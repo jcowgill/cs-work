@@ -33,7 +33,7 @@ def _prime_test_with_list(number):
 def prime_test(number):
     '''Tests whether the given integer is a prime number'''
     
-    # Force number to integer and get cutoff point
+    # Force number to integer
     number = int(number)
     
     # Ignore numbers less than 2
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     print(" Enter a blank line to exit")
     
     # Find some primes!
-    while(True):
+    while True:
         print()
         in_str = input("Enter number to test: ")
         

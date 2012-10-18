@@ -80,4 +80,3 @@ if __name__ == '__main__':
             print(str(int(in_str)) + " is prime")
         else:
             print(str(int(in_str)) + " is NOT prime")
-    

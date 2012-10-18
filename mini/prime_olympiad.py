@@ -66,4 +66,3 @@ def prime_olympiad_calc(number):
 # If this is the main module, do test now
 if __name__ == '__main__':
     print(prime_olympiad_calc(input()))
-    

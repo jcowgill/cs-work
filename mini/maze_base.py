@@ -1,9 +1,18 @@
 '''
-Base functions used by the maze challenge
+Base functions and classes used by the maze challenge
 
 18 Oct 2012
 James Cowgill
 '''
+
+import turtle
+
+# Some maze drawing constants
+_DRAW_SIZE = 20         # Size of one square in the maze (in "turtle" units)
+_DRAW_GREY = "gray"     # Colour for grey part of the maze
+_DRAW_BLACK = "black"   # Colour for black parts of the maze
+_DRAW_GREEN = "green"   # Colour for green dot
+_DRAW_RED = "red"       # Colour for red dot
 
 class _Wall:
     '''Enumeration of wall representations (used for storing the maze)'''
@@ -200,3 +209,77 @@ class Maze:
             return (x, y + 1)
         else:   # EAST
             return (x + 1, y)
+        
+    def draw(self):
+        '''Draws the maze using turtle (after clearing the screen)'''
+        
+        # Get maze size
+        width, height = self.size
+        
+        # Reset turtle
+        turtle.reset()
+        turtle.hideturtle()
+        turtle.pencolor(_DRAW_BLACK)
+        
+        # Move turtle to top left corner
+        turtle.penup()
+        turtle.goto(-_DRAW_SIZE * width / 2, -_DRAW_SIZE * height / 2)
+        home = turtle.pos()
+        turtle.pendown()
+        
+        # Draw top and right sides
+        turtle.forward(_DRAW_SIZE * width)
+        turtle.right(90)
+        turtle.forward(_DRAW_SIZE * height)
+        
+        turtle.penup()
+        turtle.goto(home)
+        
+        # Draw each square in the maze
+        for row in self._data:
+            for square in row:
+                # Start off at top left corner, facing down, pen up, black pen
+                
+                turtle.pendown()
+                
+                # Drawing west side?
+                if (square & _Wall.WEST) == 0:
+                    # No, use gray
+                    turtle.pencolor(_DRAW_GREY)
+                    
+                # Draw west side
+                turtle.forward(_DRAW_SIZE)
+                turtle.left(90)
+                
+                # Drawing south side?
+                if (square & _Wall.SOUTH) == 0:
+                    turtle.pencolor(_DRAW_GREY)
+                else:
+                    turtle.pencolor(_DRAW_BLACK)
+                    
+                # Draw south side
+                turtle.forward(_DRAW_SIZE)
+                turtle.right(90)
+                
+                # Move to next square
+                turtle.penup()
+                turtle.backward(_DRAW_SIZE)
+                turtle.pencolor(_DRAW_BLACK)
+            
+            # Advance to next row
+            turtle.left(90)
+            turtle.backward(_DRAW_SIZE * width)
+            turtle.right(90)
+            turtle.forward(_DRAW_SIZE)
+            
+        # Draw start and end dots
+        turtle.goto(home)
+        turtle.forward(_DRAW_SIZE / 2)
+        turtle.left(90)
+        turtle.forward(_DRAW_SIZE / 2)
+        turtle.dot(_DRAW_SIZE / 2, _DRAW_GREEN)
+        
+        turtle.forward(_DRAW_SIZE * (width - 1))
+        turtle.right(90)
+        turtle.forward(_DRAW_SIZE * (height - 1))
+        turtle.dot(_DRAW_SIZE / 2, _DRAW_RED)

@@ -9,9 +9,10 @@ James Cowgill
 def _list_clone(data):
     '''Performs a deep copy of a list of list'''
     new_list = []
-    for i in range(0, len(data)):
-        new_list.append(data[i][:])
-        
+
+    for row in data:
+        new_list.append(row[:])
+
     return new_list
 
 
@@ -19,7 +20,7 @@ def _solve_recursive(data, x, y):
     '''Recursive solve starting at position x, y'''
 
     solution_list = []
-    
+
     if len(data) == 9:
         square_size = 3
     else:
@@ -49,8 +50,8 @@ def _solve_recursive(data, x, y):
 
         # Check current column
         fail = False
-        for row in range(0, len(data)):
-            if data[row][x] == value:
+        for row in data:
+            if row[x] == value:
                 fail = True
                 break
 
@@ -83,7 +84,7 @@ def solve(data):
     Solves the given sudoku puzzle
 
     data must be a list of lists of characters (must be '1' to '9' or ' ')
-    Returns a list of solutions (this will be empty if the puzzle is impossible)
+    Returns a list of solutions (an empty list if the puzzle is impossible)
     '''
 
     # Must be 4x4 or 9x9
@@ -114,10 +115,10 @@ if __name__ == '__main__':
 
         # Solve it and print solutions
         solutions = solve(data)
-        
+
         if len(solutions) > 0:
             print("Found " + str(len(solutions)) + " solutions")
-            
+
             for entry in enumerate(solutions):
                 print()
                 print("Solution " + str(entry[0] + 1))

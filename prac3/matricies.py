@@ -1,6 +1,7 @@
 # Matricies
 #  All matricies are lists of rows
 
+
 def matrix_scalar_product(number, matrix):
     # Generate new matrix from old rows
     new = []
@@ -9,6 +10,7 @@ def matrix_scalar_product(number, matrix):
         new.append([number * col for col in row])
 
     return new
+
 
 def matrix_addition(m1, m2):
     # Generate new matrix from old rows
@@ -19,8 +21,10 @@ def matrix_addition(m1, m2):
 
     return new
 
+
 def matrix_transpose(matrix):
     return zip(*matrix)
+
 
 def matrix_multiply(m1, m2):
     # Matrix multiplication
@@ -41,12 +45,12 @@ def matrix_multiply(m1, m2):
         # Process each column in the row
         for col_num in range(0, new_cols):
             # Multiply m1 row by m2 col at this position
-            sum = 0
+            total = 0
             for mid_num in range(0, mid_number):
-                sum += m1[row_num][mid_num] * m2[mid_num][col_num]
+                total += m1[row_num][mid_num] * m2[mid_num][col_num]
 
-            row.append(sum)
-            
+            row.append(total)
+
         new.append(row)
 
     return new

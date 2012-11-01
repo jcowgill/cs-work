@@ -15,6 +15,6 @@ if actual_speed > limit:
         fine += 200
 
     print "Fined", fine
-    
+
 else:
     print "Speed is legal"

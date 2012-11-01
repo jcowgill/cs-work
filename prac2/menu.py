@@ -24,7 +24,7 @@ while True:
             # Test selection
             selection = raw_input()
             print
-            
+
             if selection == '1':
                 print "Price = 2.50"
             elif selection == '2':
@@ -33,7 +33,7 @@ while True:
                 continue
 
             break
-        
+
     elif selection == '2':
         while True:
             # Games Menu
@@ -46,7 +46,7 @@ while True:
             # Test selection
             selection = raw_input()
             print
-            
+
             if selection == '1':
                 print "Price = 4.00"
             elif selection == '2':
@@ -60,5 +60,3 @@ while True:
         continue
 
     break
-    
-        

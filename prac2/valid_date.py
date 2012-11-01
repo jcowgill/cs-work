@@ -1,11 +1,13 @@
 # Tests if a given date is valid
 
 # The number of days in each month
-_MONTH_DAYS = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ]
+_MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
 
 def is_leap_year(year):
     '''Returns true if the given year is a Gregorian leap year'''
     return (year % 4 == 0) and ((year % 100 != 0) or (year % 400 == 0))
+
 
 def is_valid_date(day, month, year):
     '''Returns true if the given date is valid in the Gregorian calendar'''

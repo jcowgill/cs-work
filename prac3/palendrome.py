@@ -4,6 +4,7 @@ PALENDROME_NOT = 0
 PALENDROME_PARTIAL = 1
 PALENDROME_FULL = 2
 
+
 def palendrome_test(string):
     '''Tests whether the given string is a palendrome
 
@@ -14,10 +15,10 @@ def palendrome_test(string):
 
     This function ignores case
     '''
-    
+
     # Ignoring case
     string = string.lower()
-    
+
     # Setup initial positions
     palendrome_type = PALENDROME_FULL
     left = 0
@@ -29,12 +30,12 @@ def palendrome_test(string):
             # Advance both positions
             left += 1
             right -= 1
-            
+
         elif not string[left].isalnum():
             # Ignore non alpha character
             palendrome_type = PALENDROME_PARTIAL
             left += 1
-        
+
         elif not string[right].isalnum():
             # Ignore non alpha character
             palendrome_type = PALENDROME_PARTIAL

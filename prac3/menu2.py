@@ -146,12 +146,14 @@ class RootMenu(Menu):
                 # Exit
                 break
 
-# Create menu structure
-menu = \
-    RootMenu([
-         Menu("Movies", [Product("DVD", 2.50), Product("Blue-Ray", 3.50)]),
-         Menu("Games", [Product("New Game", 4.00), Product("Old Game", 2.50)]),
-         ])
+if __name__ == '__main__':
+    # Create menu structure
+    menu = RootMenu([
+             Menu("Movies", [Product("DVD", 2.50),
+                             Product("Blue-Ray", 3.50)]),
+             Menu("Games", [Product("New Game", 4.00),
+                            Product("Old Game", 2.50)]),
+             ])
 
-# Run menu system
-menu.process(Bill())
+    # Run menu system
+    menu.process(Bill())

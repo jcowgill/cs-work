@@ -5,6 +5,7 @@ Calculates the product of distinct prime factors of a number
 James Cowgill
 '''
 
+from __future__ import print_function
 import math
 
 
@@ -67,4 +68,4 @@ def prime_olympiad_calc(number):
 
 # If this is the main module, do test now
 if __name__ == '__main__':
-    print(prime_olympiad_calc(input()))
+    print(prime_olympiad_calc(raw_input()))

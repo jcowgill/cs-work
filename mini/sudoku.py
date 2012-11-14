@@ -5,6 +5,8 @@ Solves sudoku puzzles
 James Cowgill
 '''
 
+from __future__ import print_function
+
 
 def _list_clone(data):
     '''Performs a deep copy of a list of list'''
@@ -102,14 +104,14 @@ def solve(data):
 
 if __name__ == '__main__':
     # Get the puzzle
-    size = int(input("Enter puzzle size (4 or 9): "))
+    size = int(raw_input("Enter puzzle size (4 or 9): "))
     if size != 4 and size != 9:
         print("Size must be 4 or 9")
     else:
         # Get puzzle
         data = []
         for i in range(0, size):
-            data.append(list(input()))
+            data.append(list(raw_input()))
 
         print()
 

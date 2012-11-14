@@ -5,6 +5,7 @@ Tests weather some numbers are prime wile caching results in a file
 James Cowgill
 '''
 
+from __future__ import print_function
 import math
 
 # Open primes file and read the primes from it
@@ -71,7 +72,7 @@ if __name__ == '__main__':
     # Find some primes!
     while True:
         print()
-        in_str = input("Enter number to test: ")
+        in_str = raw_input("Enter number to test: ")
 
         # Empty?
         if len(in_str) == 0:

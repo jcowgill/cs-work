@@ -5,6 +5,7 @@ Calculates Greatest Common Divisor
 James Cowgill
 '''
 
+from __future__ import print_function
 import time
 
 
@@ -44,11 +45,11 @@ def gcd(a, b, rem=remainder_fast):
 
 if __name__ == '__main__':
     # Do tests
-    start = time.perf_counter()
+    start = time.clock()
     print(gcd(123456789, 987654321))
-    mid = time.perf_counter()
+    mid = time.clock()
     print(gcd(123456789, 987654321, remainder_slow))
-    end = time.perf_counter()
+    end = time.clock()
 
     # Print timing results
     print("Fast version took", format((mid - start) * 1000, '.2f'), "ms")

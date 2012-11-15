@@ -47,10 +47,10 @@ class Item:
 
 
 # Global dictionaries
-members = {}    # Stores Member objects by (fname, sname) tuple
-                #  Member names stored here are in LOWER CASE!!
-items = {}      # Stores Item objects by item_id
-next_id = 1     # The next avaliable id
+members = {}        # Stores Member objects by (fname, sname) tuple
+                    #  Member names stored here are in LOWER CASE!!
+items = {}          # Stores Item objects by item_id
+next_item_id = 1    # The next avaliable item id
 
 
 # Member key tuple
@@ -89,7 +89,7 @@ def item_add(title, author, media, item_id=-1):
 
     # Auto-generating item?
     if item_id == -1:
-        item_id = next_id
+        item_id = next_item_id
 
     # Does that item exist?
     if item_id in items:
@@ -101,7 +101,7 @@ def item_add(title, author, media, item_id=-1):
 
     # Update next id (if nessesary)
     if item_id >= next_id:
-        next_id = item_id + 1
+        next_item_id = next_item_id + 1
 
     return item_obj
 

@@ -53,10 +53,15 @@ items = {}          # Stores Item objects by item_id
 next_item_id = 1    # The next avaliable item id
 
 
-# Member key tuple
+# Member lookups
 def member_get_key(fname, sname):
     '''Returns the key used in the members dictionary for the given names'''
     return (fname.lower(), sname.lower())
+
+
+def member_get(fname, sname):
+    '''Returns the member object with the given name'''
+    return members[member_get_key(fname, sname)];
 
 
 # Adding data

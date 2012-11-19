@@ -61,7 +61,7 @@ def member_get_key(fname, sname):
 
 def member_get(fname, sname):
     '''Returns the member object with the given name'''
-    return members[member_get_key(fname, sname)];
+    return members[member_get_key(fname, sname)]
 
 
 # Adding data
@@ -90,7 +90,7 @@ def item_add(title, author, media, item_id=-1):
 
     Returns the new object or None if the item already exists'''
 
-    global next_id
+    global next_item_id
 
     # Auto-generating item?
     if item_id == -1:
@@ -105,7 +105,7 @@ def item_add(title, author, media, item_id=-1):
     items[item_id] = item_obj
 
     # Update next id (if nessesary)
-    if item_id >= next_id:
+    if item_id >= next_item_id:
         next_item_id = next_item_id + 1
 
     return item_obj

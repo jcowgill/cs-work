@@ -83,7 +83,7 @@ def member_add(fname, sname, postcode):
     return member_obj
 
 
-def item_add(title, author, media, item_id=-1):
+def item_add(title, author, media, item_id=None):
     '''Creates a new item and adds it to the global item list
 
     item_id is optional, if it is left out a new id will be generated
@@ -93,7 +93,7 @@ def item_add(title, author, media, item_id=-1):
     global next_item_id
 
     # Auto-generating item?
-    if item_id == -1:
+    if item_id is None:
         item_id = next_item_id
 
     # Does that item exist?

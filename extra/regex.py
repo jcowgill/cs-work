@@ -46,7 +46,9 @@ class Regex:
     '''Each instance of this class represents a compiled regex pattern'''
 
     def __init__(self, pattern):
-        '''Creates a new regex pattern object and compiles it'''
+        '''Creates a new regex pattern object and compiles it
+
+        Currently pattern supports: ( ) | * + ? special characters'''
         self.start = Regex.__dfa_simplify(
                         Regex.__subset_construction(
                         Regex.__create_nfa(pattern)))
@@ -333,8 +335,26 @@ class Regex:
         return dfa
 
     def match(self, string):
-        '''Returns true if the given input string matches this pattern'''
-        pass
+        '''Returns true if the given input string matches this pattern
+
+        Note that the ENTIRE input string must match'''
+
+        state = self.start
+
+        # Start processing each character in the input
+        for c in string:
+            # Is there a transition on this character?
+            if c in state:
+                # Do transition
+                state = state[c]
+
+            else:
+                # No transitions
+                #  This is a failure since we're matching the ENTIRE string
+                return False
+
+        # End of string - return result
+        return state.accepting
 
     def diagram(self):
         '''Returns a dot digraph of the compiled DFA'''
@@ -375,7 +395,3 @@ class Regex:
 
         # Return result
         return result + "}\n"
-
-
-if __name__ == '__main__':
-    print Regex("ab(cd*e|d+)").diagram()

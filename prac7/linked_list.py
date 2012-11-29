@@ -1,7 +1,9 @@
+# Linked List practical
+# James Cowgill
+#
 
 
 class Node:
-
     def __init__(self, element):
         self.element = element
         self.next = None
@@ -20,7 +22,6 @@ class Node:
 
 
 class LinkedList:
-
     def __init__(self):
         self.head = None
 
@@ -31,17 +32,18 @@ class LinkedList:
 
         rep += '>'
         return rep
-    
+
         
 def isempty(linkedList):
     return linkedList.head == None
 
+
 def printLinkedListNonRecursive(linkedList):
-    if not isempty(linkedList):
-        currentNode = linkedList.head 
-        while currentNode != None:
-            print currentNode.element
-            currentNode = currentNode .next
+    currentNode = linkedList.head 
+    while currentNode != None:
+        print currentNode.element
+        currentNode = currentNode .next
+
 
 def printNodeRecursive(node):
     if node == None:
@@ -51,7 +53,5 @@ def printNodeRecursive(node):
         printNodeRecursive(node.next)
 
 
-
 def printLinkedListRecursive(linkedList):
     printNodeRecursive(linkedList.head)
-

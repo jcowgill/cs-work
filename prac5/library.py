@@ -106,7 +106,7 @@ def item_add(title, author, media, item_id=None):
 
     # Update next id (if nessesary)
     if item_id >= next_item_id:
-        next_item_id = next_item_id + 1
+        next_item_id = item_id + 1
 
     return item_obj
 

@@ -2,12 +2,18 @@
 #  James Cowgill
 #
 
+
+class AvailabilityError(Exception):
+    '''Error raised if an item is unavailable or borrowed by another member'''
+    pass
+
+
 class Book:
     '''Class representing Book items'''
 
     def __init__(self, item_id, title, author, isbn):
-        '''Creates a new Book object which is avaliable for taking out'''
-        
+        '''Creates a new Book object which is available for taking out'''
+
         self.__item_id = item_id
         self.__title = title
         self.__author = author
@@ -15,16 +21,16 @@ class Book:
         self.__member = None
 
     def __repr__(self):
-        return "Book(" + repr(self.__item_id) + ", " + repr(self.__title) + ", " + \
-                         repr(self.__author) + ", " + repr(self.__isbn) + ")"
+        return "Book(" + repr(self.__item_id) + ", " + repr(self.__title) + \
+                  ", " + repr(self.__author) + ", " + repr(self.__isbn) + ")"
 
-    def is_avaliable(self):
-        '''Returns true if the book is avaliable for taking out'''
+    def is_available(self):
+        '''Returns true if the book is available for taking out'''
         return self.__member is None
 
     def get_id(self):
         return self.__item_id
-    
+
     def get_title(self):
         return self.__title
 
@@ -38,13 +44,7 @@ class Book:
         return self.__member
 
     def set_member(self, value):
-        '''Sets this item's member. Only the Member class may call this.'''
         self.__member = value
-
-    def return_item(self):
-        '''Returns this item - making it avaliable again'''
-        if self.__member is not None:
-            self.__member.return_item(self)
 
 
 class Member:
@@ -52,55 +52,146 @@ class Member:
 
     def __init__(self, member_id, name, postcode):
         '''Creates a new Member who has taken out no items'''
-        
+
         self.__member_id = member_id
         self.__name = name
         self.__postcode = postcode
         self.__items = set()
 
     def __repr__(self):
-        return "Member(" + repr(self.__member_id) + ", " + repr(self.__name) + ", " + \
-                         repr(self.__postcode) + ")"
+        return "Member(" + repr(self.__member_id) + ", " + \
+                           repr(self.__name) + ", " + \
+                           repr(self.__postcode) + ")"
 
     def get_id(self):
         return self.__item_id
 
     def get_name(self):
         return self.__name
-    
+
     def get_postcode(self):
         return self.__postcode
 
     def get_items(self):
-        return frozenset(self.__items)
-
-    def take_out(self, item):
-        '''Causes this member to take out the given item'''
-        if item.is_avaliable():
-            item.set_member(self)
-            self.__items.add(item)
-
-        else:
-            # DO SOMETHING HERE #################################################
-            pass
-        
-    def return_item(self, item):
-        '''Returns the given item'''
-        if item.get_member() is self:
-            item.set_member(None)
-            self.__items.remove(item)
-
-        else:
-            # DO SOMETHING HERE #################################################
-            pass
-
-    def return_all(self):
-        '''Returns all the items this member owns'''
-        for item in self.get_items():
-            self.return_item(item)
+        return self.__items
 
     def print_items(self):
         '''Prints the list of items borrowed by this member'''
         for item in self.__items:
             print item
-        
+
+
+class Library:
+    '''Main library class which stores the collection of members and items'''
+
+    def __init__(self):
+        self.__members = {}
+        self.__next_member_id = 1
+        self.__items = {}
+        self.__next_item_id = 1
+
+    def __repr__(self):
+        return "<Library: " + str(len(self.__members)) + " members, " + \
+                              str(len(self.__items)) + " items>"
+
+    def add_member(self, name, postcode):
+        '''Adds a new member to the library and returns its member id'''
+
+        # Get new member id
+        member_id = self.__next_member_id
+        self.__next_member_id += 1
+
+        # Add member
+        self.__members[member_id] = Member(member_id, name, postcode)
+
+        return member_id
+
+    def get_member(self, member_id):
+        '''Gets a member object from an id'''
+        return self.__members[member_id]
+
+    def remove_member(self, member_id):
+        '''Removes a member - ensuring all their items are returned'''
+
+        # Lookup member
+        member_obj = self.__members[member_id]
+
+        # Return any items
+        for item in member_obj.get_items():
+            assert item.get_member() == self
+            item.set_member(None)
+
+        member_obj.get_items().clear()
+
+        # Remove from list of members
+        del self.__members[member_id]
+
+    def add_book(self, title, author, isbn):
+        '''Adds a new book to the library and returns its item id'''
+
+        # Get new item id
+        item_id = self.__next_item_id
+        self.__next_item_id += 1
+
+        # Add item
+        self.__items[item_id] = Book(item_id, title, author, isbn)
+        return item_id
+
+    def get_item(self, item_id):
+        '''Gets an item object from an id'''
+        return self.__items[item_id]
+
+    def remove_item(self, item_id):
+        '''Removes an item - you cannot remove an item that is not available'''
+
+        # Lookup item
+        item_obj = self.__items[item_id]
+
+        # Ensure item is available
+        if not item_obj.is_available():
+            raise AvailabilityError("cannot remove unavailable item")
+
+        # Remove from list
+        del self.__items[item_id]
+
+    def borrow_item(self, member_id, item_id):
+        '''Borrows an item for the given member'''
+
+        # Lookup member and item
+        member_obj = self.__members[member_id]
+        item_obj = self.__items[item_id]
+
+        # Ensure item is available
+        if not item_obj.is_available():
+            if item_obj.get_member() is not member_obj:
+                raise AvailabilityError("cannot borrow unavailable item")
+            else:
+                return  # Already borrowed this item
+
+        # Borrow item
+        member_obj.get_items().add(item_obj)
+        item_obj.set_member(member_obj)
+
+    def return_item(self, member_id, item_id):
+        '''Returns an item for the given member'''
+
+        # Lookup member and item
+        member_obj = self.__members[member_id]
+        item_obj = self.__items[item_id]
+
+        # Ensure item was taken out by that member
+        if item_obj.get_member() is not member_obj:
+            raise AvailabilityError("item is not owned by this member")
+
+        # Return item
+        member_obj.get_items().remove(item_obj)
+        item_obj.set_member(None)
+
+if __name__ == '__main__':
+    library = Library()
+    b1 = library.add_book("Book of Death", "Yourself", "42")
+    m1 = library.add_member(("Joe", "Bloggs"), "SANTA")
+    library.borrow_item(m1, b1)
+    library.borrow_item(m1, b1)
+
+    library.get_member(m1).print_items()

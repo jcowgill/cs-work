@@ -15,9 +15,8 @@ def move(max_pop, stack, me=0):
     sub_stack = stack[:]
     my_sum = 0
     best = (0, 0)
-    best_i = 0
 
-    for i in range(1, max_pop + 1):
+    for _ in range(max_pop):
         # Pop last item and add it to the sum
         my_sum += sub_stack.pop()
 
@@ -57,4 +56,3 @@ if __name__ == '__main__':
 
     # Print result
     print best[0]
-

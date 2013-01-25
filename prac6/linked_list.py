@@ -9,12 +9,12 @@ class Node:
         self.next = None
 
     def __repr__(self):
-        ## This method is recursive, you could use a while loop instead
+        # # This method is recursive, you could use a while loop instead
         rep = '<Node: '
         rep += str(self.element)
         if self.next != None:
-            ## the following statement is the recursive call. <str(self.next)> calls
-            ## the __repr__ of the next node, hence the recursive nature of this method.
+            # # the following statement is the recursive call. <str(self.next)> calls
+            # # the __repr__ of the next node, hence the recursive nature of this method.
             rep += ', ' + str(self.next)
 
         rep += '>'
@@ -33,13 +33,13 @@ class LinkedList:
         rep += '>'
         return rep
 
-        
+
 def isempty(linkedList):
     return linkedList.head == None
 
 
 def printLinkedListNonRecursive(linkedList):
-    currentNode = linkedList.head 
+    currentNode = linkedList.head
     while currentNode != None:
         print currentNode.element
         currentNode = currentNode .next
@@ -56,14 +56,16 @@ def printNodeRecursive(node):
 def printLinkedListRecursive(linkedList):
     printNodeRecursive(linkedList.head)
 
-## MY CODE BELOW HERE
+# # MY CODE BELOW HERE
 #####################################
+
 
 def add_first(lst, element):
     '''Adds a new element as the first item in the list'''
     node = Node(element)
     node.next = lst.head
     lst.head = node
+
 
 def size(lst):
     '''Gets the size of the list iteratively'''
@@ -77,6 +79,7 @@ def size(lst):
 
     return total
 
+
 def _size_node(node):
     '''Recursive helper for size_recur'''
     if node is None:
@@ -84,12 +87,14 @@ def _size_node(node):
     else:
         return 1 + _size_node(node.next)
 
+
 def size_recur(lst):
     '''Gets the size of the list recursively'''
     return _size_node(lst.head)
 
     # Question 2: You could add a size variable to the linked list to keep track
     #  of the size. It will be updated whenever something is added or deleted
+
 
 def add_last(lst, element):
     '''Adds a new element as the last item in the list
@@ -109,6 +114,7 @@ def add_last(lst, element):
             current = current.next
 
         current.next = new_node
+
 
 def insert_at(lst, element, pos):
     '''Inserts an element before the given position in the list
@@ -130,7 +136,7 @@ def insert_at(lst, element, pos):
     else:
         # Go thorugh until we are at the right position
         current = lst.head
-        for i in range(pos - 1):
+        for _ in range(pos - 1):
             # Advance pointer
             current = current.next
 
@@ -142,6 +148,7 @@ def insert_at(lst, element, pos):
         new_node = Node(element)
         new_node.next = current.next
         current.next = new_node
+
 
 def remove_first(lst):
     '''Removes the first element of the list and returns it
@@ -155,6 +162,7 @@ def remove_first(lst):
     else:
         lst.head = removed.next
         return removed.element
+
 
 def remove_last(lst):
     '''Removes the last element of the list and returns it
@@ -186,6 +194,7 @@ def remove_last(lst):
 
     return removed.element
 
+
 def remove_at(lst, pos):
     '''Removes the last element of the list and returns it
 
@@ -206,7 +215,7 @@ def remove_at(lst, pos):
     else:
         # Go to the element before the one we want to remove
         current = lst.head
-        for i in range(pos - 1):
+        for _ in range(pos - 1):
             # Advance pointer
             current = current.next
 
@@ -221,6 +230,7 @@ def remove_at(lst, pos):
         current.next = removed.next
 
         return removed.element
+
 
 def reverse(lst):
     '''Returns a new linked list which is the reverse of the given list'''

@@ -13,7 +13,7 @@ def predator_sim(n, r_birth_rate, f_death_rate, r_init, f_init, interaction):
     result = [(r_init, f_init)]
 
     # Do simulation
-    for i in range(1, n):
+    for _ in range(1, n):
         # Simulate this turn
         turn_interaction = interaction * r_current * f_current
 

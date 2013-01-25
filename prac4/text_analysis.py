@@ -1,7 +1,6 @@
 # Problem 1 - Text Analysis
 #
 
-from __future__ import division
 
 def analyze_file(file_data):
     '''Analyzes the text in the given file'''
@@ -19,17 +18,17 @@ def analyze_file(file_data):
         for word in words:
             # Record word in each structure
             word_len_total += len(word)
-            
+
             if word in word_frequency:
                 word_frequency[word] += 1
             else:
                 word_frequency[word] = 1
-                
+
             if len(word) in word_len_frequency:
                 word_len_frequency[len(word)] += 1
             else:
                 word_len_frequency[len(word)] = 1
 
     # Return turple of data
-    return (word_frequency, word_count, word_len_total / word_count,\
+    return (word_frequency, word_count, float(word_len_total) / word_count, \
             word_len_frequency)

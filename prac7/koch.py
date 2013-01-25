@@ -26,6 +26,7 @@ def koch_curve(turtle, length, degree):
         turtle.left(60)
         koch_curve(turtle, length, degree)
 
+
 def koch_wipe(degree):
     '''Display a koch curve but wiping the screen before hand'''
     turtle.clearscreen()

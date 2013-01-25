@@ -8,7 +8,7 @@ class SparseMatrixLinked:
     class Node:
         '''A node in the linked list'''
 
-        def __init__(self, x, value, next_node = None):
+        def __init__(self, x, value, next_node=None):
             '''Creates a new node with next pointing to nothing'''
             self.x = x
             self.value = value
@@ -17,7 +17,6 @@ class SparseMatrixLinked:
         def __repr__(self):
             return "<Node: x=" + str(self.x) + ",value=" + \
                    str(self.value) + ",next=" + repr(self.next) + ">"
-    
 
     def __init__(self, width, height):
         '''Creates a new sparse matrix filled with zeros'''
@@ -52,7 +51,7 @@ class SparseMatrixLinked:
         previous = None
 
         # Loop until we've found the node
-        ## while (key[0] < current.x) and (current.next is not None):
+        # # while (key[0] < current.x) and (current.next is not None):
         while (current is not None) and (key[0] > current.x):
             previous = current
             current = current.next
@@ -62,7 +61,7 @@ class SparseMatrixLinked:
             current = None
 
         return current, previous
-    
+
     def __getitem__(self, key):
         # Get value or return 0
         find_result = self.__find_key(key)
@@ -70,7 +69,7 @@ class SparseMatrixLinked:
         if find_result[0] is not None:
             return find_result[0].value
         else:
-            return 0;
+            return 0
 
     def __setitem__(self, key, value):
         # Try to find existing value
@@ -127,7 +126,7 @@ class SparseMatrixLinked:
                     if new_val != 0:
                         current.next = self.Node(left.x, new_val)
                         current = current.next
-                        
+
                     left = left.next
                     right = right.next
 
@@ -135,7 +134,7 @@ class SparseMatrixLinked:
                     # Add left
                     current.next = self.Node(left.x, left.value)
                     current = current.next
-                    
+
                 else:
                     # Add right
                     current.next = self.Node(right.x, right.value)
@@ -146,7 +145,7 @@ class SparseMatrixLinked:
                 current.next = self.Node(left.x, left.value)
                 current = current.next
                 left = left.next
-                
+
             while right is not None:
                 current.next = self.Node(right.x, right.value)
                 current = current.next
@@ -158,10 +157,9 @@ class SparseMatrixLinked:
 
         return new_matrix
 
-
-a=SparseMatrixLinked(2,2)
-b=SparseMatrixLinked(2,2)
-a[0,0]=1
-a[0,1]=2
-b[1,0]=3
-b[0,0]=55
+a = SparseMatrixLinked(2, 2)
+b = SparseMatrixLinked(2, 2)
+a[0, 0] = 1
+a[0, 1] = 2
+b[1, 0] = 3
+b[0, 0] = 55

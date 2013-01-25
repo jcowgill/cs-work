@@ -2,6 +2,7 @@
 #  James Cowgill
 #
 
+
 def print_chessboard(n):
     '''Prints an n x n chessboard'''
 

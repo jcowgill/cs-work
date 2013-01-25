@@ -4,6 +4,7 @@
 
 import math
 
+
 def is_power(a, b):
     '''Returns True if a is a power of b'''
     if a == 1:
@@ -13,6 +14,7 @@ def is_power(a, b):
     else:
         return (a % b == 0) and is_power(a / b, b)
 
+
 def fibonacci_rec(n):
     '''Returns the nth fibonnaci number'''
     if n <= 1:
@@ -20,19 +22,21 @@ def fibonacci_rec(n):
     else:
         return fibonacci_rec(n - 1) + fibonacci_rec(n - 2)
 
+
 def fibonacci_iter(n):
     '''Returns the nth fibonacci number'''
     a = 1
     b = 1
 
     # Add together until we've done it n times
-    for i in range(1, n):
+    for _ in range(1, n):
         a, b = a + b, a
 
     return a
 
 SQRT_5 = math.sqrt(5)
 GOLDEN_RATIO = (1 + SQRT_5) / 2
+
 
 def fibonacci_best(n):
     '''Returns the nth fibonacci number'''

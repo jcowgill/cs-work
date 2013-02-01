@@ -8,31 +8,49 @@ class AvailabilityError(Exception):
     pass
 
 
-class Book:
-    '''Class representing Book items'''
+class Item:
+    '''Abstract class representing an item in the library'''
 
-    def __init__(self, item_id, title, author, isbn):
+    def __init__(self, item_id, title):
         '''Creates a new Book object which is available for taking out'''
 
         self.__item_id = item_id
         self.__title = title
-        self.__author = author
-        self.__isbn = isbn
         self.__member = None
 
     def __repr__(self):
-        return "Book(" + repr(self.__item_id) + ", " + repr(self.__title) + \
-                  ", " + repr(self.__author) + ", " + repr(self.__isbn) + ")"
+        return "Item(" + repr(self.__item_id) + ")"
 
     def is_available(self):
         '''Returns true if the book is available for taking out'''
         return self.__member is None
 
+    def get_title(self):
+        return self.__title
+
     def get_id(self):
         return self.__item_id
 
-    def get_title(self):
-        return self.__title
+    def get_member(self):
+        return self.__member
+
+    def set_member(self, value):
+        self.__member = value
+
+
+class Book(Item):
+    '''Class representing Book items'''
+
+    def __init__(self, item_id, title, author, isbn):
+        '''Creates a new Book object which is available for taking out'''
+
+        Item.__init__(self, item_id, title)
+        self.__author = author
+        self.__isbn = isbn
+
+    def __repr__(self):
+        return "Book(" + repr(self.get_id()) + ", " + repr(self.get_title()) + \
+                  ", " + repr(self.__author) + ", " + repr(self.__isbn) + ")"
 
     def get_author(self):
         return self.__author
@@ -40,11 +58,22 @@ class Book:
     def get_isbn(self):
         return self.__isbn
 
-    def get_member(self):
-        return self.__member
 
-    def set_member(self, value):
-        self.__member = value
+class Dvd(Item):
+    '''Class representing DVD items'''
+
+    def __init__(self, item_id, title, director):
+        '''Creates a new Dvd object which is available for taking out'''
+
+        Item.__init__(self, item_id, title)
+        self.__director = director
+
+    def __repr__(self):
+        return "Dvd(" + repr(self.get_id()) + ", " + repr(self.get_title()) + \
+                  ", " + repr(self.__director) + ")"
+
+    def get_director(self):
+        return self.__director
 
 
 class Member:
@@ -187,7 +216,28 @@ class Library:
         member_obj.get_items().remove(item_obj)
         item_obj.set_member(None)
 
+    def search_items(self, title):
+        '''Returns a list of all item ids of the items with the given title'''
+        lst = []
+
+        for key in self.__items:
+            if self.__items[key].get_title() == title:
+                lst.append(key)
+
+        return lst
+
+    def search_members(self, name):
+        '''Returns a list of all member ids of the members with the given name'''
+        lst = []
+
+        for key in self.__members:
+            if self.__members[key].get_name() == name:
+                lst.append(key)
+
+        return lst
+
 if __name__ == '__main__':
+    # Some tests
     library = Library()
     b1 = library.add_book("Book of Death", "Yourself", "42")
     m1 = library.add_member(("Joe", "Bloggs"), "SANTA")

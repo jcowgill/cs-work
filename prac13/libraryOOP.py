@@ -172,13 +172,10 @@ class Library:
 
     def add_item(self, item):
         '''
-
-        creates and add an item to the library. Returns the item if it is created,
-        None if the uid already exists.
-
+        creates and add an item to the library. Returns the item if it is created
         '''
         if self.containsItemUID(item.getUID()): ## uid already existing so must not add item
-            return None
+            raise DuplicateItemError("Item with id " + str(item.getUID()) + " already exists")
         else:
             self.__items[item.getUID()] = item
             return item
@@ -186,13 +183,10 @@ class Library:
 
     def add_member(self, member):
         '''
-
-        creates and add a member to the library. Returns the member if it is created,
-        None if the uid already exists.
-
+        creates and add a member to the library. Returns the member if it is created
         '''
         if self.containsMemberUID(member.getUID()): ## uid already existing so must not add item
-            return None
+            raise DuplicateMemberError("Member with id " + str(member.getUID()) + " already exists")
         else:
 
             self.__members[member.getUID()] = member
@@ -202,21 +196,23 @@ class Library:
     def borrow(self, item_uid, member_uid):
         '''
         returns True if an item has been successfully borrowed,
-        False otherwise.
+        False if the item has already been borrowed
 
         '''
-        if(self.containsItemUID(item_uid) and
-           self.containsMemberUID(member_uid)):
-            item = self.__items[item_uid]
-            if item.isavailable():
-                member = self.__members[member_uid]
-                member.addItem(item_uid)
-                item.setStatus(Item.BORROWED)
-                item.setMember(member_uid)
-                return True
-            else: ## item is not available so cannot borrow
-                return False
-        else: ## item or member do not exist so cannot borrow
+
+        if not self.containsItemUID(item_uid):
+            raise UnknownItemError("Item with id " + str(item_uid) + " does not exists")
+        if not self.containsMemberUID(member_uid):
+            raise UnknownMemberError("Member with id " + str(member_uid) + " does not exists")
+
+        item = self.__items[item_uid]
+        if item.isavailable():
+            member = self.__members[member_uid]
+            member.addItem(item_uid)
+            item.setStatus(Item.BORROWED)
+            item.setMember(member_uid)
+            return True
+        else: ## item is not available so cannot borrow
             return False
 
     def containsItemUID(self, uid):
@@ -230,37 +226,40 @@ class Library:
     def return_item(self, item_uid):
         '''
         returns True if an item has been successfully returned,
-        False otherwise.
-
+        False otherwise if the item has not been borrowed
         '''
+
         if self.containsItemUID(item_uid):
             item = self.__items[item_uid]
             member_uid = item.getMember()
-            if (member_uid == None or
-                (not self.containsMemberUID(member_uid))): ## error
+            if member_uid is None:
                 return False
+
+            elif not self.containsMemberUID(member_uid)):
+                raise UnknownMemberError("Member with id " + str(member_uid) + " does not exists")
+
             else:
                 member = self.__members[member_uid]
-                if item_uid not in member.getItems() : #error, inconsistant data state between members and items
-                    return False
-                else:
-                    member.removeItem(item_uid)
-                    item.setStatus(Item.AVAILABLE)
-                    item.setMember(Item.NO_BORROWER)
-                    return True
+                assert item_uid in member.getItems()    #error, inconsistant data state between members and items
+
+                member.removeItem(item_uid)
+                item.setStatus(Item.AVAILABLE)
+                item.setMember(Item.NO_BORROWER)
+                return True
+
         else: # error item not in library
-            return False
+            raise UnknownItemError("Item with id " + str(item_uid) + " does not exists")
 
 
 
     def delete_item(self, item_uid):
         '''
         returns True if an item has be successfully deleted,
-        False otherwise, e.g. item is still borrowed or does not exist.
+        False if item is still borrowed
 
         '''
         if(not self.containsItemUID(item_uid)): ## items not in library
-            return False
+            raise UnknownItemError("Item with id " + str(item_uid) + " does not exists")
         else:
             item = self.__items[item_uid]
             if (item.getMember() is not None): ## A member has item, so cannot delete it until returned.
@@ -280,7 +279,7 @@ class Library:
 
         '''
         if(not self.containsMemberUID(member_uid)): ## member not in library
-            raise(UnknownMemberError('No exisiting member with UID: ' + str(member_uid)))
+            raise UnknownMemberError("Member with id " + str(member_uid) + " does not exists")
         else:
             member = self.__members[member_uid]
             if (len(member.getItems()) > 0): ## member has items, so cannot delete it until all are returned.
@@ -295,8 +294,32 @@ class Library:
         return self.__members.values()
 
 
+class DuplicateItemError(Exception):
+    """Exception raised for duplicate items
 
+    Attributes:
+        msg  -- explanation of the error
+    """
 
+    pass
+
+class DuplicateMemberError(Exception):
+    """Exception raised for duplicate members
+
+    Attributes:
+        msg  -- explanation of the error
+    """
+
+    pass
+
+class UnknownItemError(Exception):
+    """Exception raised for errors in the Item UID, e.g. not an existing UID.
+
+    Attributes:
+        msg  -- explanation of the error
+    """
+
+    pass
 
 class UnknownMemberError(Exception):
     """Exception raised for errors in the Member UID, e.g. not an existing UID.
@@ -305,8 +328,4 @@ class UnknownMemberError(Exception):
         msg  -- explanation of the error
     """
 
-    def __init__(self, message):
-        self.msg = message
-
-    def __str__(self):
-         return repr(self.msg)
+    pass

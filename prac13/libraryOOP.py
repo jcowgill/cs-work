@@ -161,6 +161,7 @@ class DVD(Item):
 
 
 class Library:
+    '''Represents a library containing a list of members and items'''
 
     def __init__(self):
         self.__members = {} ## Dictionary containing Member.uid as key and Member object as value

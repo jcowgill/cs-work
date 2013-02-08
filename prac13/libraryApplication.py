@@ -9,12 +9,15 @@ def addNewMember(library):
         fname = raw_input('Enter member\'s firstname: ')
         sname = raw_input('Enter member\'s surname: ')
         postcode = raw_input('Enter member\'s postcode: ')
-        member = Member(fname, sname, postcode, getUniqueIdentifier('usr_'))
-        success = library.add_member(member)
-        if success:
+
+        try:
+            member = Member(fname, sname, postcode, getUniqueIdentifier('usr_'))
+            success = library.add_member(member)
+
             print 'member added successfully.'
             return
-        else:
+
+        except DuplicateMember:
             again = raw_input('An error has occurred, do you want to try again (y/n)? ')
             if again.lower() != 'y':
                 return
@@ -25,12 +28,15 @@ def addNewDVD(library):
         title = raw_input('Enter DVD\'s title: ')
         director = raw_input('Enter DVD\'s Director: ')
         rating = raw_input('Enter DVD\'s age rating: ')
-        dvd = DVD(title, director, rating, getUniqueIdentifier('dvd_'))
-        success = library.add_item(dvd)
-        if success:
+
+        try
+            dvd = DVD(title, director, rating, getUniqueIdentifier('dvd_'))
+            success = library.add_item(dvd)
+
             print 'Item added successfully.'
             return
-        else:
+
+        except DuplicateItem:
             again = raw_input('An error has occurred, do you want to try again (y/n)? ')
             if again.lower() != 'y':
                 return

@@ -1,3 +1,2 @@
-*.py[cod]
-__pycache__
+# Global Ignores
 *~

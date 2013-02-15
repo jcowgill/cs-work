@@ -1,0 +1,3 @@
+# Python Specific Ignores
+*.py[cod]
+__pycache__

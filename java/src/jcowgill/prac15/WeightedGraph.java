@@ -7,8 +7,15 @@ import java.util.ArrayList;
  */
 public class WeightedGraph
 {
-    private City[] cities;
-    private int[][] edges;
+	/**
+	 * The array of cities stored by id
+	 */
+    protected City[] cities;
+
+    /**
+     * The adjacency list of edges for the graph
+     */
+    protected int[][] edges;
 
     /**
      * Creates a new WeightedGraph with a maximum number of cities
@@ -27,7 +34,8 @@ public class WeightedGraph
      * You may not add a vertex if it is already on the graph or if the graph is full
      *
      * @param city vertex to add
-     * @return true if it was added
+     * @return true if it was added, false if the city already exists
+     * @throws GraphFullException thrown if the graph is full
      */
     public boolean addVertex(City city)
     {
@@ -45,7 +53,7 @@ public class WeightedGraph
             }
         }
 
-        return false;
+        throw new GraphFullException("the graph is full");
     }
 
     /**

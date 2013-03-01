@@ -9,7 +9,7 @@ public class GraphFullException extends RuntimeException
 
 	/**
 	 * Creates a new GraphFullException with the given message
-	 * 
+	 *
 	 * @param msg exception message
 	 */
 	public GraphFullException(String msg)

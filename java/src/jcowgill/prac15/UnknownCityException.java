@@ -9,7 +9,7 @@ public class UnknownCityException extends RuntimeException
 
 	/**
 	 * Creates a new UnknownCityException with the given message
-	 * 
+	 *
 	 * @param msg exception message
 	 */
 	public UnknownCityException(String msg)

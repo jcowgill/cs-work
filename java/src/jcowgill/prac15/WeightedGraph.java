@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * A weighted graph of cities stored using an adjacency matrix
  */
-public class WeightedCityGraph
+public class WeightedGraph
 {
     private City[] cities;
     private int[][] edges;
@@ -14,7 +14,7 @@ public class WeightedCityGraph
      * Creates a new WeightedGraph with a maximum number of cities
      * @param n maximum number of cities
      */
-    public WeightedCityGraph(int n)
+    public WeightedGraph(int n)
     {
         // Create arrays
         this.cities = new City[n];
@@ -53,14 +53,12 @@ public class WeightedCityGraph
      *
      * @param city city to remove
      * @return true if it was removed
+     * @throws UnknownCityException thrown if the city was not found
      */
-    public boolean removeVertex(City city)
+    public void removeVertex(City city)
     {
         // Find city
         int cityId = getIndex(city);
-
-        if (cityId < 0)
-            return false;
 
         // Remove all the edges connecting to it
         for (int i = 0; i < edges.length; i++)
@@ -71,30 +69,35 @@ public class WeightedCityGraph
 
         // Remove from cities list
         cities[cityId] = null;
-        return true;
     }
 
     /**
      * Adds an edge between two cities
      *
      * You may not add an edge if the cities are not in the graph or
-     * if there is already an edge between them
+     * if there is already an edge between them.
+     * 
+     * You cannot add an edge with a weight of 0.
      *
      * @param city1 first city
      * @param city2 second city
      * @param weight weight of the edge between the cities
-     * @return true if it was added
+     * @return true if it was added, false if one already exists
+     * 
+     * @throws IllegalArgumentException thrown if weight == 0
+     * @throws UnknownCityException thrown if a city was not found
      */
     public boolean addEdge(City city1, City city2, int weight)
     {
+    	// Do not allow zero weights
+    	if (weight == 0)
+    		throw new IllegalArgumentException("weight cannot be 0");
+    	
         // Find cities
         int city1Id, city2Id;
 
         city1Id = getIndex(city1);
         city2Id = getIndex(city2);
-
-        if (city1Id < 0 || city2Id < 0)
-            return false;
 
         // Edge exists?
         if (edges[city1Id][city2Id] != 0)
@@ -111,7 +114,8 @@ public class WeightedCityGraph
      *
      * @param city1 first city
      * @param city2 second city
-     * @return true if it was removed
+     * @return true if it was removed, false if it didn't exist
+     * @throws UnknownCityException thrown if a city was not found
      */
     public boolean removeEdge(City city1, City city2)
     {
@@ -120,9 +124,6 @@ public class WeightedCityGraph
 
         city1Id = getIndex(city1);
         city2Id = getIndex(city2);
-
-        if (city1Id < 0 || city2Id < 0)
-            return false;
 
         // Edge exists?
         if (edges[city1Id][city2Id] == 0)
@@ -140,15 +141,13 @@ public class WeightedCityGraph
      * This is the number of edges connecting to it
      *
      * @param city city to get degree of
-     * @return its degree or -1 if the city wasn't found
+     * @return its degree
+     * @throws UnknownCityException thrown if the city was not found
      */
     public int getDegree(City city)
     {
         // Find city
         int cityId = getIndex(city);
-
-        if (cityId < 0)
-            return -1;
 
         // Count number of connecting edges
         int count = 0;
@@ -191,10 +190,11 @@ public class WeightedCityGraph
     }
 
     /**
-     * Returns the ID of a city or -1 if it wasn't found
+     * Returns the ID of a city
      *
      * @param city city to find
-     * @return the id or null
+     * @return the city id
+     * @throws UnknownCityException thrown if the city was not found
      */
     public int getIndex(City city)
     {
@@ -205,7 +205,7 @@ public class WeightedCityGraph
                 return i;
         }
 
-        return -1;
+        throw new UnknownCityException("City was not found (" + city + ")");
     }
 
     /**
@@ -218,9 +218,6 @@ public class WeightedCityGraph
     {
         // Find city
         int cityId = getIndex(city);
-
-        if (cityId < 0)
-            return null;
 
         // Search for neighbours
         ArrayList<City> list = new ArrayList<City>();

@@ -7,9 +7,9 @@ import java.util.ArrayList;
  */
 public class WeightedGraph
 {
-	/**
-	 * The array of cities stored by id
-	 */
+    /**
+     * The array of cities stored by id
+     */
     protected City[] cities;
 
     /**
@@ -104,9 +104,9 @@ public class WeightedGraph
      */
     public boolean addEdge(City city1, City city2, int weight)
     {
-    	// Do not allow zero weights
-    	if (weight == 0)
-    		throw new IllegalArgumentException("weight cannot be 0");
+        // Do not allow zero weights
+        if (weight == 0)
+            throw new IllegalArgumentException("weight cannot be 0");
 
         // Find cities
         int city1Id, city2Id;

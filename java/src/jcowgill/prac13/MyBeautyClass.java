@@ -90,7 +90,7 @@ public class MyBeautyClass
         // Print results
         System.out.println("You need to consume " + bmr + " calories per day");
         System.out.println("You would need to eat about " + chocBars +
-        				   " bars of chocolate to do this");
+                           " bars of chocolate to do this");
     }
 
     public static boolean isPalendrome(String str)
@@ -166,7 +166,7 @@ public class MyBeautyClass
                 return null;
         }
         else if (day == 31 && (month == 1 || month == 3 || month == 5 || month == 7 ||
-        					   month == 8 || month == 10 || month == 10))
+                               month == 8 || month == 10 || month == 10))
         {
             return null;
         }
@@ -195,8 +195,8 @@ public class MyBeautyClass
             System.out.println(formattedDate);
     }
 
-	public static void main(String[] args)
-	{
+    public static void main(String[] args)
+    {
         Scanner keyboard = new Scanner(System.in);
 
         try
@@ -207,5 +207,5 @@ public class MyBeautyClass
         {
             keyboard.close();
         }
-	}
+    }
 }

@@ -5,15 +5,15 @@ package jcowgill.prac15;
  */
 public class UnknownCityException extends RuntimeException
 {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Creates a new UnknownCityException with the given message
-	 *
-	 * @param msg exception message
-	 */
-	public UnknownCityException(String msg)
-	{
-		super(msg);
-	}
+    /**
+     * Creates a new UnknownCityException with the given message
+     *
+     * @param msg exception message
+     */
+    public UnknownCityException(String msg)
+    {
+        super(msg);
+    }
 }

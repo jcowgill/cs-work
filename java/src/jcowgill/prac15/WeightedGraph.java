@@ -18,6 +18,11 @@ public class WeightedGraph
     protected int[][] edges;
 
     /**
+     * The number of valid (non-null) cities stored in the graph
+     */
+    protected int cityCount;
+
+    /**
      * Creates a new WeightedGraph with a maximum number of cities
      * @param n maximum number of cities
      */
@@ -45,6 +50,7 @@ public class WeightedGraph
             if (cities[i] == null)
             {
                 cities[i] = city;
+                cityCount++;
                 return true;
             }
             else if (cities[i].equals(city))
@@ -77,6 +83,7 @@ public class WeightedGraph
 
         // Remove from cities list
         cities[cityId] = null;
+        cityCount--;
     }
 
     /**
@@ -84,14 +91,14 @@ public class WeightedGraph
      *
      * You may not add an edge if the cities are not in the graph or
      * if there is already an edge between them.
-     * 
+     *
      * You cannot add an edge with a weight of 0.
      *
      * @param city1 first city
      * @param city2 second city
      * @param weight weight of the edge between the cities
      * @return true if it was added, false if one already exists
-     * 
+     *
      * @throws IllegalArgumentException thrown if weight == 0
      * @throws UnknownCityException thrown if a city was not found
      */
@@ -100,7 +107,7 @@ public class WeightedGraph
     	// Do not allow zero weights
     	if (weight == 0)
     		throw new IllegalArgumentException("weight cannot be 0");
-    	
+
         // Find cities
         int city1Id, city2Id;
 
@@ -176,15 +183,7 @@ public class WeightedGraph
      */
     public int getSize()
     {
-        int count = 0;
-
-        for (int i = 0; i < cities.length; i++)
-        {
-            if (cities[i] != null)
-                count++;
-        }
-
-        return count;
+        return cityCount;
     }
 
     /**

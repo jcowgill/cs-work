@@ -6,9 +6,13 @@ public class NodeDouble {
 	private NodeDouble next;
 
 	public NodeDouble(Double value){
-		this.value = value;
-		next = null;
+		this(value, null);
 	}
+
+    public NodeDouble(Double value, NodeDouble next){
+        this.value = value;
+        this.next = next;
+    }
 
 	public Double getValue(){
 		return value;

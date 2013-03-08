@@ -1,4 +1,4 @@
-package jcowgill.prac16;
+package jcowgill.prac16.sets;
 
 public class NodeDouble {
 

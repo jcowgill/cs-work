@@ -3,7 +3,7 @@ package jcowgill.prac16.shapes;
 /**
  * Class representing a drawable ASCII shape
  */
-public abstract class Shape
+public abstract class Shape implements GeometricCalculus
 {
     private char colour;
     private int x, y;

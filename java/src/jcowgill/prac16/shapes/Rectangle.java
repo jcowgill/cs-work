@@ -19,4 +19,16 @@ public class Rectangle extends BoxedShape
             for (int offX = -width / 2; offX < xEnd; offX++)
                 this.drawRelative(canvas, offX, offY);
     }
+
+    @Override
+    public double calculateArea()
+    {
+        return getHeight() * getWidth();
+    }
+
+    @Override
+    public double calculatePerimeter()
+    {
+        return 2 * (getHeight() + getWidth());
+    }
 }

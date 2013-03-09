@@ -26,4 +26,16 @@ public class Diamond extends BoxedShape
                 if (height * Math.abs(offX) + width * Math.abs(offY) <= sizeConstant)
                     this.drawRelative(canvas, offX, offY);
     }
+
+    @Override
+    public double calculateArea()
+    {
+        return (getHeight() * getWidth()) / 2.0;
+    }
+
+    @Override
+    public double calculatePerimeter()
+    {
+        return 4.0 * Math.sqrt(getHeight() * getHeight() + getWidth() * getWidth());
+    }
 }

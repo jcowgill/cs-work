@@ -29,11 +29,18 @@ public class Circle extends Shape
         return 2 * Math.PI * radius;
     }
 
+    /**
+     * Gets the radius of this circle
+     */
     public int getRadius()
     {
         return radius;
     }
 
+    /**
+     * Sets the radius of this circle
+     * @param radius new radius
+     */
     public void setRadius(int radius)
     {
         this.radius = radius;

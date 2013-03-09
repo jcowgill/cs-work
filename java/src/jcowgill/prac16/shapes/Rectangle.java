@@ -6,7 +6,7 @@ package jcowgill.prac16.shapes;
 public class Rectangle extends BoxedShape
 {
     @Override
-    public void draw(char[][] canvas)
+    public void draw(AsciiCanvas canvas)
     {
         final int height = getHeight();
         final int width = getWidth();

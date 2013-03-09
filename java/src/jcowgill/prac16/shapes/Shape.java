@@ -3,7 +3,7 @@ package jcowgill.prac16.shapes;
 /**
  * Class representing a drawable ASCII shape
  */
-public abstract class Shape implements GeometricCalculus
+public abstract class Shape implements Drawable, GeometricCalculus
 {
     private char colour;
     private int x, y;
@@ -11,13 +11,6 @@ public abstract class Shape implements GeometricCalculus
     protected Shape()
     {
     }
-
-    /**
-     * Draws this shape onto the given canvas
-     *
-     * @param canvas canvas to draw onto (indexed canvas[x][y])
-     */
-    public abstract void draw(char[][] canvas);
 
     /**
      * Helper method for draw implementers to transform and draw a point
@@ -28,20 +21,10 @@ public abstract class Shape implements GeometricCalculus
      * @param x relative x offset of point
      * @param y relative y offset of point
      */
-    protected void drawRelative(char[][] canvas, int x, int y)
+    protected void drawRelative(AsciiCanvas canvas, int x, int y)
     {
-        // Move point
-        int newX = x + this.x;
-        int newY = y + this.y;
-
-        // Draw point or clip if out of bounds
-        if (newX >= 0 && newX < canvas.length)
-        {
-            char[] column = canvas[newX];
-
-            if (newY >= 0 && newY < column.length)
-                column[newY] = this.colour;
-        }
+        // Translate and draw point
+        canvas.setPoint(x + this.x, y + this.y, colour);
     }
 
     public char getColour()

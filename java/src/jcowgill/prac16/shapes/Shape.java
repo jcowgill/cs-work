@@ -12,7 +12,7 @@ public abstract class Shape
     {
     }
 
-    /*
+    /**
      * Draws this shape onto the given canvas
      *
      * @param canvas canvas to draw onto (indexed canvas[x][y])

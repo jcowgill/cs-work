@@ -8,10 +8,6 @@ public abstract class Shape implements Drawable, GeometricCalculus
     private char colour;
     private int x, y;
 
-    protected Shape()
-    {
-    }
-
     /**
      * Helper method for draw implementers to transform and draw a point
      *

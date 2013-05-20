@@ -165,8 +165,8 @@ class Maze:
             return (self._data[y][x] & _Wall.SOUTH) == 0
 
         elif direction == Direction.EAST:
-            # Check for edge of map OR WEST flag of left position
-            return x != 0 and (self._data[y][x - 1] & _Wall.WEST) == 0
+            # Check for edge of map OR WEST flag of right position
+            return x != (self._size[0] - 1) and (self._data[y][x + 1] & _Wall.WEST) == 0
 
         else:
             # Check for edge of map OR SOUTH flag of upper position
@@ -195,7 +195,7 @@ class Maze:
             result.append(Direction.SOUTH)
 
         # Check other positions's flags
-        if x != 0 and (self._data[y][x - 1] & _Wall.WEST) == 0:
+        if x != (self._size[0] - 1) and (self._data[y][x + 1] & _Wall.WEST) == 0:
             result.append(Direction.EAST)
 
         if y != 0 and (self._data[y - 1][x] & _Wall.SOUTH) == 0:
@@ -230,7 +230,7 @@ class Maze:
 
         # Move turtle to top left corner
         turtle.penup()
-        turtle.goto(-_DRAW_SIZE * width / 2, -_DRAW_SIZE * height / 2)
+        turtle.goto(-(_DRAW_SIZE * width) / 2, (_DRAW_SIZE * height) / 2)
         home = turtle.pos()
         turtle.pendown()
 

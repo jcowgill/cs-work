@@ -13,6 +13,7 @@ _DRAW_GREY = "gray"     # Colour for grey part of the maze
 _DRAW_BLACK = "black"   # Colour for black parts of the maze
 _DRAW_GREEN = "green"   # Colour for green dot
 _DRAW_RED = "red"       # Colour for red dot
+_DRAW_PATH = "blue"     # Colour for paths
 
 
 class _Wall:
@@ -290,3 +291,31 @@ class Maze:
         turtle.right(90)
         turtle.forward(_DRAW_SIZE * (height - 1))
         turtle.dot(_DRAW_SIZE / 2, _DRAW_RED)
+
+    def draw_path(self, positions):
+        '''
+        Draws the path given by a position list
+        '''
+
+        def position_to_turtle(pos):
+            '''Converts a maze position to a turtle position'''
+            return (home_x + _DRAW_SIZE * pos[0], home_y - _DRAW_SIZE * pos[1])
+
+        # Get maze size
+        width, height = self.size
+
+        # Prepare turtle
+        home_x = (-(_DRAW_SIZE * width) / 2) + (_DRAW_SIZE / 2)
+        home_y = ((_DRAW_SIZE * height) / 2) - (_DRAW_SIZE / 2)
+
+        turtle.showturtle()
+        turtle.pencolor(_DRAW_PATH)
+
+        # Move to star
+        turtle.penup()
+        turtle.goto(home_x, home_y)
+        turtle.pendown()
+
+        # Draw the path
+        for pos in positions:
+            turtle.goto(position_to_turtle(pos))

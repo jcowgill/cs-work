@@ -9,7 +9,7 @@ BUILD_DIR   := build
 SRC_DIR     := src
 
 # Global Compiler Options
-CFLAGS      := -I$(SRC_DIR) -Wall -Wextra -g -std=gnu99 -fno-common
+CFLAGS      := -I$(SRC_DIR) -Wall -Wextra -g -std=c99 -pedantic -fno-common
 
 #############
 

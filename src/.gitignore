@@ -1,0 +1,6 @@
+# Ignore files not written by me (and probably copyrighted)
+2.1-birthdays.c
+2.2-preprocessor.c
+2.4-syntax.c
+2.6-printf.c
+2.7-numbers.c

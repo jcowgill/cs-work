@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 // Converts lowercase characters to uppercase
-char toupper(char c)
+char to_upper(char c)
 {
     if (c >= 'a' && c <= 'z')
         return c - 'a' + 'A';
@@ -15,7 +15,7 @@ int main(void)
     int c;
 
     while ((c = getchar()) != EOF)
-        putchar(toupper(c));
+        putchar(to_upper(c));
 
     return 0;
 }

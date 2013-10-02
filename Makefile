@@ -23,7 +23,7 @@ TARGETS     := $(addprefix $(BUILD_DIR)/, $(basename $(notdir $(SOURCES))))
 all: $(TARGETS)
 
 clean:
-	rm -r $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)
 
 .SUFFIXES:
 .PHONY: all clean

@@ -10,6 +10,7 @@ SRC_DIR     := src
 
 # Global Compiler Options
 CFLAGS      := -I$(SRC_DIR) -Wall -Wextra -g -std=c99 -pedantic -fno-common
+LDFLAGS     := -Wl,--as-needed -lm
 
 #############
 
@@ -32,4 +33,4 @@ clean:
 $(BUILD_DIR)/%: $(SRC_DIR)/%.c
 	@echo "  [CC] $<"
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -o $@ $<
+	@$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)

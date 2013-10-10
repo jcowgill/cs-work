@@ -30,13 +30,13 @@
 ; Phrase definitions (return lists)
 (define (noun-phrase)
   (either
-   (lambda () (list a-noun))
+   (lambda () (list (a-noun)))
    (lambda () (append (list (a-adjective)) (noun-phrase))))
 )
 
 (define (verb-phrase)
   (either
-   (lambda () (list a-verb))
+   (lambda () (list (a-verb)))
    (lambda () (list (a-verb) (a-adverb))))
 )
 

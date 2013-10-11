@@ -31,7 +31,7 @@
 (define (noun-phrase)
   (either
    (lambda () (list (a-noun)))
-   (lambda () (append (list (a-adjective)) (noun-phrase))))
+   (lambda () (cons (a-adjective) (noun-phrase))))
 )
 
 (define (verb-phrase)

@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -55,6 +56,7 @@ bool expand_str_append(expand_str * str, char c)
         if (new_str == NULL)
             return false;
 
+        str->str = new_str;
         str->capacity *= 2;
     }
 
@@ -80,11 +82,12 @@ bool command_append(command * cmd, char * arg)
     else if (cmd->count >= cmd->capacity)
     {
         // Expand string
-        char * new_command = realloc(cmd->argv, cmd->capacity * 2);
+        char ** new_argv = realloc(cmd->argv, cmd->capacity * 2);
 
-        if (new_command == NULL)
+        if (new_argv == NULL)
             return false;
 
+        cmd->argv = new_argv;
         cmd->capacity *= 2;
     }
 
@@ -170,9 +173,9 @@ void do_exec(command * cmd)
     if (cmd_name[0] == '\0')
         return;
 
-    if (cmd_name[0] == '/')
+    // If the command contains a slash, run it directly
+    if (strchr(cmd_name, '/') != NULL)
     {
-        // Try name directory if it's an absolute path
         execv(cmd_name, cmd->argv);
     }
     else
@@ -237,12 +240,12 @@ void do_exec(command * cmd)
 // Sets handler for shell related signals
 void set_job_signals(void (* mode)(int))
 {
-    signal (SIGINT,  mode);
-    signal (SIGQUIT, mode);
-    signal (SIGTSTP, mode);
-    signal (SIGTTIN, mode);
-    signal (SIGTTOU, mode);
-    signal (SIGCHLD, mode);
+    signal(SIGINT,  mode);
+    signal(SIGQUIT, mode);
+    signal(SIGTSTP, mode);
+    signal(SIGTTIN, mode);
+    signal(SIGTTOU, mode);
+    signal(SIGCHLD, mode);
 }
 
 int main(int argc, char * argv[])
@@ -330,6 +333,7 @@ int main(int argc, char * argv[])
     else
     {
         status = EXIT_SUCCESS;
+        fprintf(stderr, "\n");
     }
 
     command_free(&cmd);

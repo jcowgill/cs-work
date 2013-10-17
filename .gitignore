@@ -1,6 +1,3 @@
-# Build directory
-/build/
-
 # Backup files
 *~
 *.bak

@@ -47,33 +47,70 @@
      (many of my patients have told me the same thing)
      (please continue))))
 
-; Replaces all occurences of pattern with replacement in th given list
-(define (replace pattern replacement lst)
-  (cond ((null? lst) '())
-        ((equal? (car lst) pattern)
-                 (cons replacement
-                       (replace pattern replacement (cdr lst)))
-        )
-        (else (cons (car lst)
-                    (replace pattern replacement (cdr lst)))
-        )))
+; Search though replacement pairs and modify item if needed
+(define (replace-by-pairs replacement-pairs item)
+  (if (null? replacement-pairs)
+      ; No more pairs to check - leave item unchanged
+      item
+
+      ; Replace item or call self again
+      (if (equal? item (car (car replacement-pairs)))
+          (car (cdr (car replacement-pairs)))
+          (replace-by-pairs (cdr replacement-pairs) item)
+      )
+  )
+)
 
 ; Performs many replacements within a list
 ;  replacement-pairs = a list of pairs (pattern replacement)
 ;   containing everything to replace and what to replace with
 (define (many-replace replacement-pairs lst)
-  (if (null? replacement-pairs)
-         lst
-         (let ((pat-rep (car replacement-pairs)))
-                (replace (car pat-rep)
-                         (cadr pat-rep)
-                         (many-replace (cdr replacement-pairs)
-                                       lst)))))
+  (if (null? lst)
+      ; Empty input list
+      lst
+
+      ; Extract first item in the list and replace it if needed
+      (cons
+       (replace-by-pairs replacement-pairs (car lst))
+       (many-replace replacement-pairs (cdr lst))
+      )
+  )
+)
+
+; Creates a list containing all the pairs in the given list
+;  in addition to their swapped variants (order is unspecified)
+(define (create-swapped-pairs lst)
+  (if (null? lst)
+      ; Empty input list
+      lst
+
+      ; Duplicate first entry and append to recursive call
+      (let ((pair (car lst)))
+        (cons
+         pair
+         (cons
+          (list (car (cdr pair)) (car pair))
+          (create-swapped-pairs (cdr lst))
+         )
+        )
+      )
+  )
+)
+
+; List of replacement pairs used in change-person
+(define change-person-pairs
+  (create-swapped-pairs '(
+    (i you)
+    (me you)
+    (am are)
+    (my your)
+  ))
+)
 
 ; Changes the person in a phrase
 (define (change-person phrase)
-  (many-replace '((i you) (me you) (am are) (my your))
-                phrase))
+  (many-replace change-person-pairs phrase)
+)
 
 ; Chooses a random item from a list
 (define (pick-random lst) (list-ref lst (random (length lst))))

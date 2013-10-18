@@ -5,10 +5,10 @@
   (begin
     (print (list 'hello name))
     (print '(what seems to be the trouble?))
-    (doctor-driver-loop name)))
+    (doctor-driver-loop name '())))
 
 ; Main loop where commands are received and stuff is printed
-(define (doctor-driver-loop name)
+(define (doctor-driver-loop name responses)
   (begin
     (newline)
     (display '**)
@@ -19,15 +19,25 @@
                    (print '(see you next week))
                 )
                 (begin
-                    (print (reply user-response))
-                    (doctor-driver-loop name)
+                    (print (reply user-response responses))
+                    (doctor-driver-loop name (cons user-response responses))
                 )))))
 
 ; Calculates the reply to a user's request
-(define (reply user-response)
+(define (reply user-response responses)
   (if (fifty-fifty)
-        (append (qualifier) (change-person user-response))
-        (hedge)))
+      (append (qualifier) (change-person user-response))
+      (if (or (null? responses) (fifty-fifty))
+          (hedge)
+          (pick-prev-response responses)
+      )
+  )
+)
+
+; Adjusts a previous response so it can be printed
+(define (pick-prev-response responses)
+  (append '(earlier you said that) (change-person (pick-random responses)))
+)
 
 ; Returns true / false randomly
 (define (fifty-fifty) (= (random 2) 0))
@@ -109,6 +119,14 @@
 
 ; Changes the person in a phrase
 (define (change-person phrase)
+; Doctor entry point
+(define (visit-doctor name)
+  (begin
+    (print (list 'hello name))
+    (print '(what seems to be the trouble?))
+    (doctor-driver-loop name '())))
+
+; Main loop where commands are received and stu
   (many-replace change-person-pairs phrase)
 )
 

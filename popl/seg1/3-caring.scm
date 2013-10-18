@@ -1,11 +1,24 @@
 #lang racket
 
 ; Doctor entry point
-(define (visit-doctor name)
-  (begin
-    (print (list 'hello name))
-    (print '(what seems to be the trouble?))
-    (doctor-driver-loop name '())))
+(define (visit-doctor)
+  ; Ask for patient's name
+  (print '(next!))
+  (print '(who are you?))
+  (let ((name (read)))
+    ; Exit if this name is bogus
+    (if (or (eof-object? name) (equal? (car name) 'death))
+        (print '(oh crap))
+
+        (begin
+          (print (list 'hello (car name)))
+          (print '(what seems to be the trouble?))
+          (doctor-driver-loop (car name) '())
+          (visit-doctor)
+        )
+    )
+   )
+)
 
 ; Main loop where commands are received and stuff is printed
 (define (doctor-driver-loop name responses)
@@ -119,14 +132,6 @@
 
 ; Changes the person in a phrase
 (define (change-person phrase)
-; Doctor entry point
-(define (visit-doctor name)
-  (begin
-    (print (list 'hello name))
-    (print '(what seems to be the trouble?))
-    (doctor-driver-loop name '())))
-
-; Main loop where commands are received and stu
   (many-replace change-person-pairs phrase)
 )
 

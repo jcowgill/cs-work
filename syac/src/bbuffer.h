@@ -11,11 +11,15 @@
 /// The main buffer structure
 typedef struct bbuffer
 {
-    char * data;        ///< Array containing the buffer's data
-    size_t capacity;    ///< Buffer maximum capacity
+    char * data;            ///< Array containing the buffer's data
+    size_t capacity;        ///< Buffer maximum capacity
 
-	size_t start;		///< Index of first valid character
-	size_t count;		///< Number of valid characters (wraps around)
+	size_t start;           ///< Index of first valid character
+	size_t count;           ///< Number of valid characters (wraps around)
+
+	pthread_mutex_t lock;   ///< Main buffer lock
+	pthread_cond_t enqueue_cond;    ///< Condition variable waited on during enqueue
+	pthread_cond_t dequeue_cond;    ///< Condition variable waited on during dequeue
 
 } bbuffer;
 

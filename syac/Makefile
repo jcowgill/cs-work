@@ -13,7 +13,7 @@ SRC_SUB_DIRS := .
 
 # Global Compiler Options
 CFLAGS      := -I$(SRC_DIR) -Wall -Wextra -g -std=c99 -pedantic -fno-common
-LDFLAGS     := -Wl,--as-needed -lm
+LDFLAGS     := -Wl,--as-needed -lm -lpthread
 
 #############
 

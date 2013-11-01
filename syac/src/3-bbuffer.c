@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
-#include "bbuffer.h"
+#include "3-bbuffer.h"
 
 // Blocking buffer implementation
 //

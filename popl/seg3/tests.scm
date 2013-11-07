@@ -3,25 +3,25 @@
 (require rackunit)
 (require rackunit/text-ui)
 
-(require "core.scm")
+(require "lang.scm")
 
 ; Ensures that the evaluation of expr equals value
 (define-binary-check (check-eval-equal? expr value)
-  (equal? (core-eval-expr (core-parse expr)) value)
+  (equal? (lang-eval-expr (lang-parse expr)) value)
 )
 
 ; Ensures the evaluation of expr fails
 (define (check-eval-fail? expr)
   (check-exn exn:fail?
      (lambda ()
-       (core-eval-expr (core-parse expr))
+       (lang-eval-expr (lang-parse expr))
      )
   )
 )
 
 ; The main test suite to run
 ;  Use the check-eval-equal? and check-eval-fail? predicates to create the tests
-(define core-tests
+(define lang-tests
   (test-suite
    "Tests for the CORE language"
 
@@ -51,4 +51,4 @@
 ))
 
 ; Run the tests
-(run-tests core-tests)
+(run-tests lang-tests)

@@ -46,7 +46,7 @@
 
    ; Comparison tests
    (check-eval-equal? "equal?(89, -(90, 1))" #t)
-   (check-eval-fail? "greater?(equal?(9, 9), 8)")
+   (check-eval-fail?  "greater?(equal?(9, 9), 8)")
    (check-eval-equal? "less?(89, -(90, 1))" #f)
 ))
 

@@ -23,7 +23,7 @@
 ;  Use the check-eval-equal? and check-eval-fail? predicates to create the tests
 (define lang-tests
   (test-suite
-   "Tests for the CORE language"
+   (string-append "Tests for the " lang-name " language")
 
    ; Basic tests
    (check-eval-equal? "10" 10)

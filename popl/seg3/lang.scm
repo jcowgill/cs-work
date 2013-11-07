@@ -2,7 +2,10 @@
 
 (require eopl)
 
-(provide lang-scan lang-parse lang-eval-expr)
+(provide lang-name lang-scan lang-parse lang-eval-expr)
+
+; The language name
+(define lang-name "CORE")
 
 ; Primitive functions and their evaluators
 (define primitives (list

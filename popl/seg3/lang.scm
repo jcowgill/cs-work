@@ -5,7 +5,7 @@
 (provide lang-name lang-scan lang-parse lang-eval-expr)
 
 ; The language name
-(define lang-name "CORE")
+(define lang-name "LET")
 
 ; Primitive functions and their evaluators
 (define primitives (list
@@ -38,11 +38,18 @@
   ; Primitive number expression
   (expression (number) expr-number)
 
-  ; Generic compound expression
-  (expression (identifier "(" (separated-list expression ",") ")") expr-compound)
+  ; Expression beginning with an identifier
+  (expression (identifier ident-tail) expr-ident-start)
+
+  ; Let expression
+  (expression ("let" identifier "=" expression "in" expression) expr-let)
 
   ; Conditional
   (expression ("if" expression "then" expression "else" expression) expr-if)
+
+  ; Tail of identifier expressions (primitive and compound expressions)
+  (ident-tail () ident-tail-empty)
+  (ident-tail ("(" (separated-list expression ",") ")") ident-tail-compound)
 ))
 
 ; Define datatypes from the grammar
@@ -78,10 +85,21 @@
     ; Numeric expression
     (expr-number (num) num)
 
+    ; Ident start expression
+    (expr-ident-start (ident tail)
+      (cases ident-tail tail
+        ; Primitive identifier
+        (ident-tail-empty () (error 'unimplemented))
+
+        ; Compound expression
+        (ident-tail-compound (exprs) (eval-compound ident exprs))
+      )
+    )
+
+    ; Let expression
+    (expr-let (name value expr) (error 'unimplemented))
+
     ; Conditional
     (expr-if (expr true false)
              (if (lang-eval-expr expr) (lang-eval-expr true) (lang-eval-expr false)))
-
-    ; Compound expression
-    (expr-compound (type exprs) (eval-compound type exprs))
 ))

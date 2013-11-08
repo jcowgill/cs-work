@@ -48,6 +48,12 @@
    (check-eval-equal? "equal?(89, -(90, 1))" #t)
    (check-eval-fail?  "greater?(equal?(9, 9), 8)")
    (check-eval-equal? "less?(89, -(90, 1))" #f)
+
+   ; Let tests
+   (check-eval-equal? "let x = +(1,2,3) in *(x,x)" 36)
+   (check-eval-equal? "let x = let y = 1 in +(y,5) in *(x,2)" 12)
+   (check-eval-fail?  "let x = let y = x in 0 in 0")
+   (check-eval-equal? "let x = 5 in let y = 12 in *(x,y)" 60)
 ))
 
 ; Run the tests

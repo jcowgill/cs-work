@@ -30,6 +30,7 @@ typedef struct buddy_order
 
 } buddy_order;
 
+#define BASE_SIZE (sizeof(block_list_data))
 #define TOTAL_BLOCKS (1 << ORDER_COUNT)
 
 // Data for the allocator
@@ -74,7 +75,6 @@ void * buddy_allocate(size_t bytes)
 
     // Calculate lowest order containing required number of bytes
     uint32_t req_order = order_from_size(bytes);
-    assert((1 << req_order) >= bytes);
 
     // Check each order (>= requested order) for free blocks
     for (uint32_t order = req_order; order < ORDER_COUNT; order++)
@@ -88,6 +88,8 @@ void * buddy_allocate(size_t bytes)
                 block->next->prev = NULL;
 
             buddy_orders[order].free_list = block->next;
+
+#error THIS IS WRONG
 
             // Split blocks if this one is too big
             for (; order > req_order; order--)
@@ -160,10 +162,14 @@ void buddy_free(void * ptr)
 
 static uint32_t order_from_size(size_t bytes)
 {
-    if (bytes <= sizeof(block_list_data))
-        return 0;
-    else
-        return (uint32_t) ceil(log2(bytes / sizeof(block_list_data)));
+    // Calculate number of blocks required
+    size_t blocks = (bytes + BASE_SIZE - 1) / BASE_SIZE;
+    assert(blocks != 0);
+
+    // Do ceil(log2) to get the order
+    uint32_t order = (uint32_t) ceil(log2(blocks));
+    assert(BASE_SIZE * (1 << order) >= bytes);
+    return order;
 }
 
 static uint8_t * bitmap_ptr(block_list_data * ptr, uint32_t order)
@@ -187,6 +193,16 @@ static void free_list_insert(block_list_data * block, uint32_t order)
 int main(void)
 {
     buddy_init();
+
+    // Allocate and free some stuff
+    void * ptr = buddy_allocate(42);
+    void * ptr2 = buddy_allocate(1000);
+    void * ptr3 = buddy_allocate(1);
+
+    buddy_free(ptr);
+    buddy_free(ptr2);
+    buddy_free(ptr3);
+
     return 0;
 }
 

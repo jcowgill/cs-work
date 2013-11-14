@@ -1,39 +1,49 @@
+#include <assert.h>
 #include <inttypes.h>
+#include <math.h>
 #include <stddef.h>
 
 #include "5-buddy.h"
 
-// Minimum block size (must be power of 2)
-#define MIN_SIZE 16
+// Number of orders to use
+//  Total Memory = (32 * 2^ORDER_COUNT)
+#define ORDER_COUNT 15
 
-// Maximum block order
-#define ORDER_COUNT 16
+// Data stored by a free block (always 32 bytes)
+typedef struct block_list_data
+{
+    struct block_list_data * prev;
+    struct block_list_data * next;
 
-// Amount of total data to allocatelin
-#define DATA_SIZE (MIN_SIZE * (1 << ORDER_COUNT))
+    char _pad[32 - (sizeof(void *) * 2)];
+
+} block_list_data;
 
 // Information about one order of the allocator
-//  The buddy map stores 2 bits per block
-//   00 = Free block / block is part of a larger block
-//   01 = Right block allocated
-//   10 = Left block allocated
-//   11 = Both blocks allocated SEPARATELY (ie to different alloc calls)
+//  The buddy map stores a 0 or 1
+//   0 = Free block / block is part of a larger block
+//   1 = Allocated (possibly not all at once though)
 typedef struct buddy_order
 {
-    void ** free_list;  // Linked list of free blocks
-    uint8_t * map;      // Buddy map (null for smallest order)
+    block_list_data * free_list;    // Linked list of free blocks
+    uint8_t * map;                  // Buddy map
 
 } buddy_order;
 
+#define DATA_SIZE (sizeof(block_list_data) * (1 << ORDER_COUNT))
+
 // Data for the allocator
 static uint8_t buddy_data[DATA_SIZE] __attribute__((aligned(MIN_SIZE)));
-static uint8_t buddy_map_data[(1 << ORDER_COUNT) / 4];
+static uint8_t buddy_map_data[1 << ORDER_COUNT];
 
 // Order data
 static buddy_order buddy_orders[ORDER_COUNT];
 
-// Fast calculation of ceil(log_2(val))
-static uint8_t clog2_int(uint32_t val);
+// Calculates the order from the size requested
+static uint32_t order_from_size(size_t bytes);
+
+// Get a pointer to the bitmap element for an order and address
+static uint8_t * bitmap_ptr(void * ptr, uint32_t order);
 
 void buddy_init()
 {
@@ -41,7 +51,7 @@ void buddy_init()
     uint32_t order_size = sizeof(buddy_map_data) / 2;
 
     // Initialize all buddy orders (except 0 which is left NULL)
-    for (int i = 1; i < ORDER_COUNT; i++)
+    for (int i = 0; i < ORDER_COUNT; i++)
     {
         buddy_orders[i].map = map_data_pos;
 
@@ -55,15 +65,48 @@ void buddy_init()
 
 void * buddy_allocate(size_t bytes)
 {
-    // Calculate lowest order containing required number of bytes
+    // Ignore size 0 allocations
     if (bytes == 0)
         return NULL;
 
-    bytes = clog2_int(bytes);
+    // Calculate lowest order containing required number of bytes
+    uint32_t req_order = order_from_size(bytes);
+    assert((1 << req_order) >= bytes);
 
+    // Check each order (>= requested order) for free blocks
+    for (uint32_t order = req_order; order < ORDER_COUNT; order++)
+    {
+        block_list_data * block = buddy_orders[order].free_list;
+
+        if (free_ptr != NULL)
+        {
+            // Update free list
+            if (block->next != NULL)
+                block->next->prev = NULL;
+
+            buddy_orders[order].free_list = block->next;
+
+            // Split blocks if this one is too big
+            for (; order > req_order; order--)
+            {
+                // Insert right half of block onto the order's free list
+                block_list_data * right = block + (1 << order);
+                right->prev = NULL;
+                right->next = buddy_orders[order].free_list;
+                buddy_orders[order].free_list = right;
+
+                // Mark left as allocated
+                *bitmap_ptr(block, order) = 1;
+            }
+
+            // Set block as allocated in my order
+            *bitmap_ptr(block, req_order) = 1;
+            return free_ptr;
+        }
+    }
+
+    // Not enough memory :(
     return NULL;
-
-    // Search the free lists
 }
 
 void buddy_free(void * ptr)
@@ -71,60 +114,32 @@ void buddy_free(void * ptr)
     // Ignore null ptrs
     if (ptr == NULL)
         return;
+
+    // Search bitmaps to determine this ptr's order
 }
 
-static uint8_t clog2_int(uint32_t val)
+static uint32_t order_from_size(size_t bytes)
 {
-    // Log lookup table
-    static const uint8_t log_table[256] =
-    {
-#define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
-        -1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
-        LT(4), LT(5), LT(5), LT(6), LT(6), LT(6), LT(6),
-        LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)
-#undef LT
-    };
-
-    uint32_t high_bits = val >> 16;
-    uint32_t middle_bits;
-
-    // Split val down to 8 bit chunks which we pass to the lookup table
-    if (high_bits != 0)
-    {
-        middle_bits = high_bits >> 8;
-        if (middle_bits != 0)
-            return 24 + log_table[middle_bits];
-        else
-            return 16 + log_table[high_bits];
-    }
+    if (bytes <= MIN_SIZE)
+        return 0;
     else
-    {
-        middle_bits = val >> 8;
-        if (middle_bits != 0)
-            return 8 + log_table[middle_bits];
-        else
-            return log_table[val];
-    }
+        return (uint32_t) ceil(log2(bytes / MIN_SIZE));
+}
+
+static uint8_t * bitmap_ptr(void * ptr, uint32_t order)
+{
+    // Verify ptr is in range
+    assert(ptr >= buddy_data && ptr < (buddy_data + DATA_SIZE));
+
+    ptrdiff_t block_no = ((ptr - buddy_data) / MIN_SIZE) >> order;
+    return buddy_orders[order].map + block_no;
 }
 
 #if 1
 
-#include <stdio.h>
-#include <math.h>
-
 int main(void)
 {
-    // Test clog2_int
-    for (uint32_t i = 1; i < 100; i++)
-    {
-        printf("clog2_int(%u) = %u\n", i, clog2_int(i));
- //       uint32_t res = clog2_int(i);
- //       double act = ceil(log2(i));
- //       if ((double) res - act > 0.001)
- //           printf("Fail clog2_int = %u, ceil(log2) = %f\n", res, act);
-    }
-
-    //buddy_init();
+    buddy_init();
     return 0;
 }
 

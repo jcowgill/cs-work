@@ -19,6 +19,11 @@
   (cons "equal?"   equal?)
   (cons "greater?" >)
   (cons "less?"    <)
+
+  (cons "cons"  cons)
+  (cons "car"   car)
+  (cons "cdr"   cdr)
+  (cons "null?" null?)
 ))
 
 ; Lexical specification
@@ -50,6 +55,9 @@
   ; Multi-way conditional
   (expression ("cond" (arbno "{" expression "==>" expression "}") "end") expr-cond)
 
+  ; List definition
+  (expression ("[" (separated-list expression ",") "]") expr-list)
+
   ; Tail of identifier expressions (primitive and compound expressions)
   (ident-tail () ident-tail-empty)
   (ident-tail ("(" (separated-list expression ",") ")") ident-tail-compound)
@@ -62,6 +70,14 @@
 (define lang-scan  (sllgen:make-string-scanner lexer-spec grammar-spec))
 (define lang-parse (sllgen:make-string-parser  lexer-spec grammar-spec))
 
+; Evaluates a list with the given bindings
+(define (eval-expr-list exprs bindings)
+  (map
+   (lambda (expr) (eval-expr expr bindings))
+   exprs
+  )
+)
+
 ; Evaluate compound expression
 (define (eval-compound type exprs bindings)
   ; Get operator
@@ -70,10 +86,7 @@
       ; Accepting the correct number of args?
       (if (procedure-arity-includes? (cdr oper-pair) (length exprs))
         ; OK, execute function over evaluated expressions
-        (apply (cdr oper-pair)
-               (map
-                (lambda (expr) (eval-expr expr bindings))
-                exprs))
+        (apply (cdr oper-pair) (eval-expr-list exprs bindings))
 
         ; Bad argument count
         (eopl:error 'lang-arg-count "wrong number of arguments for operator ~s" type)
@@ -141,6 +154,9 @@
 
     ; Multi-way conditional
     (expr-cond (conds exprs) (eval-cond conds exprs bindings))
+
+    ; List definition
+    (expr-list (lst) (eval-expr-list lst bindings))
 ))
 
 ; Main expression evaluator

@@ -59,6 +59,14 @@
    (check-eval-equal? "cond { zero?(1) ==> 1 } { zero?(0) ==> 42 } end" 42)
    (check-eval-fail?  "cond { zero?(1) ==> 1 } { zero?(42) ==> 42 } end")
    (check-eval-fail?  "cond end")
+
+   ; List tests
+   (check-eval-equal? "[]" '())
+   (check-eval-equal? "[1,2,3]" '(1 2 3))
+   (check-eval-equal? "cons(+(4,2), [1,2,3])" '(6 1 2 3))
+   (check-eval-equal? "car(cdr(cons(+(4,2), [1,2,3])))" 1)
+   (check-eval-equal? "null?([])" #t)
+   (check-eval-equal? "null?([1])" #f)
 ))
 
 ; Run the tests

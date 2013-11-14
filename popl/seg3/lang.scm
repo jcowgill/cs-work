@@ -24,6 +24,8 @@
   (cons "car"   car)
   (cons "cdr"   cdr)
   (cons "null?" null?)
+
+  (cons "print" (lambda (val) (begin (display val) val)))
 ))
 
 ; Lexical specification

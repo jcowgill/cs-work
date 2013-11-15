@@ -57,6 +57,9 @@
    (check-eval-equal? "let x = 5 y = 12 in *(x,y)" 60)
    (check-eval-equal? "let in 60" 60)
    (check-eval-fail?  "let x = 1 y = 3 x = 2 in 60")
+   (check-eval-equal? "let* x = +(1,2,3) in *(x,x)" 36)
+   (check-eval-equal? "let* x = 1 y = 3 x = 2 in *(x,y)" 6)
+   (check-eval-equal? "let* x = 1 y = +(x,1) x = 2 in *(x,y)" 4)
 
    ; Cond tests
    (check-eval-equal? "cond zero?(1) ==> 1 zero?(0) ==> 42 end" 42)

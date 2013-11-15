@@ -56,8 +56,8 @@
    (check-eval-equal? "let x = 5 in let y = 12 in *(x,y)" 60)
 
    ; Cond tests
-   (check-eval-equal? "cond { zero?(1) ==> 1 } { zero?(0) ==> 42 } end" 42)
-   (check-eval-fail?  "cond { zero?(1) ==> 1 } { zero?(42) ==> 42 } end")
+   (check-eval-equal? "cond zero?(1) ==> 1 zero?(0) ==> 42 end" 42)
+   (check-eval-fail?  "cond zero?(1) ==> 1 zero?(42) ==> 42 end")
    (check-eval-fail?  "cond end")
 
    ; List tests

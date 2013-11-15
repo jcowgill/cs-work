@@ -9,23 +9,23 @@
 
 ; Primitive functions and their evaluators
 (define primitives (list
-  (cons "zero?" zero?)
-  (cons "minus" (lambda (x) (- 0 x)))
+  (cons 'zero?    zero?)
+  (cons 'minus    (lambda (x) (- 0 x)))
 
-  (cons "+" +)
-  (cons "-" -)
-  (cons "*" *)
-  (cons "/" /)
-  (cons "equal?"   equal?)
-  (cons "greater?" >)
-  (cons "less?"    <)
+  (cons '+        +)
+  (cons '-        -)
+  (cons '*        *)
+  (cons '/        /)
+  (cons 'equal?   equal?)
+  (cons 'greater? >)
+  (cons 'less?    <)
 
-  (cons "cons"  cons)
-  (cons "car"   car)
-  (cons "cdr"   cdr)
-  (cons "null?" null?)
+  (cons 'cons     cons)
+  (cons 'car      car)
+  (cons 'cdr      cdr)
+  (cons 'null?    null?)
 
-  (cons "print" (lambda (val) (begin (display val) val)))
+  (cons 'print    (lambda (val) (begin (display val) val)))
 ))
 
 ; Lexical specification
@@ -37,7 +37,7 @@
   (number (digit (arbno digit)) number)
 
   ; Identifiers
-  (identifier ((or letter "+" "-" "*" "/") (arbno (or letter digit "?"))) string)
+  (identifier ((or letter "+" "-" "*" "/") (arbno (or letter digit "?"))) symbol)
 ))
 
 ; Grammar specification
@@ -55,7 +55,7 @@
   (expression ("if" expression "then" expression "else" expression) expr-if)
 
   ; Multi-way conditional
-  (expression ("cond" (arbno "{" expression "==>" expression "}") "end") expr-cond)
+  (expression ("cond" (arbno expression "==>" expression) "end") expr-cond)
 
   ; List definition
   (expression ("[" (separated-list expression ",") "]") expr-list)

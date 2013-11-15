@@ -49,6 +49,9 @@ static uint8_t * bitmap_ptr(block_list_data * ptr, uint32_t order);
 // Inserts a block at the beginning of the given free list
 static void free_list_insert(block_list_data * block, uint32_t order);
 
+// Removes a block from the free list
+static void free_list_remove(block_list_data * block, uint32_t order);
+
 void buddy_init()
 {
     uint8_t * map_data_pos = buddy_map_data;
@@ -89,16 +92,14 @@ void * buddy_allocate(size_t bytes)
 
             buddy_orders[order].free_list = block->next;
 
-#error THIS IS WRONG
-
             // Split blocks if this one is too big
             for (; order > req_order; order--)
             {
-                // Insert right half of block onto the order's free list
-                free_list_insert(block + (1 << order), order);
-
-                // Mark left as allocated
+                // Mark this block as allocated
                 *bitmap_ptr(block, order) = 1;
+
+                // Insert right half of block onto next order's list
+                free_list_insert(block + (1 << (order - 1)), order - 1);
             }
 
             // Set block as allocated in my order
@@ -134,10 +135,10 @@ void buddy_free(void * ptr)
     {
         // Calculate all the pointers to the blocks and bitmaps
         uint8_t * my_bitmap = bitmap_ptr(my_block, order);
+        int other_offset = ((uintptr_t) my_bitmap & 1) ? -1 : 1;
 
-        uint8_t * other_bitmap = (uint8_t *) (((uintptr_t) my_bitmap) ^ 1);
-        block_list_data * other_block =
-            (my_bitmap < other_bitmap) ? my_block + 1 : my_block - 1;
+        uint8_t * other_bitmap = my_bitmap + other_offset;
+        block_list_data * other_block = my_block + (other_offset << order);
 
         // Exit if block cannot be coalesced
         if (*other_bitmap != 0)
@@ -145,11 +146,7 @@ void buddy_free(void * ptr)
 
         // Free my block, remove other from free list and adjust final pointer
         *my_bitmap = 0;
-
-        if (other_block->prev != NULL)
-            other_block->prev->next = other_block->next;
-        if (other_block->next != NULL)
-            other_block->next->prev = other_block->prev;
+        free_list_remove(other_block, order);
 
         if (other_block < my_block)
             my_block = other_block;
@@ -177,7 +174,10 @@ static uint8_t * bitmap_ptr(block_list_data * ptr, uint32_t order)
     // Verify ptr is in range
     assert(ptr >= buddy_data && ptr < (buddy_data + TOTAL_BLOCKS));
 
+    // Get and validate block number
     ptrdiff_t block_no = (ptr - buddy_data) >> order;
+    assert(buddy_data + (block_no << order) == ptr);
+
     return buddy_orders[order].map + block_no;
 }
 
@@ -186,6 +186,17 @@ static void free_list_insert(block_list_data * block, uint32_t order)
     block->prev = NULL;
     block->next = buddy_orders[order].free_list;
     buddy_orders[order].free_list = block;
+}
+
+static void free_list_remove(block_list_data * block, uint32_t order)
+{
+    if (block->prev == NULL)
+        buddy_orders[order].free_list = block->next;
+    else
+        block->prev->next = block->next;
+
+    if (block->next != NULL)
+        block->next->prev = block->prev;
 }
 
 #if 1

@@ -75,7 +75,7 @@ int main(void)
 
     // Create philosophers
     for (int i = 0; i < NUM_PHILOSOPHERS; i++)
-        pthread_create(&thr, NULL, philosopher_thread, (void *) i);
+        pthread_create(&thr, NULL, philosopher_thread, (void *) (intptr_t) i);
 
     // Hang until SIGINTed
     for (;;)

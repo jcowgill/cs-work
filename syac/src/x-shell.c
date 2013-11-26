@@ -161,82 +161,6 @@ err_handler:
     return false;
 }
 
-// Attempt to exec to the given command
-//  This function only returns if this fails
-void do_exec(command * cmd)
-{
-    // Get command name
-    char * cmd_name = cmd->argv[0];
-    size_t cmd_name_len = strlen(cmd_name);
-
-    // Ignore empty commands
-    if (cmd_name[0] == '\0')
-        return;
-
-    // If the command contains a slash, run it directly
-    if (strchr(cmd_name, '/') != NULL)
-    {
-        execv(cmd_name, cmd->argv);
-    }
-    else
-    {
-        // Get path
-        const char * path = getenv("PATH");
-        bool last_iteration = false;
-
-        // Default to current directory if not set
-        if (path == NULL)
-            path = "";
-
-        // Try all the prefixes from the beginning
-        do
-        {
-            // Search for a colon
-            const char * colon_ptr = strchr(path, ':');
-            char * filename;
-
-            if (colon_ptr == NULL)
-            {
-                // Imagine end of string is the colon
-                //  - but mark this as the last iteration
-                colon_ptr = path + strlen(path);
-                last_iteration = true;
-            }
-
-            // Construct new filename
-            ptrdiff_t path_part_len = colon_ptr - path;
-
-            filename = malloc(path_part_len + cmd_name_len + 2);
-            if (filename == NULL)
-                return;
-
-            {
-                char * put_ptr = filename;
-
-                memcpy(put_ptr, path, path_part_len);
-                put_ptr += path_part_len;
-
-                *put_ptr++ = '/';
-
-                memcpy(put_ptr, cmd_name, cmd_name_len);
-                put_ptr += cmd_name_len;
-
-                *put_ptr++ = '\0';
-            }
-
-            // Try to execute it
-            execv(filename, cmd->argv);
-
-            // Free filename
-            free(filename);
-
-            // Advance search
-            path = colon_ptr + 1;
-        }
-        while (!last_iteration);
-    }
-}
-
 // Sets handler for shell related signals
 void set_job_signals(void (* mode)(int))
 {
@@ -299,8 +223,8 @@ int main(int argc, char * argv[])
                 // Reset job signals
                 set_job_signals(SIG_DFL);
 
-                // Attempt to exev the first command name
-                do_exec(&cmd);
+                // Execute command
+                execvp(cmd.argv[0], cmd.argv);
 
                 // Report error and exit
                 is_parent = false;

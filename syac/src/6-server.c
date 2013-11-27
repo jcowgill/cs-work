@@ -23,6 +23,22 @@ static int print_usage(char * programName)
     return 1;
 }
 
+// Same as in 6-client.c
+static bool parse_port(uint16_t * result, char * input, char * program_name)
+{
+    // Extract port number
+    long long_port = strtol(input, NULL, 0);
+    if (long_port <= 0 || long_port > 0xFFFF)
+    {
+        fprintf(stderr, "%s: port number out of range\n", program_name);
+        return false;
+    }
+
+    // Store result
+    *result = (uint16_t) long_port;
+    return true;
+}
+
 static int create_listener(uint16_t port)
 {
     // Create socket
@@ -95,15 +111,11 @@ int main(int argc, char * argv[])
         return print_usage(argv[0]);
 
     // Extract port number
-    long long_port = strtol(argv[1], NULL, 0);
-    if (long_port <= 0 || long_port > 0xFFFF)
-    {
-        fprintf(stderr, "%s: port number out of range\n", argv[0]);
+    uint16_t port;
+    if (!parse_port(&port, argv[1], argv[0]))
         return 1;
-    }
 
     // Setup constant parts of environment
-    uint16_t port = (uint16_t) long_port;
     setenv("PROTO", "TCP", 1);
     setenv("TCPLOCALIP", "0.0.0.0", 1);
     setenv_number("TCPLOCALPORT", port);

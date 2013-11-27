@@ -12,7 +12,7 @@ SRC_DIR     := src
 SRC_SUB_DIRS := .
 
 # Global Compiler Options
-CFLAGS      := -I$(SRC_DIR) -Wall -Wextra -g -std=c99 -pedantic -fno-common
+CFLAGS      := -I$(SRC_DIR) -Wall -Wextra -g -std=c99 -pedantic -fno-common -D_POSIX_C_SOURCE=200112L
 LDFLAGS     := -Wl,--as-needed -lm -lpthread
 
 #############

@@ -7,26 +7,9 @@
 ; The language name
 (define lang-name "PROC")
 
-; Primitive functions and their evaluators
-(define primitives (list
-  (cons 'zero?    zero?)
-  (cons 'minus    (lambda (x) (- 0 x)))
-
-  (cons '+        +)
-  (cons '-        -)
-  (cons '*        *)
-  (cons '/        /)
-  (cons 'equal?   equal?)
-  (cons 'greater? >)
-  (cons 'less?    <)
-
-  (cons 'cons     cons)
-  (cons 'car      car)
-  (cons 'cdr      cdr)
-  (cons 'null?    null?)
-
-  (cons 'print    (lambda (val) (begin (display val) val)))
-))
+; Definitions for extra primitive functions
+(define (minus x) (- 0 x))
+(define (print val) (begin (display val) val))
 
 ; Lexical specification
 (define lexer-spec '(
@@ -37,16 +20,34 @@
   (number (digit (arbno digit)) number)
 
   ; Identifiers
-  (identifier ((or letter "+" "-" "*" "/") (arbno (or letter digit "?"))) symbol)
+  (identifier (letter (arbno (or letter digit "-" "_"))) symbol)
+
+  ; Primitives
+  ;  I admit this is a hack, but it's needed since the language grammar treats
+  ;  primitives and other functions fundamentally differently
+  ;  (unlike scheme for example).
+  ;  All these must be defined as functions somewhere in this file (or imported)
+  (primitive ((or
+      "zero?" "minus" "+" "-" "*" "/" "equal?" "greater?" "less?"
+      "cons" "car" "cdr" "null?" "print"
+    )) symbol)
 ))
 
 ; Grammar specification
 (define grammar-spec '(
-  ; Primitive number expression
+  ; Primitive numbers and identifiers
   (expression (number) expr-number)
+  (expression (identifier) expr-ident)
 
-  ; Expression beginning with an identifier
-  (expression (identifier ident-tail) expr-ident-start)
+  ; List definition
+  (expression ("[" (separated-list expression ",") "]") expr-list)
+
+  ; Primitive function call
+  (expression (primitive "(" (separated-list expression ",") ")") expr-primitive)
+
+  ; Procedures and procedure calls
+  (expression ("proc" "(" (arbno identifier) ")" expression) expr-proc)
+  (expression ("(" (arbno expression) ")") expr-call)
 
   ; Let expressions
   (expression ("let"  (arbno identifier "=" expression) "in" expression) expr-let)
@@ -57,13 +58,6 @@
 
   ; Multi-way conditional
   (expression ("cond" (arbno expression "==>" expression) "end") expr-cond)
-
-  ; List definition
-  (expression ("[" (separated-list expression ",") "]") expr-list)
-
-  ; Tail of identifier expressions (primitive and compound expressions)
-  (ident-tail () ident-tail-empty)
-  (ident-tail ("(" (separated-list expression ",") ")") ident-tail-compound)
 ))
 
 ; Define datatypes from the grammar

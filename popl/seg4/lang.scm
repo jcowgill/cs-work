@@ -7,7 +7,13 @@
 ; The language name
 (define lang-name "PROC")
 
+; Initialize primitive functions
+(define-namespace-anchor ns-anchor)
+(define eval-ns (namespace-anchor->namespace ns-anchor))
+
 ; Definitions for extra primitive functions
+(define less? <)
+(define greater? >)
 (define (minus x) (- 0 x))
 (define (print val) (begin (display val) val))
 
@@ -30,7 +36,7 @@
   (primitive ((or
       "zero?" "minus" "+" "-" "*" "/" "equal?" "greater?" "less?"
       "cons" "car" "cdr" "null?" "print"
-    )) symbol)
+    )) string)
 ))
 
 ; Grammar specification
@@ -47,7 +53,7 @@
 
   ; Procedures and procedure calls
   (expression ("proc" "(" (arbno identifier) ")" expression) expr-proc)
-  (expression ("(" (arbno expression) ")") expr-call)
+  (expression ("(" expression (arbno expression) ")") expr-call)
 
   ; Let expressions
   (expression ("let"  (arbno identifier "=" expression) "in" expression) expr-let)
@@ -75,24 +81,38 @@
   )
 )
 
-; Evaluate compound expression
-(define (eval-compound type exprs bindings)
-  ; Get operator
-  (let ((oper-pair (assoc type primitives)))
-    (if oper-pair
-      ; Accepting the correct number of args?
-      (if (procedure-arity-includes? (cdr oper-pair) (length exprs))
-        ; OK, execute function over evaluated expressions
-        (apply (cdr oper-pair) (eval-expr-list exprs bindings))
+; Evaluate primitive expression
+(define (eval-primitive ident exprs bindings)
+  ; Get primitive function
+  (let ((func (eval (string->symbol ident) eval-ns)))
+    ; Accepting the correct number of args?
+    (if (procedure-arity-includes? func (length exprs))
+      ; OK, execute function over evaluated expressions
+      (apply func (eval-expr-list exprs bindings))
 
-        ; Bad argument count
-        (eopl:error 'lang-arg-count "wrong number of arguments for operator ~s" type)
-      )
-
-      ; Bad operator
-      (eopl:error 'lang-undefined "undefined operator ~s" type)
+      ; Bad argument count
+      (eopl:error 'lang-arg-count "wrong number of arguments for primitive ~s" ident)
     )
   )
+)
+
+; Create procedure
+(define (eval-make-proc arg-names expr bindings)
+  (lambda arg-values
+    ; Args must be correct length
+    (if (not (= (length(arg-names) (length(arg-values)))))
+      ; Bind names + evaluate function
+      (eval-expr expr (make-let-bindings arg-names arg-values bindings))
+
+      ; Bad argument count
+      (eopl:error 'lang-arg-count "wrong number of arguments for function")
+    )
+  )
+)
+
+; Call procedure
+(define (eval-call-proc func args bindings)
+  (apply (eval-expr func bindings) (eval-expr-list args bindings))
 )
 
 ; Evaluates a "read name" expression
@@ -169,19 +189,21 @@
 ;  bindings = list of binding -> value pairs which can be used in the expression
 (define (eval-expr tree bindings)
   (cases expression tree
-    ; Numeric expression
+    ; Numeric + variable lookup expressions
     (expr-number (num) num)
+    (expr-ident (ident) (eval-read-name ident bindings))
 
-    ; Ident start expression
-    (expr-ident-start (ident tail)
-      (cases ident-tail tail
-        ; Primitive identifier
-        (ident-tail-empty () (eval-read-name ident bindings))
+    ; List definition
+    (expr-list (lst) (eval-expr-list lst bindings))
 
-        ; Compound expression
-        (ident-tail-compound (exprs) (eval-compound ident exprs bindings))
-      )
-    )
+    ; Primitive function call
+    (expr-primitive (ident exprs) (eval-primitive ident exprs bindings))
+
+    ; Procedure definition
+    (expr-proc (args expr) (eval-make-proc args expr bindings))
+
+    ; Procedure call
+    (expr-call (func exprs) (eval-call-proc func exprs bindings))
 
     ; Let expressions
     (expr-let  (names values expr) (eval-expr expr (make-let-bindings  names values bindings)))
@@ -193,9 +215,6 @@
 
     ; Multi-way conditional
     (expr-cond (conds exprs) (eval-cond conds exprs bindings))
-
-    ; List definition
-    (expr-list (lst) (eval-expr-list lst bindings))
 ))
 
 ; Main expression evaluator

@@ -73,6 +73,33 @@
    (check-eval-equal? "car(cdr(cons(+(4,2), [1,2,3])))" 1)
    (check-eval-equal? "null?([])" #t)
    (check-eval-equal? "null?([1])" #f)
+
+   ; Procedure tests
+   (check-eval-fail?  "(death 7)")
+   (check-eval-equal? "let inc = proc (x) +(x,1) in (inc 7)" 8)
+   (check-eval-equal? "(proc (x) +(x,1) 7)" 8)
+   (check-eval-equal? "let square = proc (x) *(x,x) in (square +(4,1))" 25)
+
+   ; PROC tests from EOPL
+   (check-eval-equal? "let f = proc (x) -(x,11) in (f (f 77))" 55)
+   (check-eval-equal? "(proc (f) (f (f 77)) proc (x) -(x,11))" 55)
+   (check-eval-equal? "let x = 200
+                       in let f = proc (z) -(z,x)
+                         in let x = 100
+                           in let g = proc (z) -(z,x)
+                             in -((f 1), (g 1))" -100)
+
+   (check-eval-equal? "let makerec = proc (f)
+                         let d = proc (x)
+                           proc (z) ((f (x x)) z)
+                         in proc (n) ((f (d d)) n)
+                       in let maketimes4 = proc (f)
+                         proc (x)
+                           if zero?(x)
+                           then 0
+                           else -((f -(x,1)), minus(4))
+                         in let times4 = (makerec maketimes4)
+                         in (times4 3)" 12)
 ))
 
 ; Run the tests

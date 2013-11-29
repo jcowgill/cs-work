@@ -100,9 +100,9 @@
 (define (eval-make-proc arg-names expr bindings)
   (lambda arg-values
     ; Args must be correct length
-    (if (not (= (length(arg-names) (length(arg-values)))))
+    (if (= (length arg-names) (length arg-values))
       ; Bind names + evaluate function
-      (eval-expr expr (make-let-bindings arg-names arg-values bindings))
+      (eval-expr expr (append (make-bindings-list arg-names arg-values) bindings))
 
       ; Bad argument count
       (eopl:error 'lang-arg-count "wrong number of arguments for function")
@@ -143,34 +143,33 @@
   )
 )
 
-; Recursive part of make-let-bindings
-(define (make-let-bindings-rec names values old-bindings new-bindings)
+; Constructs a list of bindings from a list of names and values
+;  Does not evaluate the values list
+(define (make-bindings-list names values [bindings '()])
   ; Stop if at the end of the list
   (if (null? names)
-    new-bindings
+    bindings
 
     ; Check if the name exists
-    (if (assoc (car names) new-bindings)
-      (eopl:error 'lang-dup-name "duplicate identifier in let ~s" (car names))
+    (if (assoc (car names) bindings)
+      (eopl:error 'lang-dup-name "duplicate binding name ~s" (car names))
 
-      ; Evaluate name and append to new-bindings
-      (make-let-bindings-rec
+      ; Append to list of bindings
+      (make-bindings-list
         (cdr names)
         (cdr values)
-        old-bindings
-        (cons (cons (car names) (eval-expr (car values) old-bindings)) new-bindings)
+        (cons (cons (car names) (car values)) bindings)
       )
     )
   )
 )
 
-; Constructs a list of bindings to be evaluated in a let expression
-;  This list is created from the given names and values lists
+; Creates bindings list for let expression
 (define (make-let-bindings names values bindings)
-  (append (make-let-bindings-rec names values bindings '()) bindings)
+  (append (make-bindings-list names (eval-expr-list values bindings)) bindings)
 )
 
-; Like above, but with let* bindings
+; Creates bindings list for let* expression
 (define (make-let*-bindings names values bindings)
   ; Stop if at the end of the list
   (if (null? names)

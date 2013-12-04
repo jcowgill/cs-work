@@ -24,6 +24,7 @@ void insertNode(node ** previousPtr, int power, float coeff)
     node * current = malloc(sizeof(node));
     current->power = power;
     current->coeff = coeff;
+    current->next = NULL;
 
     // Add to the end of the list and update previousPtr
     previous->next = current;

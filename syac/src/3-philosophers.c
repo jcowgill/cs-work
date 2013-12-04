@@ -23,7 +23,9 @@ static void lfsr_next(uint32_t * state)
 
 void * philosopher_thread(void * ptr_id)
 {
-    int id = (int) ptr_id;
+    int id = *(int *) ptr_id;
+    free(ptr_id);
+
     unsigned int rand_state = time(NULL) + id;
     lfsr_next(&rand_state);
 
@@ -75,7 +77,11 @@ int main(void)
 
     // Create philosophers
     for (int i = 0; i < NUM_PHILOSOPHERS; i++)
-        pthread_create(&thr, NULL, philosopher_thread, (void *) (intptr_t) i);
+    {
+        int * id_ptr = malloc(sizeof(int));
+        *id_ptr = i;
+        pthread_create(&thr, NULL, philosopher_thread, id_ptr);
+    }
 
     // Hang until SIGINTed
     for (;;)

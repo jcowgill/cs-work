@@ -1,6 +1,18 @@
 # Build directories
 build/
 
+# Racket compiled directories
+compiled/
+
+# Java Specific Ignores
+*.jar
+*.class
+bin/
+
+# Python Specific Ignores
+*.py[cod]
+__pycache__
+
 # Backup files
 *~
 *.bak

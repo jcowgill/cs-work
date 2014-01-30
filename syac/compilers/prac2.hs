@@ -10,6 +10,10 @@ import Data.Maybe
 --  snd Output = rest of string to process
 type RegExp a = [a] -> (Maybe [a], [a])
 
+-- True if the regex worked
+matched :: (Maybe [a], [a]) -> Bool
+matched (f,s) = isJust f
+
 -- Matches empty regex
 nil :: RegExp a
 nil xs = (Just [], xs)
@@ -29,8 +33,8 @@ one c = range (==c)
 
 -- Matches union of two regexs
 alt :: RegExp a -> RegExp a -> RegExp a
-alt l _ xs | isJust lFst = (lFst, lSnd)
-    where (lFst, lSnd) = l xs
+alt l _ xs | matched (lMatch) = lMatch
+    where lMatch = l xs
 alt _ r xs = r xs
 
 -- Matches sequence of two regexs

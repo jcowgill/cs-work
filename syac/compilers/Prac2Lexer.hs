@@ -1,6 +1,8 @@
 -- Haskell Practical 2 Code - Lexing
 --  By James Cowgill
 
+module Prac2Lexer where
+
 import Data.Maybe
 
 -- Type of regular expression parsers

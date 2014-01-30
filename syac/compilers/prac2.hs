@@ -12,7 +12,11 @@ type RegExp a = [a] -> (Maybe [a], [a])
 
 -- True if the regex worked
 matched :: (Maybe [a], [a]) -> Bool
-matched (f,s) = isJust f
+matched (f, s) = isJust f
+
+-- True if matched and the match is not empty
+matchedNonEmpty :: (Maybe [a], [a]) -> Bool
+matchedNonEmpty (f, s) = isJust f && (not (null (fromJust f)))
 
 -- Matches empty regex
 nil :: RegExp a
@@ -63,9 +67,16 @@ itr _ xs = nil xs
 --  arg1 = regex of valid regexes in language
 --  arg2 = regex of whitespace
 lexemes :: Show a => RegExp a -> RegExp a -> [a] -> [[a]]
-lexemes r w xs | isJust wFst = lexemes r w wSnd
-    where (wFst, wSnd) = w xs
+lexemes r w xs | matchedNonEmpty wMatch = lexemes r w (snd wMatch)
+    where wMatch = w xs
 lexemes r w xs | isJust rFst = (fromJust rFst):lexemes r w rSnd
     where (rFst, rSnd) = r xs
 lexemes _ _ [] = []
 lexemes _ _ xs = error ("string could not be parsed: " ++ show xs)
+
+-- The main lexical scanner
+--  arg1 = regex of valid regexes in language
+--  arg2 = regex of whitespace
+--  arg3 = string -> token function
+scanner :: Show a => RegExp a -> RegExp a -> ([a] -> b) -> [a] -> [b]
+scanner r w t cs = map t (lexemes r w cs)

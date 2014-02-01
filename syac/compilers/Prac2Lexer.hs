@@ -65,6 +65,10 @@ itr l xs | isJust lFst =
         (rFst, rSnd) = itr l lSnd
 itr _ xs = nil xs
 
+-- Matches kleene plus of regex
+itrPlus :: RegExp a -> RegExp a
+itrPlus l = l `sqn` (itr l)
+
 -- Identify lexemes in string
 --  arg1 = regex of valid regexes in language
 --  arg2 = regex of whitespace

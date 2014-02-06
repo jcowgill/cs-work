@@ -2,7 +2,7 @@
 This repository contains most of the code created during my Computer Science course at the University of York.
 
 ## Licence
-Copyright 2012-2013 James Cowgill
+Copyright 2012-2014 James Cowgill
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
 

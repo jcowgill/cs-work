@@ -4,25 +4,50 @@
 import Data.Char
 import Prac3ParserCommon
 
--- Removes all whitespace from a string
-removeSpace :: String -> String
-removeSpace = filter (not.isSpace)
+-- Lexer tokens
+data Token =
+    TokTrue |
+    TokFalse |
+    TokNegate |
+    TokAnd |
+    TokLeft |
+    TokRight |
+    TokVar Char
+    deriving (Eq, Show)
+
+-- Converts single characters into a token
+lexerSingle :: Char -> Token
+lexerSingle 'T'                = TokTrue
+lexerSingle 'F'                = TokFalse
+lexerSingle '-'                = TokNegate
+lexerSingle '*'                = TokAnd
+lexerSingle '('                = TokLeft
+lexerSingle ')'                = TokRight
+lexerSingle c | isAsciiLower c = TokVar c
+lexerSingle c                  = error ("lexical error: " ++ [c])
+
+-- Simple lexer for prepositional calculus
+lexer :: String -> [Token]
+lexer [] = []
+lexer (x:xs)
+    | isSpace x = lexer xs
+    | otherwise = (lexerSingle x) : lexer xs
 
 -- Main parser rules
-parserP :: Parser Char
-parserP =  terminal 'T'
-        <> terminal 'F'
+parserP :: Parser Token
+parserP =  terminal TokTrue
+        <> terminal TokFalse
         <> parserV
-        <> terminal '-' +> parserP
-        <> terminal '(' +> parserP +> terminal '*' +> parserP +> terminal ')'
+        <> terminal TokNegate +> parserP
+        <> terminal TokLeft +> parserP +> terminal TokAnd +> parserP +> terminal TokRight
 
 -- Variable names parser
-parserV :: Parser Char
-parserV (x:xs) | isAsciiLower x = (True, xs)
-parserV xs                      = (False, xs)
+parserV :: Parser Token
+parserV (TokVar _:xs) = (True, xs)
+parserV xs            = (False, xs)
 
 -- Tests for valid prepositional calculus strings
-parser :: String -> Bool
-parser str = rFst && (null rSnd)
+parser :: [Token] -> Bool
+parser xs = rFst && (null rSnd)
     where
-        (rFst, rSnd) = parserP (removeSpace str)
+        (rFst, rSnd) = parserP xs

@@ -2,7 +2,7 @@
 --  By James Cowgill
 
 import Data.Char
-import Prac3ParserCommon
+import Prac3Combinators
 
 -- Lexer tokens
 data Token =

@@ -1,7 +1,7 @@
 -- Haskell Practical 3 Common Parsing Code
 --  By James Cowgill
 
-module Prac3ParserCommon where
+module Prac3Combinators where
 
 type Parse t = (Bool, [t])
 type Parser t = [t] -> Parse t

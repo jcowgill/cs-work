@@ -1,10 +1,6 @@
 -- Haskell Practical 3 Code - N1 Parser
 --  By James Cowgill
 
--- The practicals say to use the combinators OR the llparser
---  but I'm not a fan of either so I'm just doing a handwritten
---  recursive decent parser
-
 import Prac2Alex
 import Prac3LLParser
 

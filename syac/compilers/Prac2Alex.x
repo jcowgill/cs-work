@@ -22,9 +22,20 @@ import Data.Char
     "then"              { \s -> TokThen }
     "else"              { \s -> TokElse }
     "while"             { \s -> TokWhile }
+    "or"                { \s -> TokOr }
+    "and"               { \s -> TokAnd }
+    "not"               { \s -> TokNot }
 
     -- Symbols
-    [\=\<\+\-\*\;\(\)]  { \s -> TokSym (head s) }
+    "="                 { \s -> TokEquals }
+    "<"                 { \s -> TokLess }
+    ">"                 { \s -> TokGreater }
+    "+"                 { \s -> TokPlus }
+    "-"                 { \s -> TokMinus }
+    "*"                 { \s -> TokTimes }
+    ";"                 { \s -> TokSeq }
+    "("                 { \s -> TokLeft }
+    ")"                 { \s -> TokRight }
     ":="                { \s -> TokAssign }
 
     -- Identifiers and Numbers
@@ -35,10 +46,11 @@ import Data.Char
 {
 -- N0 Tokens
 data Token =
-    TokAssign |
+    TokAssign | TokEquals | TokLess | TokGreater |
+    TokPlus | TokMinus | TokTimes | TokSeq | TokLeft | TokRight |
+    TokOr | TokAnd | TokNot |
     TokSkip | TokIf | TokThen | TokElse | TokWhile |
     TokBool Bool |
-    TokSym Char |
     TokVar String |
     TokNum Int
     deriving (Eq, Show)

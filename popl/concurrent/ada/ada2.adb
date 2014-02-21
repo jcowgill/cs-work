@@ -2,10 +2,7 @@ with Ada.Integer_Text_IO;   use Ada.Integer_Text_IO;
 
 procedure Ada2 is
     -- Barrier which stores an integer
-    protected type BarrierInt is
-        -- Initializes the barrier with the given number of tasks
-        procedure Init(M : in Integer);
-
+    protected type BarrierInt(MaxTasks : Integer) is
         -- Gets the integer from the barrier
         --  Only returns when release is called
         entry Wait(V : out Integer);
@@ -15,18 +12,12 @@ procedure Ada2 is
         entry Release(V : in Integer);
 
         private
-            MaxTasks : Integer;
             Value : Integer;
             CanRelease : Boolean := False;
     end;
 
     -- Barrier code
     protected body BarrierInt is
-        procedure Init(M : in Integer) is
-        begin
-            MaxTasks := M;
-        end;
-
         entry Wait(V : out Integer) when CanRelease is
         begin
             V := Value;
@@ -45,7 +36,7 @@ procedure Ada2 is
     end;
 
     -- Global barrier instance
-    Barrier : BarrierInt;
+    Barrier : BarrierInt(5);
 
     -- Consumer task type
     task type Consumer;
@@ -62,9 +53,6 @@ procedure Ada2 is
     -- Consumer instances
     Consumers : array (1..5) of Consumer;
 begin
-    -- Initialize barrier
-    Barrier.Init(Consumers'Length);
-
     -- Release 5 times
     for I in 1..5 loop
         Barrier.Release(I);

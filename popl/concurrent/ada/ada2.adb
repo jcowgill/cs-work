@@ -1,5 +1,4 @@
-with Ada.Text_IO;
-with Ada.Integer_Text_IO;
+with Ada.Integer_Text_IO;   use Ada.Integer_Text_IO;
 
 procedure Ada2 is
     -- Barrier which stores an integer
@@ -9,7 +8,7 @@ procedure Ada2 is
 
         -- Gets the integer from the barrier
         --  Only returns when release is called
-        entry GetInt(V : out Integer);
+        entry Wait(V : out Integer);
 
         -- Places an integer into the barrier
         --  Only returns after all tasks have arrived + been released
@@ -18,7 +17,7 @@ procedure Ada2 is
         private
             MaxTasks : Integer;
             Value : Integer;
-            CanRelease : Boolean;
+            CanRelease : Boolean := False;
     end;
 
     -- Barrier code
@@ -26,20 +25,19 @@ procedure Ada2 is
         procedure Init(M : in Integer) is
         begin
             MaxTasks := M;
-            CanRelease := False;
         end;
 
-        entry GetInt(V : out Integer) when CanRelease is
+        entry Wait(V : out Integer) when CanRelease is
         begin
             V := Value;
 
             -- Reset CanRelease when we're the last task
-            if GetInt'count = 0 then
+            if Wait'count = 0 then
                 CanRelease := False;
             end if;
         end;
 
-        entry Release(V : in Integer) when GetInt'count = MaxTasks is
+        entry Release(V : in Integer) when Wait'count = MaxTasks is
         begin
             Value := V;
             CanRelease := True;
@@ -56,17 +54,18 @@ procedure Ada2 is
     begin
         -- Get + print integer
         for I in 1..5 loop
-            Barrier.GetInt(V);
-            Ada.Integer_Text_IO.Put(V);
+            Barrier.Wait(V);
+            Ada.Integer_Text_IO.Put(V, 2);
         end loop;
     end;
 
     -- Consumer instances
-    C1, C2, C3, C4 : Consumer;
+    Consumers : array (1..5) of Consumer;
 begin
-    -- This task acts as the producer
-    Barrier.Init(5);
+    -- Initialize barrier
+    Barrier.Init(Consumers'Length);
 
+    -- Release 5 times
     for I in 1..5 loop
         Barrier.Release(I);
     end loop;

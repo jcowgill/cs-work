@@ -7,6 +7,10 @@ module Prac4DomFunc where
 --  Contain a list with the domain and a function to map the domain to values
 type DomFunc n v = ([n], n -> v)
 
+-- The empty list
+empty :: DomFunc n v
+empty = ([], undefined)
+
 -- Return list of names in the list
 names :: DomFunc n v -> [n]
 names = fst

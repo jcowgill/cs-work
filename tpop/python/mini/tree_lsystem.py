@@ -98,7 +98,7 @@ class TurtleLSystem(LSystem):
 
         # Initialize standard rendering rules + parameters
         self.fd_length = 5
-        self.angle = 20
+        self.angle = 90
         self.__render_rules = TurtleDrawState.default_render_rules()
 
     @property
@@ -127,34 +127,40 @@ class TurtleLSystem(LSystem):
 
 
 # Some example L-Systems
-
 def sierpinski():
     '''L-System to create a sierpinski triangle'''
     system = TurtleLSystem("A", {"A": "B-A-B", "B": "A+B+A"})
     system.render_rules["A"] = TurtleDrawState.forwards
     system.render_rules["B"] = TurtleDrawState.forwards
+    system.angle = 60
 
     return system
 
 
 def dragon_curve():
     '''L-System to create a dragon curve'''
-    return TurtleLSystem("FX", {"X": "X+YF", "Y": "FX-Y"})
+    system = TurtleLSystem("FX", {"X": "X+YF", "Y": "FX-Y"})
+    system.angle = 90
+    return system
 
 
 def tall_tree():
     '''L-System to create a tall tree'''
-    return TurtleLSystem("1", {
-                                "1": "FF[-2][3][+3]",
-                                "2": "FF+F-F-F[FFF3][+3]-F-F3",
-                                "3": "FF-F+F+F[2][-2]+F+F2"
-                              })
+    system = TurtleLSystem(
+        "1",
+        {
+            "1": "FF[-2][3][+3]",
+            "2": "FF+F-F-F[FFF3][+3]-F-F3",
+            "3": "FF-F+F+F[2][-2]+F+F2"
+        })
+    system.angle = 20
+    return system
 
 
-if __name__ == '__main__':
-    # Test the tall tree L-System
-    system = tall_tree()
-    system.expand(6)
+def render_system(system, n=0):
+    '''Renders the given system using a new turtle'''
+    # Expand if requested
+    system.expand(n)
 
     # Draw it
     turtle = RawTurtle(Screen())
@@ -163,3 +169,8 @@ if __name__ == '__main__':
     turtle.lt(90)
 
     system.render_turtle(turtle)
+
+
+if __name__ == '__main__':
+    # Test the tall tree L-System
+    render_system(tall_tree(), 6)

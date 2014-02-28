@@ -1,0 +1,314 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@base <http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl> .
+
+<http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl> rdf:type owl:Ontology .
+
+
+#################################################################
+#
+#    Datatypes
+#
+#################################################################
+
+
+
+
+#################################################################
+#
+#    Object Properties
+#
+#################################################################
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#hasAncestor
+
+:hasAncestor rdf:type owl:ObjectProperty ,
+                      owl:TransitiveProperty ;
+
+             owl:propertyChainAxiom ( :hasParent
+                                    ) .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#hasChild
+
+:hasChild rdf:type owl:AsymmetricProperty ,
+                   owl:IrreflexiveProperty ,
+                   owl:ObjectProperty ;
+
+          rdfs:domain :Person ;
+
+          rdfs:range :Person .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#hasParent
+
+:hasParent rdf:type owl:ObjectProperty ;
+
+           owl:inverseOf :hasChild .
+
+
+
+
+
+#################################################################
+#
+#    Data properties
+#
+#################################################################
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#firstName
+
+:firstName rdf:type owl:DatatypeProperty ,
+                    owl:FunctionalProperty ;
+
+           rdfs:domain :Person ;
+
+           rdfs:range xsd:string .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#lastName
+
+:lastName rdf:type owl:DatatypeProperty ,
+                   owl:FunctionalProperty ;
+
+          rdfs:domain :Person ;
+
+          rdfs:range xsd:string .
+
+
+
+
+
+#################################################################
+#
+#    Classes
+#
+#################################################################
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#Alive
+
+:Alive rdf:type owl:Class ;
+
+       rdfs:subClassOf :Person .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#BigFamilyPerson
+
+:BigFamilyPerson rdf:type owl:Class ;
+
+                 owl:equivalentClass [ rdf:type owl:Restriction ;
+                                       owl:onProperty :hasChild ;
+                                       owl:minCardinality "4"^^xsd:nonNegativeInteger
+                                     ] ;
+
+                 rdfs:subClassOf :Person .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#Childless
+
+:Childless rdf:type owl:Class ;
+
+           owl:equivalentClass [ rdf:type owl:Restriction ;
+                                 owl:onProperty :hasChild ;
+                                 owl:cardinality "0"^^xsd:nonNegativeInteger
+                               ] ;
+
+           rdfs:subClassOf :Person .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#Dead
+
+:Dead rdf:type owl:Class ;
+
+      rdfs:subClassOf :Person .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#Father
+
+:Father rdf:type owl:Class ;
+
+        owl:equivalentClass [ rdf:type owl:Class ;
+                              owl:intersectionOf ( :Male
+                                                   :Parent
+                                                 )
+                            ] .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#Female
+
+:Female rdf:type owl:Class ;
+
+        rdfs:subClassOf :Person .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#Male
+
+:Male rdf:type owl:Class ;
+
+      rdfs:subClassOf :Person .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#Mother
+
+:Mother rdf:type owl:Class ;
+
+        owl:equivalentClass [ rdf:type owl:Class ;
+                              owl:intersectionOf ( :Female
+                                                   :Parent
+                                                 )
+                            ] .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#Orphan
+
+:Orphan rdf:type owl:Class ;
+
+        owl:equivalentClass [ rdf:type owl:Restriction ;
+                              owl:onProperty :hasParent ;
+                              owl:allValuesFrom :Dead
+                            ] ;
+
+        rdfs:subClassOf :Person .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#Parent
+
+:Parent rdf:type owl:Class ;
+
+        owl:equivalentClass [ rdf:type owl:Restriction ;
+                              owl:onProperty :hasChild ;
+                              owl:someValuesFrom :Person
+                            ] ;
+
+        rdfs:subClassOf :Person .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#Person
+
+:Person rdf:type owl:Class ;
+
+        owl:disjointUnionOf ( :Alive
+                              :Dead
+                            ) ,
+                            ( :Female
+                              :Male
+                            ) .
+
+
+
+
+
+#################################################################
+#
+#    Individuals
+#
+#################################################################
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#JackSmith
+
+:JackSmith rdf:type :Alive ,
+                    :Male ,
+                    :Person ,
+                    owl:NamedIndividual ;
+
+           :lastName "Smith" ;
+
+           :firstName "Jack" .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#JennySmith
+
+:JennySmith rdf:type :Dead ,
+                     :Female ,
+                     :Person ,
+                     owl:NamedIndividual ;
+
+            :lastName "Smith" ;
+
+            :firstName "Jenny" ;
+
+            :hasChild :JohnSmith .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#JessicaSmith
+
+:JessicaSmith rdf:type :Alive ,
+                       :Female ,
+                       :Person ,
+                       owl:NamedIndividual ;
+
+              :lastName "Smith" ;
+
+              :firstName "Jessica" .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#JohnSmith
+
+:JohnSmith rdf:type :Alive ,
+                    :Male ,
+                    :Person ,
+                    owl:NamedIndividual ;
+
+           :lastName "Smith" ;
+
+           :firstName "John" ;
+
+           :hasChild :JackSmith ,
+                     :JessicaSmith ,
+                     :RosieSmith ,
+                     :ThomasSmith .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#RosieSmith
+
+:RosieSmith rdf:type :Alive ,
+                     :Female ,
+                     :Person ,
+                     owl:NamedIndividual ;
+
+            :lastName "Smith" ;
+
+            :firstName "Rosie" .
+
+
+
+###  http://www.semanticweb.org/ontologies/2014/1/Ontology1393581484796.owl#ThomasSmith
+
+:ThomasSmith rdf:type :Alive ,
+                      :Male ,
+                      :Person ,
+                      owl:NamedIndividual ;
+
+             :lastName "Smith" ;
+
+             :firstName "Thomas" .
+
+
+
+
+###  Generated by the OWL API (version 3.2.3.1824) http://owlapi.sourceforge.net

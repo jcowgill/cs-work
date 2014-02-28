@@ -5,6 +5,8 @@ build/
 compiled/
 
 # Java Specific Ignores
+.idea/
+*.iml
 *.jar
 *.class
 bin/

@@ -1,10 +1,10 @@
 -- Haskell Practical 4 Code - Semantics for M
 --  By James Cowgill
 
+import Data.Char;
 import Data.List;
 import Data.Maybe;
-
-import Debug.Trace;
+import Text.Printf;
 
 -- M Abstract Syntax Tree
 type Reg = Int
@@ -109,6 +109,32 @@ evalWithState s c | isNothing pc = out
 -- Evaluates a block of code
 eval :: Code -> Output
 eval = evalWithState (Just 0, [], [])
+
+-- Pretty prints a block of code
+showCode :: Code -> String
+showCode [] = ""
+showCode (c:cs) = showCmd c ++ "\n" ++ showCode cs
+  where
+    showCmd (Hlt)               = "  hlt"
+    showCmd (Prn r)             = printf "  prn r%d" r
+    showCmd (Lim r i)           = printf "  lim r%d, %d" r i
+    showCmd (Mov r1 r2)         = printf "  mov r%d, r%d" r1 r2
+    showCmd (Opn r1 r2 op r3)   = printf "  %s r%d, r%d, r%d" (showOp op) r1 r2 r3
+    showCmd (Opni r1 r2 op r3)  = printf "  %si r%d, r%d, r%d" (showOp op) r1 r2 r3
+    showCmd (Jmp l)             = printf "  jmp %s" l
+    showCmd (Br r1 op r2 l)     = printf "  %s r%d, r%d, %s" (showCmpOp op) r1 r2 l
+    showCmd (MarkLabel l)       = l ++ ":"
+    showOp op       = map toLower (show op)
+    showCmpOp Eq    = "beq"
+    showCmpOp NEq   = "bneq"
+    showCmpOp Lt    = "blt"
+    showCmpOp Gt    = "bgt"
+    showCmpOp LtEq  = "bgeq"
+    showCmpOp GtEq  = "bleq"
+
+-- Prints block of code to stdout
+putStrCode :: Code -> IO ()
+putStrCode c = putStr (showCode c)
 
 -- Test program
 --  Calculates smallest power of 2 greater than 10000

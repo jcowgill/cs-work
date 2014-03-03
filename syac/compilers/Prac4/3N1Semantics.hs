@@ -1,7 +1,7 @@
 -- Haskell Practical 4 Code - Semantics for N1
 --  By James Cowgill
 
-import Prac4DomFunc
+import Prac4.DomFunc
 
 -- N1 Abstract Syntax Tree
 data E  = Plus E E

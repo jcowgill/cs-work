@@ -2,8 +2,8 @@
 --  By James Cowgill
 
 import Data.Char
-import Prac2Lexer
-import Prac3Combinators
+import Prac2.Lexer
+import Prac3.Combinators
 
 {-
 Original Grammar

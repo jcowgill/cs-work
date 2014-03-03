@@ -1,8 +1,8 @@
 -- Haskell Practical 3 Code - Predictive Parser
 --  By James Cowgill
 
-import Prac3Lexer
-import Prac3LLParser
+import Prac3.Lexer
+import Prac3.LLParser
 
 {-
 First and follow sets

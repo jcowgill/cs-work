@@ -1,8 +1,8 @@
 -- Haskell Practical 3 Code - N1 Parser
 --  By James Cowgill
 
-import Prac2Alex
-import Prac3LLParser
+import Prac2.Alex
+import Prac3.LLParser
 
 {-
 Original Grammar

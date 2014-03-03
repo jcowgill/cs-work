@@ -1,8 +1,8 @@
 -- Haskell Practical 3 Code - Parsing Fuller
 --  By James Cowgill
 
-import Prac3Combinators
-import Prac3Lexer
+import Prac3.Combinators
+import Prac3.Lexer
 
 {-
 (all symbols and uppercase letters are terminals)

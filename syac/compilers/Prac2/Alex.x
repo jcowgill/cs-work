@@ -2,7 +2,7 @@
 -- Haskell Practical 2 Alex Code - N0 Lexer
 --  By James Cowgill
 
-module Prac2Alex(Token(..), alexScanTokens) where
+module Prac2.Alex(Token(..), alexScanTokens) where
 
 import Data.Char
 }

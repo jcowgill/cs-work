@@ -1,7 +1,7 @@
 -- Haskell Practical 2 Code - Lexing
 --  By James Cowgill
 
-module Prac2Lexer where
+module Prac2.Lexer where
 
 import Data.Maybe
 

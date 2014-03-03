@@ -1,7 +1,7 @@
 -- Haskell Practical 3 Lexer for fuller prepositional calculus
 --  By James Cowgill
 
-module Prac3Lexer where
+module Prac3.Lexer where
 
 import Data.Char
 

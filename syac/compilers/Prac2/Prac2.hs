@@ -3,7 +3,7 @@
 
 import Data.Char
 import Data.Maybe
-import Prac2Lexer
+import Prac2.Lexer
 
 -- N0 Tokens
 data Token =

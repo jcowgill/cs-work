@@ -1,7 +1,7 @@
 -- Haskell Practical 3 Code - Generic LL(1) Parser
 --  By James Cowgill
 
-module Prac3LLParser where
+module Prac3.LLParser where
 
 -- Generic LL(1) Parser
 --  Given a parsing table, starting symbol, list of tokens

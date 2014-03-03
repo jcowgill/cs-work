@@ -1,7 +1,7 @@
 -- Haskell Practical 4 Code - Domain Functions
 --  By James Cowgill
 
-module Prac4DomFunc where
+module Prac4.DomFunc where
 
 -- Domain function lists
 --  Contain a list with the domain and a function to map the domain to values

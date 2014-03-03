@@ -22,6 +22,7 @@ Original Grammar
         | (b)
 
     s   = skip
+        | print e
         | s; s
         | v := e
         | if b then s else s
@@ -89,6 +90,7 @@ Remove left recursion
     s'  = ; s
         | λ
     s1  = skip
+        | print e
         | v := e
         | if b then s1 else s1
         | while b s1
@@ -132,6 +134,7 @@ parseTable S    _                   = [SymNont S1, SymNont S']
 parseTable S'   (Just TokSeq)       = [SymTerm TokSeq, SymNont S]
 parseTable S'   _                   = []
 parseTable S1   (Just TokSkip)      = [SymTerm TokSkip]
+parseTable S1   (Just TokPrint)     = [SymTerm TokPrint, SymNont E]
 parseTable S1   (Just (TokVar v))   = [SymTerm (TokVar v), SymTerm TokAssign, SymNont E]
 parseTable S1   (Just TokIf)        = [SymTerm TokIf, SymNont B, SymTerm TokThen, SymNont S1, SymTerm TokElse, SymNont S1]
 parseTable S1   (Just TokWhile)     = [SymTerm TokWhile, SymNont B, SymNont S1]

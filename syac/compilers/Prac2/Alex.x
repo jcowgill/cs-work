@@ -18,6 +18,7 @@ import Data.Char
     "true"              { \s -> TokBool True }
     "false"             { \s -> TokBool False }
     "skip"              { \s -> TokSkip }
+    "print"             { \s -> TokPrint }
     "if"                { \s -> TokIf }
     "then"              { \s -> TokThen }
     "else"              { \s -> TokElse }
@@ -49,7 +50,7 @@ data Token =
     TokAssign | TokEquals | TokLess | TokGreater |
     TokPlus | TokMinus | TokTimes | TokSeq | TokLeft | TokRight |
     TokOr | TokAnd | TokNot |
-    TokSkip | TokIf | TokThen | TokElse | TokWhile |
+    TokSkip | TokIf | TokThen | TokElse | TokWhile | TokPrint |
     TokBool Bool |
     TokVar String |
     TokNum Int

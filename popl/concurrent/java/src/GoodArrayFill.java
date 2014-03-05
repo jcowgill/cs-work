@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.concurrent.CyclicBarrier;
 
 /**
  * Good array filling
@@ -11,7 +10,7 @@ public class GoodArrayFill
 	 */
 	private static class Filler implements Runnable
 	{
-		private static CyclicBarrier barrier = new CyclicBarrier(2);
+		private static Barrier barrier = new Barrier(2);
 
 		private final int[] array;
 		private final int value;

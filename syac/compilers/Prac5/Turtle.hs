@@ -63,3 +63,15 @@ turtleExec = exec []
 -- Execute turtle code with default initial state
 follow :: [TurtleCmd] -> Canvas
 follow cs = turtleExec (cs, (0, 0), East, False)
+
+-- Example 2
+example2 :: [TurtleCmd]
+example2 =
+    [Rotate, PenDown, Forward, Forward, Forward, Forward, PenUp,
+    Rotate, Rotate, Forward, Forward, Rotate, PenDown, Forward,
+    Forward, PenUp, Rotate, Forward, Forward, Rotate, Rotate,
+    PenDown, Forward, Forward, Forward, Forward, PenUp, Rotate,
+    Forward, Forward, Rotate, PenDown, Forward, Forward, Forward,
+    Forward, PenUp, Rotate, Rotate, Rotate, Forward, Forward,
+    Rotate, Rotate, Rotate, PenDown, PenUp, Forward, Forward,
+    PenDown, Forward, Forward]

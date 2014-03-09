@@ -1,7 +1,7 @@
 -- Haskell Practical 5 - Picture
 --  By James Cowgill
 
-module Prac5.Picture where
+module Prac5.Picture(Picture, PicCommand(..), box, count, readPicture, drawPicture) where
 
 import Data.List
 import Prac5.Canvas

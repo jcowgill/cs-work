@@ -2,7 +2,7 @@
 -- Haskell Practical 5 - Drawing Code Parser
 --  By James Cowgill
 
-module Prac5.Parser(Picture, Command(..), doParse) where
+module Prac5.Parser(Picture, PicCommand(..), doParse) where
 
 import Prac5.Lexer
 }
@@ -33,11 +33,11 @@ Command : hor num ',' num ',' num   { CmdHor ($2, $4) $6 }
 
 {
 -- Picture and Commands
-type Picture = [Command]
+type Picture = [PicCommand]
 
-data Command = CmdHor (Int, Int) Int
-             | CmdVer (Int, Int) Int
-             deriving (Eq, Show)
+data PicCommand = CmdHor (Int, Int) Int
+                | CmdVer (Int, Int) Int
+                deriving (Eq, Show)
 
 -- Error function
 parseError :: [Token] -> a

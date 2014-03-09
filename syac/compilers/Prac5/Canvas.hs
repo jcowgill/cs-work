@@ -1,15 +1,14 @@
 -- Haskell Practical 5 - Canvas
 --  By James Cowgill
 
-module Prac5.Canvas where
+module Prac5.Canvas(Canvas, plus, hor, ver, overlay, render) where
 
 import Data.List
 
 -- A canvas is a grid where each point can be black or white
 --  Stored as a list of black points
 --  They do not have fixed sizes, they can expand in any direction
-type Coords = (Int, Int)
-type Canvas = [Coords]
+type Canvas = [(Int, Int)]
 
 -- Plus symbol
 plus :: Canvas
@@ -23,11 +22,11 @@ range n | n < 0     = [n+1..0]
         | otherwise = [0..n-1]
 
 -- Horizontal lines
-hor :: Coords -> Int -> Canvas
+hor :: (Int, Int) -> Int -> Canvas
 hor (x, y) len = [(x + n, y) | n <- range len]
 
 -- Vertical lines
-ver :: Coords -> Int -> Canvas
+ver :: (Int, Int) -> Int -> Canvas
 ver (x, y) len = [(x, y + n) | n <- range len]
 
 -- Overlay two canvases
@@ -50,13 +49,13 @@ ybounds c = (minimum ys, maximum ys)
     ys = map snd c
 
 -- Returns the character to print for a cell
-cell :: Canvas -> Coords -> Char
+cell :: Canvas -> (Int, Int) -> Char
 cell c coords | elem coords c = '#'
               | otherwise     = ' '
 
 -- Renders a canvas
-renderCanvas :: Canvas -> String
-renderCanvas c = canvas top
+render :: Canvas -> String
+render c = canvas top
   where
     canvas y | y > bottom = []
              | otherwise  = row y left ++ canvas (y + 1)
@@ -64,7 +63,3 @@ renderCanvas c = canvas top
              | otherwise  = cell c (x, y) : row y (x + 1)
     (left, right) = xbounds c
     (top, bottom) = ybounds c
-
--- Prints a canvas to stdout
-printCanvas :: Canvas -> IO ()
-printCanvas = putStr . renderCanvas

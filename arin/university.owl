@@ -1,0 +1,259 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY xml "http://www.w3.org/XML/1998/namespace" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY university "http://www-student.cs.york.ac.uk/~jc1311/university.owl#" >
+]>
+
+
+<rdf:RDF xmlns="http://www-student.cs.york.ac.uk/~jc1311/university.owl#"
+     xml:base="http://www-student.cs.york.ac.uk/~jc1311/university.owl"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:university="http://www-student.cs.york.ac.uk/~jc1311/university.owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#">
+    <owl:Ontology rdf:about="http://www-student.cs.york.ac.uk/~jc1311/university.owl"/>
+
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#studies -->
+
+    <owl:ObjectProperty rdf:about="&university;studies">
+        <rdfs:range rdf:resource="&university;Module"/>
+        <rdfs:domain rdf:resource="&university;Student"/>
+    </owl:ObjectProperty>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#teaches -->
+
+    <owl:ObjectProperty rdf:about="&university;teaches">
+        <rdfs:domain rdf:resource="&university;Lecturer"/>
+        <rdfs:range rdf:resource="&university;Module"/>
+    </owl:ObjectProperty>
+
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#name -->
+
+    <owl:DatatypeProperty rdf:about="&university;name">
+        <rdfs:domain rdf:resource="&university;Person"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#staffID -->
+
+    <owl:DatatypeProperty rdf:about="&university;staffID">
+        <rdfs:domain rdf:resource="&university;Lecturer"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#studentID -->
+
+    <owl:DatatypeProperty rdf:about="&university;studentID">
+        <rdfs:domain rdf:resource="&university;Student"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#CSModule -->
+
+    <owl:Class rdf:about="&university;CSModule">
+        <rdfs:subClassOf rdf:resource="&university;Module"/>
+        <owl:disjointWith rdf:resource="&university;MathModule"/>
+    </owl:Class>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#Lecturer -->
+
+    <owl:Class rdf:about="&university;Lecturer">
+        <rdfs:subClassOf rdf:resource="&university;Person"/>
+        <owl:disjointWith rdf:resource="&university;Student"/>
+    </owl:Class>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#MathModule -->
+
+    <owl:Class rdf:about="&university;MathModule">
+        <rdfs:subClassOf rdf:resource="&university;Module"/>
+    </owl:Class>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#Module -->
+
+    <owl:Class rdf:about="&university;Module">
+        <owl:disjointWith rdf:resource="&university;Person"/>
+    </owl:Class>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#Person -->
+
+    <owl:Class rdf:about="&university;Person"/>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#Student -->
+
+    <owl:Class rdf:about="&university;Student">
+        <rdfs:subClassOf rdf:resource="&university;Person"/>
+    </owl:Class>
+
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#CS101 -->
+
+    <owl:NamedIndividual rdf:about="&university;CS101">
+        <rdf:type rdf:resource="&university;CSModule"/>
+    </owl:NamedIndividual>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#CS103 -->
+
+    <owl:NamedIndividual rdf:about="&university;CS103">
+        <rdf:type rdf:resource="&university;CSModule"/>
+    </owl:NamedIndividual>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#Lecturer1 -->
+
+    <owl:NamedIndividual rdf:about="&university;Lecturer1">
+        <rdf:type rdf:resource="&university;Lecturer"/>
+        <staffID rdf:datatype="&xsd;integer">417686</staffID>
+        <name>Larisa Soldatova</name>
+    </owl:NamedIndividual>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#Lecturer2 -->
+
+    <owl:NamedIndividual rdf:about="&university;Lecturer2">
+        <rdf:type rdf:resource="&university;Lecturer"/>
+        <teaches rdf:resource="&university;CS103"/>
+        <teaches rdf:resource="&university;M201"/>
+    </owl:NamedIndividual>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#M201 -->
+
+    <owl:NamedIndividual rdf:about="&university;M201">
+        <rdf:type rdf:resource="&university;MathModule"/>
+    </owl:NamedIndividual>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#M204 -->
+
+    <owl:NamedIndividual rdf:about="&university;M204">
+        <rdf:type rdf:resource="&university;MathModule"/>
+    </owl:NamedIndividual>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#Student1 -->
+
+    <owl:NamedIndividual rdf:about="&university;Student1">
+        <rdf:type rdf:resource="&university;Student"/>
+        <studentID rdf:datatype="&xsd;integer">226814</studentID>
+        <name>Josef Baker</name>
+        <studies rdf:resource="&university;CS101"/>
+        <studies rdf:resource="&university;M201"/>
+        <studies rdf:resource="&university;M204"/>
+    </owl:NamedIndividual>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#Student2 -->
+
+    <owl:NamedIndividual rdf:about="&university;Student2">
+        <rdf:type rdf:resource="&university;Student"/>
+        <studies rdf:resource="&university;M204"/>
+    </owl:NamedIndividual>
+
+
+
+    <!-- http://www-student.cs.york.ac.uk/~jc1311/university.owl#Student3 -->
+
+    <owl:NamedIndividual rdf:about="&university;Student3">
+        <rdf:type rdf:resource="&university;Student"/>
+        <studies rdf:resource="&university;CS103"/>
+        <studies rdf:resource="&university;M201"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.2.3.1824) http://owlapi.sourceforge.net -->

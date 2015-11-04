@@ -1,0 +1,6 @@
+# Init for simulated motes
+mote-create
+mote-create
+moma-load logger
+0 moma-load RadioReceiver
+1 moma-load RadioSender

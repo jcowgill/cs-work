@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="LED-1.0"/>
+	<classpathentry kind="src" path="RadioReceiver-1.0"/>
+	<classpathentry kind="src" path="RadioSender-1.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Moterunner"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

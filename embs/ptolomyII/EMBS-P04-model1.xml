@@ -1,0 +1,419 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
+    "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
+<entity name="model1" class="ptolemy.actor.TypedCompositeActor">
+    <property name="_createdBy" class="ptolemy.kernel.attributes.VersionAttribute" value="6.0.2">
+    </property>
+    <property name="Line6" class="ptolemy.vergil.kernel.attributes.LineAttribute">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[465.0, 205.0]">
+        </property>
+        <property name="x" class="ptolemy.data.expr.Parameter" value="0.0">
+            <property name="_editorFactory" class="ptolemy.vergil.toolbox.VisibleParameterEditorFactory">
+            </property>
+        </property>
+        <property name="y" class="ptolemy.data.expr.Parameter" value="800.0">
+        </property>
+        <property name="_renderFirst" class="ptolemy.kernel.util.SingletonAttribute">
+        </property>
+    </property>
+    <property name="Rectangle" class="ptolemy.vergil.kernel.attributes.RectangleAttribute">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[270.0, 205.0]">
+        </property>
+        <property name="width" class="ptolemy.data.expr.Parameter" value="800.0">
+        </property>
+        <property name="height" class="ptolemy.data.expr.Parameter" value="800.0">
+        </property>
+        <property name="_renderFirst" class="ptolemy.kernel.util.SingletonAttribute">
+        </property>
+    </property>
+    <property name="WirelessDirector" class="ptolemy.domains.wireless.kernel.WirelessDirector">
+        <property name="stopTime" class="ptolemy.data.expr.Parameter" value="900">
+        </property>
+        <property name="synchronizeToRealTime" class="ptolemy.data.expr.Parameter" value="true">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[155.0, 50.0]">
+        </property>
+    </property>
+    <property name="Line" class="ptolemy.vergil.kernel.attributes.LineAttribute">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{270.0, 595.0}">
+        </property>
+        <property name="x" class="ptolemy.data.expr.Parameter" value="800.0">
+        </property>
+    </property>
+    <property name="Line2" class="ptolemy.vergil.kernel.attributes.LineAttribute">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{270.0, 395.0}">
+        </property>
+        <property name="x" class="ptolemy.data.expr.Parameter" value="800.0">
+        </property>
+    </property>
+    <property name="Line3" class="ptolemy.vergil.kernel.attributes.LineAttribute">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[270.0, 805.0]">
+        </property>
+        <property name="x" class="ptolemy.data.expr.Parameter" value="800.0">
+        </property>
+    </property>
+    <property name="Line4" class="ptolemy.vergil.kernel.attributes.LineAttribute">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[660.0, 205.0]">
+        </property>
+        <property name="x" class="ptolemy.data.expr.Parameter" value="0.0">
+            <property name="_editorFactory" class="ptolemy.vergil.toolbox.VisibleParameterEditorFactory">
+            </property>
+        </property>
+        <property name="y" class="ptolemy.data.expr.Parameter" value="800.0">
+        </property>
+    </property>
+    <property name="Line5" class="ptolemy.vergil.kernel.attributes.LineAttribute">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[870.0, 205.0]">
+        </property>
+        <property name="x" class="ptolemy.data.expr.Parameter" value="0.0">
+            <property name="_editorFactory" class="ptolemy.vergil.toolbox.VisibleParameterEditorFactory">
+            </property>
+        </property>
+        <property name="y" class="ptolemy.data.expr.Parameter" value="800.0">
+        </property>
+    </property>
+    <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={-4, -4, 1288, 774}, maximized=true}">
+    </property>
+    <property name="_vergilSize" class="ptolemy.actor.gui.SizeAttribute" value="[1073, 657]">
+    </property>
+    <property name="_vergilZoomFactor" class="ptolemy.data.expr.ExpertParameter" value="0.6439696760855">
+    </property>
+    <property name="_vergilCenter" class="ptolemy.data.expr.ExpertParameter" value="{935.1137628424658, 524.8828125}">
+    </property>
+    <entity name="Anchor1" class="ptolemy.domains.wireless.kernel.WirelessComposite">
+        <property name="DEDirector" class="ptolemy.domains.de.kernel.DEDirector">
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[70.0, 35.0]">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[265.0, 210.0]">
+        </property>
+        <property name="range" class="ptolemy.data.expr.Parameter" value="1000.0">
+        </property>
+        <property name="id" class="ptolemy.data.expr.Parameter" value="1">
+        </property>
+        <port name="port" class="ptolemy.domains.wireless.kernel.WirelessIOPort">
+            <property name="output"/>
+            <property name="outsideChannel" class="ptolemy.data.expr.StringParameter" value="PowerLossChannel">
+            </property>
+            <property name="outsideTransmitProperties" class="ptolemy.data.expr.Parameter" value="{range=range}">
+            </property>
+            <property name="insideChannel" class="ptolemy.data.expr.StringParameter" value="">
+            </property>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[355.0, 205.0]">
+            </property>
+        </port>
+        <entity name="Clock" class="ptolemy.actor.lib.Clock">
+            <property name="period" class="ptolemy.data.expr.Parameter" value="2.0">
+            </property>
+            <property name="offsets" class="ptolemy.data.expr.Parameter" value="{0.0}">
+            </property>
+            <property name="values" class="ptolemy.data.expr.Parameter" value="{id}">
+            </property>
+            <doc>Create a set of pulses</doc>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="{140, 205}">
+            </property>
+        </entity>
+        <relation name="relation" class="ptolemy.actor.TypedIORelation">
+            <property name="width" class="ptolemy.data.expr.Parameter" value="1">
+            </property>
+        </relation>
+        <link port="port" relation="relation"/>
+        <link port="Clock.output" relation="relation"/>
+    </entity>
+    <entity name="Receiver" class="ptolemy.domains.wireless.kernel.WirelessComposite">
+        <property name="DEDirector" class="ptolemy.domains.de.kernel.DEDirector">
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[70.0, 35.0]">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[450, 450]">
+        </property>
+        <port name="port" class="ptolemy.domains.wireless.kernel.WirelessIOPort">
+            <property name="input"/>
+            <property name="outsideChannel" class="ptolemy.data.expr.StringParameter" value="PowerLossChannel">
+            </property>
+            <property name="insideChannel" class="ptolemy.data.expr.StringParameter" value="">
+            </property>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="{20.0, 200.0}">
+            </property>
+        </port>
+        <entity name="Display" class="ptolemy.actor.lib.gui.Display">
+            <property name="_windowProperties" class="ptolemy.actor.gui.WindowPropertiesAttribute" value="{bounds={909, 105, 334, 210}, maximized=false}">
+            </property>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[580.0, 220.0]">
+            </property>
+        </entity>
+        <entity name="GetProperties" class="ptolemy.domains.wireless.lib.GetProperties">
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[175.0, 305.0]">
+            </property>
+        </entity>
+        <entity name="RecordDisassembler" class="ptolemy.actor.lib.RecordDisassembler">
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[255.0, 285.0]">
+            </property>
+            <port name="input" class="ptolemy.actor.TypedIOPort">
+                <property name="input"/>
+                <property name="_cardinal" class="ptolemy.kernel.util.StringAttribute" value="WEST">
+                </property>
+            </port>
+            <port name="power" class="ptolemy.actor.TypedIOPort">
+                <property name="output"/>
+                <property name="_type" class="ptolemy.actor.TypeAttribute" value="unknown">
+                </property>
+                <property name="_cardinal" class="ptolemy.kernel.util.StringAttribute" value="EAST">
+                </property>
+                <property name="_showName" class="ptolemy.data.expr.SingletonParameter" value="true">
+                </property>
+            </port>
+        </entity>
+        <entity name="Clock" class="ptolemy.actor.lib.Clock">
+            <property name="period" class="ptolemy.data.expr.Parameter" value="1.0">
+            </property>
+            <property name="offsets" class="ptolemy.data.expr.Parameter" value="{0.0}">
+            </property>
+            <property name="values" class="ptolemy.data.expr.Parameter" value="{1}">
+            </property>
+            <property name="numberOfCycles" class="ptolemy.data.expr.Parameter" value="-1">
+            </property>
+            <doc>Create a set of pulses</doc>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[-35.0, 410.0]">
+            </property>
+        </entity>
+        <entity name="Expression" class="ptolemy.actor.lib.Expression">
+            <property name="expression" class="ptolemy.kernel.util.StringAttribute" value="[50 + 10*in, 450]">
+            </property>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[330.0, 420.0]">
+            </property>
+            <property name="_icon" class="ptolemy.vergil.icon.BoxedValueIcon">
+                <property name="attributeName" class="ptolemy.kernel.util.StringAttribute" value="expression">
+                </property>
+                <property name="displayWidth" class="ptolemy.data.expr.Parameter" value="60">
+                </property>
+            </property>
+            <port name="output" class="ptolemy.actor.TypedIOPort">
+                <property name="output"/>
+                <property name="_cardinal" class="ptolemy.kernel.util.StringAttribute" value="EAST">
+                </property>
+            </port>
+            <port name="in" class="ptolemy.actor.TypedIOPort">
+                <property name="input"/>
+                <property name="_type" class="ptolemy.actor.TypeAttribute" value="unknown">
+                </property>
+                <property name="_cardinal" class="ptolemy.kernel.util.StringAttribute" value="WEST">
+                </property>
+            </port>
+        </entity>
+        <entity name="SetVariable" class="ptolemy.actor.lib.SetVariable">
+            <property name="variableName" class="ptolemy.kernel.util.StringAttribute" value="_location">
+            </property>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="{465.0, 420.0}">
+            </property>
+        </entity>
+        <entity name="Ramp" class="ptolemy.actor.lib.Ramp">
+            <property name="firingCountLimit" class="ptolemy.data.expr.Parameter" value="0">
+            </property>
+            <property name="init" class="ptolemy.data.expr.Parameter" value="0">
+            </property>
+            <property name="step" class="ptolemy.actor.parameters.PortParameter" value="1">
+            </property>
+            <doc>Create a sequence of tokens with increasing value</doc>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="{185.0, 420.0}">
+            </property>
+        </entity>
+        <relation name="relation2" class="ptolemy.actor.TypedIORelation">
+        </relation>
+        <relation name="relation4" class="ptolemy.actor.TypedIORelation">
+            <property name="width" class="ptolemy.data.expr.Parameter" value="1">
+            </property>
+            <vertex name="vertex1" value="[120.0, 180.0]">
+            </vertex>
+        </relation>
+        <relation name="relation" class="ptolemy.actor.TypedIORelation">
+            <property name="width" class="ptolemy.data.expr.Parameter" value="1">
+            </property>
+        </relation>
+        <relation name="relation3" class="ptolemy.actor.TypedIORelation">
+        </relation>
+        <relation name="relation5" class="ptolemy.actor.TypedIORelation">
+        </relation>
+        <relation name="relation6" class="ptolemy.actor.TypedIORelation">
+        </relation>
+        <link port="port" relation="relation4"/>
+        <link port="Display.input" relation="relation4"/>
+        <link port="Display.input" relation="relation"/>
+        <link port="GetProperties.output" relation="relation2"/>
+        <link port="GetProperties.trigger" relation="relation4"/>
+        <link port="RecordDisassembler.input" relation="relation2"/>
+        <link port="RecordDisassembler.power" relation="relation"/>
+        <link port="Clock.output" relation="relation6"/>
+        <link port="Expression.output" relation="relation3"/>
+        <link port="Expression.in" relation="relation5"/>
+        <link port="SetVariable.input" relation="relation3"/>
+        <link port="Ramp.output" relation="relation5"/>
+        <link port="Ramp.trigger" relation="relation6"/>
+    </entity>
+    <entity name="PowerLossChannel" class="ptolemy.domains.wireless.lib.PowerLossChannel">
+        <property name="defaultProperties" class="ptolemy.data.expr.Parameter" value="{range = Infinity, power =1.0}">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[395.0, 55.0]">
+        </property>
+    </entity>
+    <entity name="Anchor2" class="ptolemy.domains.wireless.kernel.WirelessComposite">
+        <property name="DEDirector" class="ptolemy.domains.de.kernel.DEDirector">
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[70.0, 35.0]">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[1065.0, 210.0]">
+        </property>
+        <property name="range" class="ptolemy.data.expr.Parameter" value="1000.0">
+        </property>
+        <property name="id" class="ptolemy.data.expr.Parameter" value="2">
+        </property>
+        <port name="port" class="ptolemy.domains.wireless.kernel.WirelessIOPort">
+            <property name="output"/>
+            <property name="outsideChannel" class="ptolemy.data.expr.StringParameter" value="PowerLossChannel">
+            </property>
+            <property name="outsideTransmitProperties" class="ptolemy.data.expr.Parameter" value="{range=range}">
+            </property>
+            <property name="insideChannel" class="ptolemy.data.expr.StringParameter" value="">
+            </property>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[355.0, 205.0]">
+            </property>
+        </port>
+        <entity name="Clock" class="ptolemy.actor.lib.Clock">
+            <property name="period" class="ptolemy.data.expr.Parameter" value="2.0">
+            </property>
+            <property name="offsets" class="ptolemy.data.expr.Parameter" value="{0.0}">
+            </property>
+            <property name="values" class="ptolemy.data.expr.Parameter" value="{id}">
+            </property>
+            <doc>Create a set of pulses</doc>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="{140, 205}">
+            </property>
+        </entity>
+        <relation name="relation" class="ptolemy.actor.TypedIORelation">
+            <property name="width" class="ptolemy.data.expr.Parameter" value="1">
+            </property>
+        </relation>
+        <link port="port" relation="relation"/>
+        <link port="Clock.output" relation="relation"/>
+    </entity>
+    <entity name="Anchor3" class="ptolemy.domains.wireless.kernel.WirelessComposite">
+        <property name="DEDirector" class="ptolemy.domains.de.kernel.DEDirector">
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[70.0, 35.0]">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[270.0, 1005.0]">
+        </property>
+        <property name="range" class="ptolemy.data.expr.Parameter" value="1000.0">
+        </property>
+        <property name="id" class="ptolemy.data.expr.Parameter" value="3">
+        </property>
+        <port name="port" class="ptolemy.domains.wireless.kernel.WirelessIOPort">
+            <property name="output"/>
+            <property name="outsideChannel" class="ptolemy.data.expr.StringParameter" value="PowerLossChannel">
+            </property>
+            <property name="outsideTransmitProperties" class="ptolemy.data.expr.Parameter" value="{range=range}">
+            </property>
+            <property name="insideChannel" class="ptolemy.data.expr.StringParameter" value="">
+            </property>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[355.0, 205.0]">
+            </property>
+        </port>
+        <entity name="Clock" class="ptolemy.actor.lib.Clock">
+            <property name="period" class="ptolemy.data.expr.Parameter" value="2.0">
+            </property>
+            <property name="offsets" class="ptolemy.data.expr.Parameter" value="{0.0}">
+            </property>
+            <property name="values" class="ptolemy.data.expr.Parameter" value="{id}">
+            </property>
+            <doc>Create a set of pulses</doc>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="{140, 205}">
+            </property>
+        </entity>
+        <relation name="relation" class="ptolemy.actor.TypedIORelation">
+            <property name="width" class="ptolemy.data.expr.Parameter" value="1">
+            </property>
+        </relation>
+        <link port="port" relation="relation"/>
+        <link port="Clock.output" relation="relation"/>
+    </entity>
+    <entity name="Wall1" class="ptolemy.domains.wireless.lib.TerrainProperty">
+        <property name="channelName" class="ptolemy.data.expr.StringParameter" value="PowerLossChannel">
+        </property>
+        <property name="xyPoints" class="ptolemy.data.expr.Parameter" value="{{0, 0}, {0, 5}, {720, 5}, {720, 0}}">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[665.0, 205.0]">
+        </property>
+    </entity>
+    <entity name="Wall2" class="ptolemy.domains.wireless.lib.TerrainProperty">
+        <property name="channelName" class="ptolemy.data.expr.StringParameter" value="PowerLossChannel">
+        </property>
+        <property name="xyPoints" class="ptolemy.data.expr.Parameter" value="{{0, 0}, {0,720}, {5, 720}, {5, 0}}">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[1070.0, 610.0]">
+        </property>
+    </entity>
+    <entity name="Anchor4" class="ptolemy.domains.wireless.kernel.WirelessComposite">
+        <property name="DEDirector" class="ptolemy.domains.de.kernel.DEDirector">
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[70.0, 35.0]">
+            </property>
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[1070.0, 1005.0]">
+        </property>
+        <property name="range" class="ptolemy.data.expr.Parameter" value="1000.0">
+        </property>
+        <property name="id" class="ptolemy.data.expr.Parameter" value="4">
+        </property>
+        <port name="port" class="ptolemy.domains.wireless.kernel.WirelessIOPort">
+            <property name="output"/>
+            <property name="outsideChannel" class="ptolemy.data.expr.StringParameter" value="PowerLossChannel">
+            </property>
+            <property name="outsideTransmitProperties" class="ptolemy.data.expr.Parameter" value="{range=range}">
+            </property>
+            <property name="insideChannel" class="ptolemy.data.expr.StringParameter" value="">
+            </property>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="[355.0, 205.0]">
+            </property>
+        </port>
+        <entity name="Clock" class="ptolemy.actor.lib.Clock">
+            <property name="period" class="ptolemy.data.expr.Parameter" value="2.0">
+            </property>
+            <property name="offsets" class="ptolemy.data.expr.Parameter" value="{0.0}">
+            </property>
+            <property name="values" class="ptolemy.data.expr.Parameter" value="{id}">
+            </property>
+            <doc>Create a set of pulses</doc>
+            <property name="_location" class="ptolemy.kernel.util.Location" value="{140, 205}">
+            </property>
+        </entity>
+        <relation name="relation" class="ptolemy.actor.TypedIORelation">
+            <property name="width" class="ptolemy.data.expr.Parameter" value="1">
+            </property>
+        </relation>
+        <link port="port" relation="relation"/>
+        <link port="Clock.output" relation="relation"/>
+    </entity>
+    <entity name="Wall" class="ptolemy.domains.wireless.lib.TerrainProperty">
+        <property name="channelName" class="ptolemy.data.expr.StringParameter" value="PowerLossChannel">
+        </property>
+        <property name="xyPoints" class="ptolemy.data.expr.Parameter" value="{{0, 0}, {0,120}, {5, 120}, {5, 0}}">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[270.0, 305.0]">
+        </property>
+    </entity>
+    <entity name="Wall3" class="ptolemy.domains.wireless.lib.TerrainProperty">
+        <property name="channelName" class="ptolemy.data.expr.StringParameter" value="PowerLossChannel">
+        </property>
+        <property name="xyPoints" class="ptolemy.data.expr.Parameter" value="{{0, 0}, {0,480}, {5, 480}, {5, 0}}">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[270.0, 730.0]">
+        </property>
+    </entity>
+    <entity name="Wall4" class="ptolemy.domains.wireless.lib.TerrainProperty">
+        <property name="channelName" class="ptolemy.data.expr.StringParameter" value="PowerLossChannel">
+        </property>
+        <property name="xyPoints" class="ptolemy.data.expr.Parameter" value="{{0, 0}, {0, 5}, {720, 5}, {720, 0}}">
+        </property>
+        <property name="_location" class="ptolemy.kernel.util.Location" value="[675.0, 1005.0]">
+        </property>
+    </entity>
+</entity>

@@ -6,7 +6,11 @@ ASSEMBLY = LED-1.0 RadioReceiver-1.0 RadioSender-1.0
 MRCFLAGS = --verbose -r:logger-11.0
 
 # mrc executable
-MRC = /usr/share/moterunner/moterunner/linux64/bin/mrc
+ifneq (,$(findstring MINGW,$(shell uname -s)))
+	MRC = C:/apps/moterunner/win32/bin/mrc.exe
+else
+	MRC = /usr/share/moterunner/moterunner/linux64/bin/mrc
+endif
 
 ############
 

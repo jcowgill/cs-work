@@ -28,8 +28,8 @@ public class RadioSender {
 		// Open the default radio
 		radio.open(Radio.DID, null, 0, 0);
 
-		// Set the PAN ID to 0x22 and the short address to 0x31
-		radio.setPanId(0x22, true);
+		// Set the PAN ID to 0x42 and the short address to 0x31
+		radio.setPanId(0x42, true);
 		radio.setShortAddr(0x31);
 
 		// Set radio channel
@@ -38,7 +38,7 @@ public class RadioSender {
 		// Prepare beacon frame with source addressing
 		xmit[0] = Radio.FCF_BEACON;
 		xmit[1] = Radio.FCA_SRC_SADDR;
-		Util.set16le(xmit, 3, 0x22);
+		Util.set16le(xmit, 3, 0x42);
 		Util.set16le(xmit, 5, 0x31);
 
 		// Setup timer to send the frames

@@ -32,8 +32,8 @@ public class RadioReceiver {
 		// Open the default radio
 		radio.open(Radio.DID, null, 0, 0);
 
-		// Set the PAN ID to 0x22 and the short address to 0x30
-		radio.setPanId(0x22, true);
+		// Set the PAN ID to 0x42 and the short address to 0x30
+		radio.setPanId(0x42, true);
 		radio.setShortAddr(0x30);
 
 		// Setup the radio handler on channel 1

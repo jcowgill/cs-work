@@ -1,4 +1,5 @@
-# Source directories (names of directories are assembly names)
+# Assemblies to build
+#  Source directories are everything before the dash
 ASSEMBLY = LED-1.0 RadioReceiver-1.0 RadioSender-1.0
 
 # Flags to pass to mrc
@@ -9,10 +10,12 @@ MRC = /usr/share/moterunner/moterunner/linux64/bin/mrc
 
 ############
 
+SRCS = $(shell find $$(echo $(1) | sed 's/-.*//') -type f -name '*.java')
+
 all: $(addsuffix .sdx, $(ASSEMBLY))
 
 .SECONDEXPANSION:
-%.sdx: $$(shell find $$(basename $$@)/ -type f -name '*.java')
+%.sdx: $$(call SRCS, $$@)
 	$(MRC) --assembly=$(basename $@) $(MRCFLAGS) $^
 
 # Clean build files

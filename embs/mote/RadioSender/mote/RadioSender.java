@@ -19,6 +19,13 @@ public class RadioSender {
 	private static Radio radio = new Radio();
 
 	static {
+		// Register destroy callback
+		Assembly.setSystemInfoCallback(new SystemInfo(null) {
+			public int invoke(int type, int info) {
+				return onUnload(type, info);
+			}
+		});
+
 		// Open the default radio
 		radio.open(Radio.DID, null, 0, 0);
 
@@ -56,5 +63,15 @@ public class RadioSender {
 
 		// Restart timer
 		sendTimer.setAlarmBySpan(XMIT_DELAY);
+	}
+
+	private static int onUnload(int type, int info) {
+		// Stop the timer when assembly is unloaded
+		if (type == Assembly.SYSEV_DELETED) {
+			radio.close();
+			sendTimer.cancelAlarm();
+		}
+
+		return 0;
 	}
 }

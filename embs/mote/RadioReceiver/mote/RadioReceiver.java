@@ -21,6 +21,17 @@ public class RadioReceiver {
 	private static Radio radio = new Radio();
 
 	static {
+		// Register destroy callback
+		Assembly.setSystemInfoCallback(new SystemInfo(null) {
+			public int invoke(int type, int info) {
+				return onUnload(type, info);
+			}
+		});
+
+		// Reset LEDs
+		LED.setState(LED_GREEN, (byte) 0);
+		LED.setState(LED_RED, (byte) 0);
+
 		// Open the default radio
 		radio.open(Radio.DID, null, 0, 0);
 
@@ -74,5 +85,15 @@ public class RadioReceiver {
 		// Start radio and turn on green LED
 		radio.startRx(Device.ASAP, 0, Time.currentTicks() + RXON_DELAY);
 		LED.setState(LED_GREEN, (byte) 1);
+	}
+
+	private static int onUnload(int type, int info) {
+		// Reset actions to perform when assembly is unloaded
+		if (type == Assembly.SYSEV_DELETED) {
+			radio.close();
+			wakeupTimer.cancelAlarm();
+		}
+
+		return 0;
 	}
 }

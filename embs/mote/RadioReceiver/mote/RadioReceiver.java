@@ -66,11 +66,11 @@ public class RadioReceiver {
 			return 0;
 		}
 
-		// Blink red led
-		LED.setState(LED_RED, (byte) (1 - LED.getState(LED_RED)));
-
 		// Log packet received
 		if (len == 8) {
+			// Blink red led
+			LED.setState(LED_RED, (byte) (1 - LED.getState(LED_RED)));
+
 			Logger.appendString(csr.s2b("good packet received, payload = "));
 			Logger.appendByte(data[7]);
 		} else {

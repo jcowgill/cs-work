@@ -1,12 +1,6 @@
 package mote;
 
-import com.ibm.saguaro.system.Device;
-import com.ibm.saguaro.system.LED;
-import com.ibm.saguaro.system.Radio;
-import com.ibm.saguaro.system.Time;
-import com.ibm.saguaro.system.Timer;
-import com.ibm.saguaro.system.TimerEvent;
-import com.ibm.saguaro.system.Util;
+import com.ibm.saguaro.system.*;
 
 public class RadioSender {
 	/** LED Colours */

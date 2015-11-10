@@ -55,7 +55,7 @@ public class RadioReceiver {
 		});
 
 		// Immediately fire the wakeup timer to enable the radio
-		wakeupTimer.setAlarmBySpan(0);
+		wakeupTimerFire((byte) 0, 0);
 	}
 
 	private static int receivePacket(int flags, byte[] data, int len, int info, long time) {

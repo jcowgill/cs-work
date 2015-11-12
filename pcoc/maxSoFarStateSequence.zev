@@ -1,0 +1,7 @@
+<Z-EVES-GUI-State version="1" index="4"><textItem location="gui::1" history="2"><zed-box location="gui::1">EVENT  == &Nopf;&sub1;</zed-box></textItem
+><textItem location="gui::2" history="3"><zed-box location="gui::2">Trace == <word style="roman"/>seq<word/> EVENT</zed-box></textItem
+><textItem location="gui::4" history="4"><schema-box location="gui::4"> MaxSoFar <decl-part/>    tr: Trace
+mx! : &Nopf;&sub1;<ax-part/>    tr &neq; &empty;
+mx! = max (<word style="roman"/>ran<word/> tr)</schema-box></textItem
+><script name="MaxSoFar$domainCheck"></script
+></Z-EVES-GUI-State>

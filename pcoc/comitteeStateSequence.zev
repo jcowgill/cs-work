@@ -1,0 +1,13 @@
+<Z-EVES-GUI-State version="1" index="7"><textItem location="gui::1" history="2"><zed-box location="gui::1">[PERSON]</zed-box></textItem
+><textItem location="gui::2" history="3"><zed-box location="gui::2">EVENT ::= NEW &lchev;PERSON&rchev; | RESIGN &lchev;PERSON&rchev;</zed-box></textItem
+><textItem location="gui::4" history="4"><zed-box location="gui::4">Trace == <word style="roman"/>seq<word/> EVENT</zed-box></textItem
+><textItem location="gui::5" history="5"><schema-box location="gui::5">ResignAfterNew<decl-part/> tr: Trace<ax-part/> &forall; t: Trace; p: PERSON
+    &bullet; tr = t &frown; &lang;RESIGN p&rang;
+      &rArr; (<word style="bold"/>let<word/> ft == t &uharr; {NEW p, RESIGN p} &bullet; last ft = NEW p)</schema-box></textItem
+><textItem location="gui::6" history="6"><schema-box location="gui::6"> NewAfterResign <decl-part/>tr: Trace<ax-part/> &forall; t: Trace; p: PERSON
+    &bullet; tr = t &frown; &lang;NEW p&rang;
+      &rArr; (<word style="bold"/>let<word/> ft == t &uharr; {NEW p, RESIGN p} &bullet; ft = &lang;&rang; &vee; last ft = RESIGN p)</schema-box></textItem
+><textItem location="gui::7" history="7"><zed-box location="gui::7">Committee &eqhat; NewAfterResign &wedge; ResignAfterNew</zed-box></textItem
+><script name="NewAfterResign$domainCheck"></script
+><script name="ResignAfterNew$domainCheck"></script
+></Z-EVES-GUI-State>

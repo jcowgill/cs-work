@@ -66,10 +66,10 @@ public class SinkSyncData
 	/**
 	 * Called when a beacon is received to update the estimates for N and Δt
 	 *
-	 * @param n the value of n in the beacon received
 	 * @param absoluteTime the absolute time the beacon was received in milliseconds
+	 * @param n the value of n in the beacon received
 	 */
-	public void receiveBeacon(int n, long absoluteTime)
+	public void receiveBeacon(long absoluteTime, int n)
 	{
 		// bestN must be at least the value of n we just received
 		if (n > bestN)

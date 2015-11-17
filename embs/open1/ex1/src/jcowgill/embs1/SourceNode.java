@@ -108,7 +108,6 @@ public class SourceNode extends TypedAtomicActor
 
 		setChannel(controller.getReadChannel());
 		setWakeupTime(new Time(director, ((double) controller.getNextWakeupTime()) / 1000), 1);
-		isSending = false;
 	}
 
 	/**
@@ -170,6 +169,8 @@ public class SourceNode extends TypedAtomicActor
 		//  was a sending wakeup
 		if (!isSending)
 			controller.wakeupEvent(time);
+
+		isSending = false;
 
 		// Send any packets if necessary
 		if (!sendPendingPacket())

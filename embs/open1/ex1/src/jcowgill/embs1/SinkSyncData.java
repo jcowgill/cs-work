@@ -14,8 +14,14 @@ public class SinkSyncData
 	/** Upper bound for Δt */
 	private static final long DELTA_T_UPPER = 1500;
 
-	/** Do not send frames this many milliseconds before the end of the reception phase */
-	private static final long RECEPTION_PHASE_CUTOFF = 100;
+	/** Period at the start of the rx phase to not send packets */
+	private static final long RX_PHASE_LEADIN = 20;
+
+	/** Period at the end of the rx phase to not send packets */
+	private static final long RX_PHASE_LEADOUT = 50;
+
+	/** Subtract this from the time we think an interesting beacon will appear */
+	private static final long INTERESTING_BEACON_OFFSET = 500;
 
 	/** The best value of n we have so far */
 	private int bestN;
@@ -115,7 +121,7 @@ public class SinkSyncData
 				{
 					// Beacons have definitely wrapped at least once
 					//  We guess at one iteration if it looks sane
-					long guess = deltaT / (11 + bestN - deltaN);
+					long guess = roundingIntegerDivision(deltaT, (11 + bestN - deltaN));
 
 					if (isValidDeltaT(guess))
 						bestDeltaT = guess;
@@ -183,14 +189,16 @@ public class SinkSyncData
 		if (prevN != 0 && bestDeltaT != 0)
 		{
 			// Calculate the time of the phase immediately after the previous beacon
-			long immediatePhase = prevT + prevN * bestDeltaT;
+			// Calculate the time of the phase immediately after the previous beacon
+			long immediatePhase = prevT + prevN * bestDeltaT + RX_PHASE_LEADIN;
+			long phaseLength = bestDeltaT - (RX_PHASE_LEADIN + RX_PHASE_LEADOUT);
 
 			if (immediatePhase > time)
 			{
 				// Send a frame in the future on the next reception phase
 				result = immediatePhase;
 			}
-			else if (immediatePhase + DELTA_T_LOWER - RECEPTION_PHASE_CUTOFF > time)
+			else if (immediatePhase + phaseLength > time)
 			{
 				// We're in the reception phase so send a frame right now
 				result = time;
@@ -205,6 +213,36 @@ public class SinkSyncData
 		}
 
 		return result;
+	}
+
+	/**
+	 * Calculates the earliest time of the next interesting beacon
+	 *
+	 * This method is intended to prevent pointless use of channels if we
+	 * know there will not be a useful beacon in the timeframe.
+	 *
+	 * @param absoluteTime the current absolute time
+	 * @return the absolute time of the beacon
+	 */
+	public long nextInterestingBeacon(long absoluteTime)
+	{
+		// This is only used in the calculation of n. If we know n, no beacons
+		// are interesting. If we don't know Δt then we have no idea when the
+		// beacons are.
+
+		if (goodN && goodT)
+			return -1;
+
+		if (!goodT)
+			return absoluteTime;
+
+		// Try to calculate roughly when the first beacon will arrive
+		long firstBeacon = prevT + (11 + prevN) * bestDeltaT - INTERESTING_BEACON_OFFSET;
+
+		if (absoluteTime >= firstBeacon)
+			return absoluteTime;
+
+		return firstBeacon;
 	}
 
 	/**
@@ -242,7 +280,7 @@ public class SinkSyncData
 	 * @param b the divisor
 	 * @return the rounded division result
 	 */
-	private long roundingIntegerDivision(long a, long b)
+	private static long roundingIntegerDivision(long a, long b)
 	{
 		return (a + b / 2) / b;
 	}
@@ -254,7 +292,7 @@ public class SinkSyncData
 	 * @param n value the multiple must be greater than
 	 * @return the next multiple
 	 */
-	private long nextMultiple(long multiplier, long n)
+	private static long nextMultiple(long multiplier, long n)
 	{
 		return (n + multiplier - 1) / multiplier * multiplier;
 	}

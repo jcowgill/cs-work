@@ -14,7 +14,7 @@ public class SourceController
 	private static final long TIME_HOP = 1000;
 
 	/** Extra time to give a channel if data is received on it */
-	private static final long TIME_HOP_DATA = 2000;
+	private static final long TIME_HOP_DATA = 1550;
 
 	/** The SinkSyncData objects for each sink */
 	private final SinkSyncData[] sinkData;
@@ -159,12 +159,48 @@ public class SourceController
 		// Forward to sink object
 		sinkData[readChannel].receiveBeacon(absoluteTime, n);
 
-		// Extend the hop if it was the first
-		if (!hopExtended)
+		// If n is not 1, and this was the first beacon, extend the hop time
+		//  to try and immediately get another beacon
+		if (n != 1 && !hopExtended)
 		{
+			// Extend the hop if it was the first
 			hopExpiry = absoluteTime + TIME_HOP_DATA;
 			hopExtended = true;
 		}
+		else
+		{
+			// Otherwise there is no point staying on this channel at the moment
+			changeChannel(absoluteTime);
+		}
+	}
+
+	/**
+	 * Select another channel to read on
+	 */
+	private void changeChannel(long absoluteTime)
+	{
+		int firstChannel = readChannel + 1;
+		readChannel = -1;
+
+		// Find another suitable channel
+		for (int i = 0; i < getChannelCount(); i++)
+		{
+			int channel = (firstChannel + i) % getChannelCount();
+
+			if (!sinkData[channel].hasGoodDeltaT() || !sinkData[channel].hasGoodN())
+			{
+				if (sinkData[channel].nextInterestingBeacon(absoluteTime) < absoluteTime + TIME_HOP)
+				{
+					// Suitable channel
+					readChannel = channel;
+					break;
+				}
+			}
+		}
+
+		// Reset timer
+		hopExpiry = absoluteTime + TIME_HOP;
+		hopExtended = false;
 	}
 
 	/**
@@ -196,26 +232,6 @@ public class SourceController
 
 		// Change channel if the hop timer has expired
 		if (absoluteTime >= hopExpiry)
-		{
-			int prevReadChannel = readChannel;
-			readChannel = -1;
-
-			// Find another suitable channel
-			for (int i = 0; i < getChannelCount(); i++)
-			{
-				int channel = (prevReadChannel + i) % getChannelCount();
-
-				if (!sinkData[channel].hasGoodDeltaT() || !sinkData[channel].hasGoodN())
-				{
-					// Suitable channel
-					readChannel = channel;
-					break;
-				}
-			}
-
-			// Reset timer
-			hopExpiry = absoluteTime + TIME_HOP;
-			hopExtended = false;
-		}
+			changeChannel(absoluteTime);
 	}
 }

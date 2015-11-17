@@ -57,6 +57,12 @@ public class SinkSyncData
 		prevT = 0;
 	}
 
+	/** Returns true if a good value of n has been calculated */
+	public boolean hasGoodN()
+	{
+		return goodN;
+	}
+
 	/** Returns true if a good value of Δt has been calculated */
 	public boolean hasGoodDeltaT()
 	{
@@ -244,7 +250,7 @@ public class SinkSyncData
 	/**
 	 * Finds the next multiple of 'multiplier' greater than or equal to n
 	 *
-	 * @param multipler value to multiply by integers to get a value near n
+	 * @param multiplier value to multiply by integers to get a value near n
 	 * @param n value the multiple must be greater than
 	 * @return the next multiple
 	 */

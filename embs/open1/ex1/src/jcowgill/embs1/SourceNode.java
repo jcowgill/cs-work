@@ -1,9 +1,12 @@
 package jcowgill.embs1;
 
+import ptolemy.actor.Director;
 import ptolemy.actor.TypedAtomicActor;
 import ptolemy.actor.TypedIOPort;
+import ptolemy.actor.util.Time;
 import ptolemy.data.IntToken;
 import ptolemy.data.type.BaseType;
+import ptolemy.domains.de.kernel.DEDirector;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
@@ -23,7 +26,14 @@ public class SourceNode extends TypedAtomicActor
 	private final TypedIOPort setChannel;
 
 	/** The controller for the source node */
-	private final SourceController controller = new SourceController(CHANNELS);
+	private final SourceController controller = new SourceController(CHANNELS, 0);
+
+	/** The channel we're currently on */
+	private int currentChannel;
+
+	/** The current scheduled wakeup time */
+	private Time timerTime;
+	private int timerMicrostep;
 
 	/** Initializes a new SourceNode */
 	public SourceNode(CompositeEntity container, String name)
@@ -48,21 +58,100 @@ public class SourceNode extends TypedAtomicActor
 	 */
 	private void setChannel(int channel) throws IllegalActionException
 	{
-		setChannel.send(0, new IntToken(EXT_CHANNEL_OFFSET + channel));
+		// We can't read "no channel", so use channel 0 in that case
+		if (channel < 0)
+			channel = 0;
+
+		if (currentChannel != channel)
+		{
+			setChannel.send(0, new IntToken(EXT_CHANNEL_OFFSET + channel));
+			currentChannel = channel;
+		}
+	}
+
+	/**
+	 * Sets the next time the node will wakeup for a timer event,
+	 * cancelling any previous event
+	 *
+	 * @param time the time to wakeup
+	 * @param microstep the microstep to wakeup on
+	 * @throws IllegalActionException
+	 */
+	private void setWakeupTime(Time time, int microstep) throws IllegalActionException
+	{
+		DEDirector director = (DEDirector) getDirector();
+
+		if (timerTime != null)
+		{
+			// Ignore request if the time is the same
+			if (timerTime.equals(time) && timerMicrostep == microstep)
+				return;
+
+			// Cancel previous timer
+			director.cancelFireAt(this, timerTime, timerMicrostep);
+		}
+
+		// Schedule next timer event
+		timerTime = time;
+		timerMicrostep = microstep;
+		director.fireAt(this, time, microstep);
+	}
+
+	/** Updates the state of the source for reading  */
+	private void setReading() throws IllegalActionException
+	{
+		// Set read channel and schedule next wakeup
+		Director director = getDirector();
+
+		setChannel(controller.getReadChannel());
+		setWakeupTime(new Time(director, ((double) controller.getNextWakeupTime()) / 1000), 1);
+	}
+
+	/**
+	 * Send at most one pending packet
+	 *
+	 * @return true if something was sent
+	 */
+	private boolean sendPendingPacket() throws IllegalActionException
+	{
+		DEDirector director = (DEDirector) getDirector();
+
+		// Send any packets if necessary
+		int sendChannel = controller.calcSendChannel();
+		if (sendChannel >= 0)
+		{
+			setChannel(sendChannel);
+			output.send(0, new IntToken(sendChannel));
+
+			// Fire immediately, but on the next microstep
+			//  This ensures a channel change doesn't affect previously sent packets
+			setWakeupTime(director.getModelTime(), director.getMicrostep() + 1);
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
 	public void initialize() throws IllegalActionException
 	{
-		// Reset the controller and set the initial channel
-		controller.reset();
-		setChannel(controller.getReadChannel());
+		// Reset the controller and start reading
+		controller.reset(0);
+		currentChannel = -1;
+		timerTime = null;
+
+		setReading();
 	}
 
 	@Override
 	public void fire() throws IllegalActionException
 	{
-		long time = (long) (getDirector().getModelTime().getDoubleValue() * 1000);
+		DEDirector director = (DEDirector) getDirector();
+		long time = (long) Math.ceil(director.getModelTime().getDoubleValue() * 1000);
+
+		// If anything is already pending to be sent, send it
+		if (sendPendingPacket())
+			return;
 
 		// Handle any received tokens
 		//  We only accept the last token received
@@ -74,6 +163,14 @@ public class SourceNode extends TypedAtomicActor
 		if (nValue >= 1)
 			controller.receiveBeacon(time, nValue);
 
-		// TODO The rest of this function
+		// Tell the controller that we've woken up
+		controller.wakeupEvent(time);
+
+		// Send any packets if necessary
+		if (!sendPendingPacket())
+		{
+			// If nothing was sent, enter read mode
+			setReading();
+		}
 	}
 }

@@ -43,12 +43,12 @@ public class SourceNode extends TypedAtomicActor
 
 		// Setup ports
 		input = new TypedIOPort(this, "input", true, false);
-		output = new TypedIOPort(this, "output", false, true);
 		setChannel = new TypedIOPort(this, "setChannel", false, true);
+		output = new TypedIOPort(this, "output", false, true);
 
 		input.setTypeEquals(BaseType.INT);
-		output.setTypeEquals(BaseType.INT);
 		setChannel.setTypeEquals(BaseType.INT);
+		output.setTypeEquals(BaseType.INT);
 	}
 
 	/**

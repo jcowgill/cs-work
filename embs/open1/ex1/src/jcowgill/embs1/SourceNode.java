@@ -35,6 +35,9 @@ public class SourceNode extends TypedAtomicActor
 	private Time timerTime;
 	private int timerMicrostep;
 
+	/** True if the next fire event is a packet sending wakeup */
+	private boolean isSending;
+
 	/** Initializes a new SourceNode */
 	public SourceNode(CompositeEntity container, String name)
 			throws IllegalActionException, NameDuplicationException
@@ -105,6 +108,7 @@ public class SourceNode extends TypedAtomicActor
 
 		setChannel(controller.getReadChannel());
 		setWakeupTime(new Time(director, ((double) controller.getNextWakeupTime()) / 1000), 1);
+		isSending = false;
 	}
 
 	/**
@@ -126,6 +130,7 @@ public class SourceNode extends TypedAtomicActor
 			// Fire immediately, but on the next microstep
 			//  This ensures a channel change doesn't affect previously sent packets
 			setWakeupTime(director.getModelTime(), director.getMicrostep() + 1);
+			isSending = true;
 			return true;
 		}
 
@@ -139,6 +144,7 @@ public class SourceNode extends TypedAtomicActor
 		controller.reset(0);
 		currentChannel = -1;
 		timerTime = null;
+		isSending = false;
 
 		setReading();
 	}
@@ -148,10 +154,6 @@ public class SourceNode extends TypedAtomicActor
 	{
 		DEDirector director = (DEDirector) getDirector();
 		long time = (long) Math.ceil(director.getModelTime().getDoubleValue() * 1000);
-
-		// If anything is already pending to be sent, send it
-		if (sendPendingPacket())
-			return;
 
 		// Handle any received tokens
 		//  We only accept the last token received
@@ -164,7 +166,10 @@ public class SourceNode extends TypedAtomicActor
 			controller.receiveBeacon(time, nValue);
 
 		// Tell the controller that we've woken up
-		controller.wakeupEvent(time);
+		//  To ensure we don't get any sending loops, we do not do this if this
+		//  was a sending wakeup
+		if (!isSending)
+			controller.wakeupEvent(time);
 
 		// Send any packets if necessary
 		if (!sendPendingPacket())

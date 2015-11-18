@@ -220,10 +220,25 @@ public final class MoteSourceNode
 				pendingSendChannel = sendChannel;
 			}
 		}
-		else if (tryChangeChannel(controller.getReadChannel()))
+		else
 		{
-			radio.startRx(Device.ASAP | Device.RX4EVER, 0, 0);
-			rxOn = true;
+			// Change channel to read on
+			int readChannel = controller.getReadChannel();
+
+			if (readChannel != -1)
+			{
+				if (tryChangeChannel(controller.getReadChannel()))
+				{
+					radio.startRx(Device.ASAP | Device.RX4EVER, 0, 0);
+					rxOn = true;
+				}
+			}
+			else if (rxOn)
+			{
+				// Nothing more to read, so switch the radio off
+				radio.stopRx();
+				rxOn = false;
+			}
 		}
 	}
 

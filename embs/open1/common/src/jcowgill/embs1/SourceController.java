@@ -167,9 +167,7 @@ public class SourceController
 		}
 	}
 
-	/**
-	 * Select another channel to read on
-	 */
+	/** Select another channel to read on */
 	private void changeChannel(long absoluteTime)
 	{
 		int firstChannel = readChannel + 1;

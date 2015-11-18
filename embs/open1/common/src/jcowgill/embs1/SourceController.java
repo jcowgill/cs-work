@@ -50,8 +50,6 @@ public class SourceController
 	 */
 	public SourceController(int channels, long initialTime)
 	{
-		assert channels > 0;
-
 		sinkData = new SinkSyncData[channels];
 		sendPending = new byte[channels];
 
@@ -124,8 +122,6 @@ public class SourceController
 	 */
 	public void reset(long initialTime)
 	{
-		assert initialTime >= 0;
-
 		// Reset all sinks
 		for (int i = 0; i < getChannelCount(); i++)
 			sinkData[i].reset();

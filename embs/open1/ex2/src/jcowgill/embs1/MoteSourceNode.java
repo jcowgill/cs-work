@@ -98,13 +98,16 @@ public final class MoteSourceNode
 			}
 		});
 
-		// Setup xmit fields which do not change
-		xmit[0] = Radio.FCF_DATA;
-		xmit[1] = Radio.FCA_SRC_SADDR | Radio.FCA_DST_SADDR;
-		Util.set16le(xmit, 9, MY_SHORT_ADDRESS);
-
 		// Initialize the source controller
 		controller = new SourceController(CHANNELS, Time.currentTime(Time.MILLISECS));
+
+		// Setup xmit fields
+		xmit[0] = Radio.FCF_DATA;
+		xmit[1] = Radio.FCA_SRC_SADDR | Radio.FCA_DST_SADDR;
+		Util.set16le(xmit, 3, PAN_ID_OFFSET + controller.getReadChannel());
+		Util.set16le(xmit, 5, PAN_ID_OFFSET + controller.getReadChannel());
+		Util.set16le(xmit, 7, PAN_ID_OFFSET + controller.getReadChannel());
+		Util.set16le(xmit, 9, MY_SHORT_ADDRESS);
 
 		// Enter read mode and enable timer
 		radio.setShortAddr(MY_SHORT_ADDRESS);

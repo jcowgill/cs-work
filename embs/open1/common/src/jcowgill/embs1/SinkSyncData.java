@@ -189,9 +189,9 @@ public class SinkSyncData
 		if (prevN != 0 && bestDeltaT != 0)
 		{
 			// Calculate the time of the phase immediately after the previous beacon
-			// Calculate the time of the phase immediately after the previous beacon
 			long immediatePhase = prevT + prevN * bestDeltaT + RX_PHASE_LEADIN;
 			long phaseLength = bestDeltaT - (RX_PHASE_LEADIN + RX_PHASE_LEADOUT);
+			long iterationLength = (11 + bestN) * bestDeltaT;
 
 			if (immediatePhase > time)
 			{
@@ -206,9 +206,20 @@ public class SinkSyncData
 			else if (allowFutureSync)
 			{
 				// The time was in the past so try and predict the time in the future sync iteration
-				long iterationLength = (11 + bestN) * bestDeltaT;
+				//  Find the immediate phase around the current time
+				immediatePhase += nextMultiple(iterationLength, (time - immediatePhase - phaseLength));
 
-				result = nextMultiple(iterationLength, (time - immediatePhase)) + immediatePhase;
+				// Do something similar to the above
+				if (immediatePhase > time)
+				{
+					// Send a frame in the future
+					result = immediatePhase;
+				}
+				else
+				{
+					// We must be in a reception phase so send a frame right now
+					result = time;
+				}
 			}
 		}
 

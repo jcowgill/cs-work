@@ -203,7 +203,7 @@ public class SourceController
 	 */
 	public void wakeupEvent(long absoluteTime)
 	{
-		long newNextSendWakeup = Long.MAX_VALUE;
+		nextSendWakeup = -1;
 
 		// Recalculate all the pending packet sends
 		for (int i = 0; i < getChannelCount(); i++)
@@ -212,16 +212,21 @@ public class SourceController
 
 			long sendTime = sinkData[i].calcReceptionPhase(absoluteTime);
 
-			if (sendTime != 0)
+			if (sendTime > 0)
 			{
 				if (sendTime <= absoluteTime)
 					sendPending[i] = 1;
-				else if (sendTime < newNextSendWakeup)
-					newNextSendWakeup = sendTime;
+				else if (nextSendWakeup == -1 || sendTime < nextSendWakeup)
+					nextSendWakeup = sendTime;
 			}
 		}
 
-		nextSendWakeup = newNextSendWakeup;
+		// Ensure the timer doesn't ever stop
+		//  This can happen if for all channels
+		//   goodN and goodT are true so rx is off
+		//   everything is pending
+		if (nextSendWakeup == -1)
+			nextSendWakeup = absoluteTime + 2000;
 
 		// Change channel if the hop timer has expired
 		if (absoluteTime >= hopExpiry)

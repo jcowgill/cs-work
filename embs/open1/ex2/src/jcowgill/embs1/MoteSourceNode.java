@@ -188,7 +188,7 @@ public final class MoteSourceNode
 
 		long wakeupTime = controller.getNextWakeupTime();
 		if (wakeupTime > 0)
-			timer.setAlarmTime(wakeupTime);
+			timer.setAlarmTime(Time.toTickSpan(Time.MILLISECS, wakeupTime));
 
 		// See if there is anything to transmit
 		int sendChannel;

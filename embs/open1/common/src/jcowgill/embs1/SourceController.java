@@ -36,10 +36,10 @@ public class SourceController
 	 */
 	private int readChannel;
 
-	/** Expiry time for the current channel hop. Only valid if readChannel != -1. */
+	/** Expiry time for the current channel hop. */
 	private long hopExpiry;
 
-	/** If true, the hop time has already been extended. Only valid if readChannel != -1. */
+	/** If true, the hop time has already been extended. */
 	private boolean hopExtended;
 
 	/**
@@ -106,7 +106,7 @@ public class SourceController
 	{
 		long lowest = nextSendWakeup;
 
-		if (readChannel != -1 && (lowest == -1 || hopExpiry < lowest))
+		if (lowest == -1 || hopExpiry < lowest)
 			lowest = hopExpiry;
 
 		return lowest;

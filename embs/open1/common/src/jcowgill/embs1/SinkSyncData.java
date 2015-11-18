@@ -242,7 +242,7 @@ public class SinkSyncData
 		// beacons are.
 
 		if (goodN && goodT)
-			return -1;
+			return 0;
 
 		if (!goodT)
 			return absoluteTime;

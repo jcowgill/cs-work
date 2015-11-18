@@ -104,13 +104,10 @@ public class SourceController
 	/** Returns the absolute time the next timer event should fire */
 	public long getNextWakeupTime()
 	{
-		long lowest = -1;
+		long lowest = nextSendWakeup;
 
-		if (readChannel != -1)
+		if (readChannel != -1 && (lowest == -1 || hopExpiry < lowest))
 			lowest = hopExpiry;
-
-		if (nextSendWakeup != -1 && nextSendWakeup < lowest)
-			lowest = nextSendWakeup;
 
 		return lowest;
 	}

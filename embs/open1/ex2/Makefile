@@ -1,9 +1,3 @@
-# Assembly name
-ASSEMBLY = MoteSourceNode-1.0
-
-# Source directories
-SRC_DIRS = src ../common/src
-
 # Flags to pass to mrc
 MRCFLAGS = --verbose -r:logger-11.0
 
@@ -14,15 +8,14 @@ else
 	MRC = /usr/share/moterunner/moterunner/linux64/bin/mrc
 endif
 
-############
+all: MoteSourceNode-1.0.sdx Sink-1.0.sdx
 
-SRCS = $(shell find $(SRC_DIRS) -type f -name '*.java' ! -path '*/test/*')
+MoteSourceNode-1.0.sdx: $(shell find src/jcowgill ../common/src -type f -name '*.java' ! -path '*/test/*')
+Sink-1.0.sdx: $(shell find src/embs -type f -name '*.java')
 
-all: $(ASSEMBLY).sdx
-
-$(ASSEMBLY).sdx: $(SRCS)
+%.sdx:
 	$(MRC) --assembly=$(basename $@) $(MRCFLAGS) $^
 
 # Clean build files
 clean:
-	rm -f $(ASSEMBLY).sba $(ASSEMBLY).sxp $(ASSEMBLY).sba
+	rm -f *.sba *.sdx *.sxp

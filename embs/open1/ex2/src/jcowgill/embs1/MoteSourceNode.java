@@ -150,7 +150,7 @@ public final class MoteSourceNode
 				return 0;
 
 			// Validate beacon
-			if (len != 12 || (data[0] & Radio.FCF_BEACON) == 0)
+			if (len != 12 || (data[0] & Radio.FCF_TYPE) != Radio.FCF_BEACON)
 				return 0;
 
 			// Notify controller

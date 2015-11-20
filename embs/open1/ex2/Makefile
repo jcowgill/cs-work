@@ -8,10 +8,12 @@ else
 	MRC = /usr/share/moterunner/moterunner/linux64/bin/mrc
 endif
 
-all: MoteSourceNode-1.0.sdx Sink-1.0.sdx
+all: MoteSourceNode-1.0.sdx Sink11-1.0.sdx Sink12-1.0.sdx Sink13-1.0.sdx
 
 MoteSourceNode-1.0.sdx: $(shell find src/jcowgill ../common/src -type f -name '*.java' ! -path '*/test/*')
-Sink-1.0.sdx: $(shell find src/embs -type f -name '*.java')
+Sink11-1.0.sdx: src/embs/Sink.java src/embs/Sink11.java
+Sink12-1.0.sdx: src/embs/Sink.java src/embs/Sink12.java
+Sink13-1.0.sdx: src/embs/Sink.java src/embs/Sink13.java
 
 %.sdx:
 	$(MRC) --assembly=$(basename $@) $(MRCFLAGS) $^

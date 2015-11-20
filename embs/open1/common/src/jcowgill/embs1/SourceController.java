@@ -26,6 +26,9 @@ public class SourceController
 	 */
 	private final byte[] sendPending;
 
+	/** The last reception phase a packet was sent on */
+	private final long[] lastReceptionPhase;
+
 	/** The next time the source should wakeup for a send event. This is -1 if nothing is pending. */
 	private long nextSendWakeup;
 
@@ -52,6 +55,7 @@ public class SourceController
 	{
 		sinkData = new SinkSyncData[channels];
 		sendPending = new byte[channels];
+		lastReceptionPhase = new long[channels];
 
 		for (int i = 0; i < channels; i++)
 			sinkData[i] = new SinkSyncData();
@@ -119,13 +123,13 @@ public class SourceController
 	 */
 	public void reset(long initialTime)
 	{
-		// Reset all sinks
+		// Reset per sink data
 		for (int i = 0; i < getChannelCount(); i++)
+		{
 			sinkData[i].reset();
-
-		// Reset pending sends
-		for (int i = 0; i < getChannelCount(); i++)
 			sendPending[i] = 0;
+			lastReceptionPhase[i] = 0;
+		}
 
 		nextSendWakeup = -1;
 
@@ -212,25 +216,31 @@ public class SourceController
 		// Recalculate all the pending packet sends
 		for (int i = 0; i < getChannelCount(); i++)
 		{
-			sendPending[i] = 0;
-
 			long sendTime = sinkData[i].calcReceptionPhase(absoluteTime);
 
 			if (sendTime > 0)
 			{
 				if (sendTime <= absoluteTime)
-					sendPending[i] = 1;
-				else if (nextSendWakeup == -1 || sendTime < nextSendWakeup)
+				{
+					// Only signal a wakeup if we haven't already handled this reception phase
+					if (sendTime != lastReceptionPhase[i])
+					{
+						sendPending[i] = 1;
+						lastReceptionPhase[i] = sendTime;
+					}
+
+					// Try and wakeup in exactly one iteration if possible
+					long iterationLength = sinkData[i].getIterationLength();
+					if (iterationLength != 0)
+						sendTime += iterationLength;
+					else
+						continue;
+				}
+
+				if (nextSendWakeup == -1 || sendTime < nextSendWakeup)
 					nextSendWakeup = sendTime;
 			}
 		}
-
-		// Ensure the timer doesn't ever stop
-		//  This can happen if for all channels
-		//   goodN and goodT are true so rx is off
-		//   everything is pending
-		if (nextSendWakeup == -1)
-			nextSendWakeup = absoluteTime + 2000;
 
 		// Change channel if the hop timer has expired
 		if (absoluteTime >= hopExpiry)

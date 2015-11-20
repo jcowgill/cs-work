@@ -180,14 +180,20 @@ public class SourceController
 
 			if (!sinkData[channel].hasGoodDeltaT() || !sinkData[channel].hasGoodN())
 			{
+				// We must ensure that SOME channel is selected if any remaining channels
+				//  need some data
+				readChannel = channel;
+
+				// Break if this channel is definitely suitable
 				if (sinkData[channel].nextInterestingBeacon(absoluteTime) < absoluteTime + TIME_HOP)
-				{
-					// Suitable channel
-					readChannel = channel;
 					break;
-				}
 			}
 		}
+
+		// If we can't find any channel which is worth listening on, just listen to
+		//  the next channel in the rotation
+		if (readChannel == -1)
+			readChannel = firstChannel % getChannelCount();
 
 		// Reset timer
 		hopExpiry = absoluteTime + TIME_HOP;

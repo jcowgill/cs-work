@@ -9,7 +9,7 @@ public class SinkSyncData
 	private static final int MAX_N = 10;
 
 	/** Lower bound for Δt */
-	private static final long DELTA_T_LOWER = 500;
+	private static final long DELTA_T_LOWER = 250;
 
 	/** Upper bound for Δt */
 	private static final long DELTA_T_UPPER = 1500;

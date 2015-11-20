@@ -147,13 +147,13 @@ public final class MoteSourceNode
 		// Handle new beacon packets
 		if (data != null)
 		{
-			// If we don't change the channel when sending, there is a small change we
-			//  will get a beacon for the wrong channel (which we will ignore).
-			if (controller.getReadChannel() != radio.getChannel())
-				return 0;
-
 			// Validate beacon
 			if (len != 12 || (data[0] & Radio.FCF_TYPE) != Radio.FCF_BEACON)
+				return 0;
+
+			// Ensure we're receiving a beacon for the right channel
+			//  If a packet is sent just before we change channels, we might receive it
+			if (Util.get16le(data, 3) != PAN_ID_OFFSET + controller.getReadChannel())
 				return 0;
 
 			// Notify controller

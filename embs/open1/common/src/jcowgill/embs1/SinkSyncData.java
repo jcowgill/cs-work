@@ -148,6 +148,15 @@ public class SinkSyncData
 		prevT = absoluteTime;
 	}
 
+	/** Returns the length of one iteration of the protocol or 0 if we don't know */
+	public long getIterationLength()
+	{
+		if (bestDeltaT == 0 || !goodN)
+			return 0;
+
+		return (11 + bestN) * bestDeltaT;
+	}
+
 	/**
 	 * Calculates the start of the reception phase
 	 *
@@ -167,9 +176,11 @@ public class SinkSyncData
 	 * Calculates the start of the reception phase
 	 *
 	 * This method uses the current knowledge of the sink (guesses of n, Δt,
-	 * times of previous beacons) to calculate the start of the next reception phase.
+	 * times of previous beacons) to calculate the start of either the reception phase
+	 * the sink is currently in, or the next reception phase.
 	 *
-	 * It returns 0 if there is not enough information at all to calculate it.
+	 * It returns 0 if there is not enough information at all to calculate it. It may
+	 * return a result in the past if we are in a reception phase that's already started.
 	 *
 	 * Other functions give the caller an indication of the "quality" of the result
 	 * returned by this method.
@@ -193,33 +204,16 @@ public class SinkSyncData
 			long phaseLength = bestDeltaT - (RX_PHASE_LEADIN + RX_PHASE_LEADOUT);
 			long iterationLength = (11 + bestN) * bestDeltaT;
 
-			if (immediatePhase > time)
+			if (immediatePhase + phaseLength > time)
 			{
-				// Send a frame in the future on the next reception phase
+				// We are either in a reception phase now, or the next phase is at the end
+				//  of this iteration
 				result = immediatePhase;
-			}
-			else if (immediatePhase + phaseLength > time)
-			{
-				// We're in the reception phase so send a frame right now
-				result = time;
 			}
 			else if (allowFutureSync)
 			{
 				// The time was in the past so try and predict the time in the future sync iteration
-				//  Find the immediate phase around the current time
-				immediatePhase += nextMultiple(iterationLength, (time - immediatePhase - phaseLength));
-
-				// Do something similar to the above
-				if (immediatePhase > time)
-				{
-					// Send a frame in the future
-					result = immediatePhase;
-				}
-				else
-				{
-					// We must be in a reception phase so send a frame right now
-					result = time;
-				}
+				result = immediatePhase + nextMultiple(iterationLength, (time - immediatePhase - phaseLength));
 			}
 		}
 

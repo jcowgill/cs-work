@@ -11,7 +11,7 @@ package jcowgill.embs1;
 public class SourceController
 {
 	/** Default time before hopping to another channel */
-	private static final long TIME_HOP = 1000;
+	private static final long TIME_HOP = 2000;
 
 	/** Extra time to give a channel if data is received on it */
 	private static final long TIME_HOP_DATA = 1550;

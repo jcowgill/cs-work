@@ -6,7 +6,6 @@ import ptolemy.actor.TypedIOPort;
 import ptolemy.actor.util.Time;
 import ptolemy.data.IntToken;
 import ptolemy.data.type.BaseType;
-import ptolemy.domains.de.kernel.DEDirector;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
@@ -33,7 +32,6 @@ public class SourceNode extends TypedAtomicActor
 
 	/** The current scheduled wakeup time */
 	private Time timerTime;
-	private int timerMicrostep;
 
 	/** True if the next fire event is a packet sending wakeup */
 	private boolean isSending;
@@ -77,37 +75,21 @@ public class SourceNode extends TypedAtomicActor
 	 * cancelling any previous event
 	 *
 	 * @param time the time to wakeup
-	 * @param microstep the microstep to wakeup on
-	 * @throws IllegalActionException
 	 */
-	private void setWakeupTime(Time time, int microstep) throws IllegalActionException
+	private void setWakeupTime(Time time) throws IllegalActionException
 	{
-		DEDirector director = (DEDirector) getDirector();
-
-		if (timerTime != null)
-		{
-			// Ignore request if the time is the same
-			if (timerTime.equals(time) && timerMicrostep == microstep)
-				return;
-
-			// Cancel previous timer
-			director.cancelFireAt(this, timerTime, timerMicrostep);
-		}
-
 		// Schedule next timer event
 		timerTime = time;
-		timerMicrostep = microstep;
-		director.fireAt(this, time, microstep);
+		if (time != null)
+			getDirector().fireAt(this, time);
 	}
 
 	/** Updates the state of the source for reading  */
 	private void setReading() throws IllegalActionException
 	{
 		// Set read channel and schedule next wakeup
-		Director director = getDirector();
-
 		setChannel(controller.getReadChannel());
-		setWakeupTime(new Time(director, ((double) controller.getNextWakeupTime()) / 1000), 1);
+		setWakeupTime(new Time(getDirector(), ((double) controller.getNextWakeupTime()) / 1000));
 	}
 
 	/**
@@ -117,8 +99,6 @@ public class SourceNode extends TypedAtomicActor
 	 */
 	private boolean sendPendingPacket() throws IllegalActionException
 	{
-		DEDirector director = (DEDirector) getDirector();
-
 		// Send any packets if necessary
 		int sendChannel = controller.calcSendChannel();
 		if (sendChannel >= 0)
@@ -126,9 +106,8 @@ public class SourceNode extends TypedAtomicActor
 			setChannel(sendChannel);
 			output.send(0, new IntToken(sendChannel));
 
-			// Fire immediately, but on the next microstep
-			//  This ensures a channel change doesn't affect previously sent packets
-			setWakeupTime(director.getModelTime(), director.getMicrostep() + 1);
+			// Fire immediately
+			setWakeupTime(getDirector().getModelTime());
 			isSending = true;
 			return true;
 		}
@@ -151,18 +130,26 @@ public class SourceNode extends TypedAtomicActor
 	@Override
 	public void fire() throws IllegalActionException
 	{
-		DEDirector director = (DEDirector) getDirector();
+		Director director = getDirector();
 		long time = (long) Math.ceil(director.getModelTime().getDoubleValue() * 1000);
 
 		// Handle any received tokens
 		//  We only accept the last token received
 		int nValue = -1;
 
-		while (input.hasNewToken(0))
+		while (input.hasToken(0))
 			nValue = ((IntToken) input.get(0)).intValue();
 
 		if (nValue >= 1)
+		{
 			controller.receiveBeacon(time, nValue);
+		}
+		else
+		{
+			// Ensure this is an intended timer event
+			if (timerTime != null && !director.getModelTime().equals(timerTime))
+				return;
+		}
 
 		// Tell the controller that we've woken up
 		//  To ensure we don't get any sending loops, we do not do this if this

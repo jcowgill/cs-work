@@ -3,22 +3,41 @@ package embs;
 import com.ibm.saguaro.system.*;
 import com.ibm.saguaro.logger.*;
 
+/**
+ * Mote sink
+ *
+ * Yellow LED = On during the reception phase
+ * Green LED  = Blinked when a good packet is received
+ * Red LED    = Blinked when a bad packet is received
+ */
 public class Sink {
+
+	/* LED Colours */
+	private static final byte LED_YELLOW = (byte) 0;
+	private static final byte LED_GREEN = (byte) 1;
+	private static final byte LED_RED = (byte) 2;
+
+	/* LED States */
+	private static final byte LED_OFF = (byte) 0;
+	private static final byte LED_ON = (byte) 1;
 
 	private static final int PAN_ID_OFFSET = 0x11;
 
-	private Timer  tsend;
-	private Timer  tstart;
-	private boolean light=false;
+	private final Timer tsend = new Timer();
+	private final Timer tstart = new Timer();
+	private final Timer tendPeriod = new Timer();
+	private final Radio radio = new Radio();
 
-	private byte[] xmit;
-	private long	  wait;
-	private Radio radio = new Radio();
-	private int nc;
+	private final byte[] xmit = new byte[12];
+	private final long wait;
 
 	// settings for sink A
 	private final int n;
 	private final byte channel;
+
+	// Mutable state
+	private int nc;
+	private boolean inReceptionPhase;
 
 	public Sink() {
 		// Default settings
@@ -42,7 +61,6 @@ public class Sink {
 		radio.setShortAddr(panid);
 
 		// Prepare beacon frame with source and destination addressing
-		xmit = new byte[12];
 		xmit[0] = Radio.FCF_BEACON;
 		xmit[1] = Radio.FCA_SRC_SADDR|Radio.FCA_DST_SADDR;
 		Util.set16le(xmit, 3, panid); // destination PAN address
@@ -61,7 +79,6 @@ public class Sink {
 			});
 
 		// Setup a periodic timer callback for beacon transmissions
-		tsend = new Timer();
 		tsend.setCallback(new TimerEvent(this){
 				@Override
 				public void invoke(byte param, long time){
@@ -70,7 +87,6 @@ public class Sink {
 			});
 
 		// Setup a periodic timer callback to restart the protocol
-		tstart = new Timer();
 		tstart.setCallback(new TimerEvent(this){
 				@Override
 				public void invoke(byte param, long time){
@@ -78,34 +94,42 @@ public class Sink {
 				}
 			});
 
+		// Setup a periodic timer callback to end the reception period
+		tendPeriod.setCallback(new TimerEvent(this){
+				@Override
+				public void invoke(byte param, long time){
+					((Sink) obj).endReceptionPeriod(param, time);
+				}
+			});
+
 		// Convert the periodic delay from ms to platform ticks
 		wait = Time.toTickSpan(Time.MILLISECS, t);
 
-		tstart.setAlarmBySpan(Time.toTickSpan(Time.SECONDS, 5)); //starts the protocol 5 seconds after constructing the assembly
+		// Start listening
+		radio.startRx(Device.ASAP | Device.RX4EVER, 0, 0);
+
+		// Start the protocol now
+		tstart.setAlarmBySpan(0);
 	}
 
 	// Called when a frame is received or at the end of a reception period
 	int onReceive (int flags, byte[] data, int len, int info, long time) {
-		if (data == null) { // marks end of reception period
-			// turn green LED off
-			LED.setState((byte)1, (byte)0);
+		if (data == null) {
+			// Restart receiver
+			radio.startRx(Device.ASAP | Device.RX4EVER, 0, 0);
+		}
+		else
+		{
+			// blink relevant led
+			if (inReceptionPhase)
+				toggleLED(LED_GREEN);
+			else
+				toggleLED(LED_RED);
 
-			//set alarm to restart protocol
-			tstart.setAlarmBySpan(10*wait);
-			return 0;
+			Logger.appendByte(data[11]);
+			Logger.flush(Mote.WARN);
 		}
 
-		// frame received, so blink red LED and log its payload
-		if(light){
-			LED.setState((byte)2, (byte)1);
-		}
-		else{
-			LED.setState((byte)2, (byte)0);
-		}
-		light=!light;
-
-		Logger.appendByte(data[11]);
-		Logger.flush(Mote.WARN);
 		return 0;
 	}
 
@@ -120,10 +144,11 @@ public class Sink {
 			xmit[11]--;
 		}
 		else{
-			//start reception phase
-			radio.startRx(Device.ASAP, 0, Time.currentTicks()+wait);
-			// turn green LED on
-			LED.setState((byte)1, (byte)1);
+			// Start reception phase and timer
+			inReceptionPhase = true;
+			LED.setState(LED_YELLOW, LED_ON);
+
+			tendPeriod.setAlarmBySpan(wait);
 		}
 	}
 
@@ -132,5 +157,20 @@ public class Sink {
 		nc=n;
 		xmit[11]=(byte)n;
 		tsend.setAlarmBySpan(0);
+	}
+
+	// Called on a timer alarm, ends the reception period
+	void endReceptionPeriod(byte param, long time) {
+		inReceptionPhase = false;
+		LED.setState(LED_YELLOW, LED_OFF);
+
+		// Set alarm to restart the protocol
+		tstart.setAlarmBySpan(10 * wait);
+	}
+
+	/** Toggles the given LED */
+	private static void toggleLED(byte led)
+	{
+		LED.setState(led, (byte) (1 - LED.getState(led)));
 	}
 }

@@ -1,0 +1,11 @@
+# Simulation test script
+#  Run with "mrsh -i simulate.mrsh"
+mote-create -n Source -e 50000 --drift 20
+mote-create -n Sink11 -e 50000 --drift -20
+mote-create -n Sink12 -e 50000 --drift -10
+mote-create -n Sink13 -e 50000
+moma-load logger
+1 moma-load Sink11
+2 moma-load Sink12
+3 moma-load Sink13
+0 moma-load MoteSourceNode

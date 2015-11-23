@@ -1,5 +1,6 @@
 # Build directories
 build/
+out/
 
 # Racket compiled directories
 compiled/
@@ -10,6 +11,22 @@ compiled/
 *.jar
 *.class
 bin/
+
+# MoteRunner binaries
+*.sba
+*.sdx
+*.sxp
+
+# PascalFC
+listfile.txt
+objfile
+pmdfile
+
+# Eclipse private settings
+.settings/
+
+# ZEves proof files
+*.zcs
 
 # Python Specific Ignores
 *.py[cod]

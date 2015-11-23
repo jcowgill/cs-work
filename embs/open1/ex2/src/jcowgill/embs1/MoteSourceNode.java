@@ -11,7 +11,13 @@ import com.ibm.saguaro.system.Timer;
 import com.ibm.saguaro.system.TimerEvent;
 import com.ibm.saguaro.system.Util;
 
-/** A Source node implemented with MoteRunner */
+/**
+ * A Source node implemented with MoteRunner
+ *
+ * Yellow LED = Source has initialized (always on)
+ * Green LED  = Blinked when a beacon is received
+ * Red LED    = Blinked when a packet is transmitted
+ */
 public final class MoteSourceNode
 {
 	/* LED Colours */
@@ -151,6 +157,9 @@ public final class MoteSourceNode
 			if (len != 12 || (data[0] & Radio.FCF_TYPE) != Radio.FCF_BEACON)
 				return 0;
 
+			// Indicate we received a beacon
+			toggleLED(LED_GREEN);
+
 			// Ensure we're receiving a beacon for the right channel
 			//  If a packet is sent just before we change channels, we might receive it
 			if (Util.get16le(data, 3) != PAN_ID_OFFSET + controller.getReadChannel())
@@ -212,6 +221,7 @@ public final class MoteSourceNode
 			{
 				radio.transmit(Device.ASAP | Radio.TXMODE_POWER_MAX | Radio.TXMODE_CCA,
 						xmit, 0, xmit.length, 0);
+				toggleLED(LED_RED);
 				txOn = true;
 			}
 			else
@@ -274,5 +284,11 @@ public final class MoteSourceNode
 		Util.set16le(xmit, 5, PAN_ID_OFFSET + channel); // Dest Address
 		Util.set16le(xmit, 7, PAN_ID_OFFSET + channel); // Source PAN
 		return true;
+	}
+
+	/** Toggles the given LED */
+	private static void toggleLED(byte led)
+	{
+		LED.setState(led, (byte) (1 - LED.getState(led)));
 	}
 }

@@ -1,0 +1,99 @@
+\documentclass[a4paper,12pt,draft,DIV=calc]{scrartcl}
+
+% Character Encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Math Typesetting
+\usepackage{amsmath}
+\usepackage{bussproofs}
+
+\newcommand{\NullaryInfC}[1]{\AxiomC{}\UnaryInfC{#1}}
+\newcommand{\NullaryProofTree}[1]{\begin{prooftree}\NullaryInfC{#1}\end{prooftree}}
+
+% URLs
+\usepackage{url}
+\usepackage[pdfusetitle,hidelinks]{hyperref}
+
+% Syntax Highlighting
+\usepackage[final]{listingsutf8}
+\usepackage{pxfonts}
+\usepackage{color}
+
+\definecolor{grey}{rgb}{0.3,0.3,0.3}
+\lstset{
+  commentstyle=\color{grey},
+  basicstyle=\ttfamily
+}
+
+% Subfigures
+\usepackage{subcaption}
+\usepackage{verbatim}
+
+% Various Typesetting Packages
+\usepackage{microtype}
+\usepackage[british]{babel}
+
+\begin{document}
+% Title
+\title{EMBS WSN MAC Layer Protocol Report}
+\author{James Cowgill}
+\date{27th November 2015}
+\maketitle
+
+\section{Overview Stuff}
+Report entry 1:
+ - Design + Implementation Decisions
+   - Synchronizing to multiple sinks
+   - Handling of sinks with n = 1
+ - References of the form (class name, method name, line numbers)
+   - For every decision
+ - Max 400 words, does not include references and figures
+ - "well illustrated"
+
+Report entry 2:
+ - Design + Implementation Decisions
+   - Synchonizing to multiple sinks
+   - Design decisions related to energy efficiency
+ - References as above
+ - Max 500 words as above
+
+\section{Exercise 1 - Ptolemy II}
+- Mathematical part split into two parts
+  - Data + operations related to a single Sink (SinkSyncData)
+    - Calculation of n and delta t
+    - Calculation of when to send the next packet (knowing n and delta t)
+  - Multiple sink coordination (SourceController)
+    - Owns one SinkSyncData object for each sink and demultiplexes events to
+      them
+    - Controls when to change channels
+    - Controls when to wakeup (to send packets or for channel hopping)
+
+- ptolemy II Model
+  - Completely implemented in Java (no other ptolemy actors)
+  - Wrapper around SourceController class
+  - Sends events to the SourceController class
+  - Obtains data and tried to set the "state of the world" to what
+    SourceController wants
+
+\section{Exercise 2 - Mote Runner}
+- Code for mathemetical part is the same as the above
+  - Why?
+    - Code reuse - much less code to write!
+    - Allows simulation in ptolemy of the ACTUAL code which will be used
+    - Above code was designed to be fairly resiliant to packet loss
+- Channel changing
+  - Requires nothing being transmitted and the receiver must be stopped
+    - Noticed some strange (undocumented) values returned by getState so I
+      decided to ignore that method and use txOn and rxOn boolean variables to
+      record it myself.
+- SourceController does not have separate timers for things so actions are
+  handled after events in a single "refresh" method handleControllerStateChange
+  - Handles any previously pending transmit / receive events.
+  - Attempts to transmit packets or start listening on a particular channel
+  - If this failed (channel change), the event is deffered until both txOn
+    and rxOn are false.
+
+- Clock skew? (my code doesn't deal with it too much)
+
+\end{document}

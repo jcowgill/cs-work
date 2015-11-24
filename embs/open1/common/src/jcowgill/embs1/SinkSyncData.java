@@ -6,13 +6,13 @@ package jcowgill.embs1;
 public class SinkSyncData
 {
 	/** Maximum value of N */
-	private static final int MAX_N = 10;
+	public static final int MAX_N = 10;
 
 	/** Lower bound for Δt */
-	private static final long DELTA_T_LOWER = 250;
+	public static final long DELTA_T_LOWER = 250;
 
 	/** Upper bound for Δt */
-	private static final long DELTA_T_UPPER = 1500;
+	public static final long DELTA_T_UPPER = 1500;
 
 	/** Period at the start of the rx phase to not send packets */
 	private static final long RX_PHASE_LEADIN = 20;

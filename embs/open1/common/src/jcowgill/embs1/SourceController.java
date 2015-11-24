@@ -14,7 +14,7 @@ public class SourceController
 	private static final long TIME_HOP = 2000;
 
 	/** Extra time to give a channel if data is received on it */
-	private static final long TIME_HOP_DATA = 1550;
+	private static final long TIME_HOP_DATA = SinkSyncData.DELTA_T_UPPER + 50;
 
 	/** The SinkSyncData objects for each sink */
 	private final SinkSyncData[] sinkData;

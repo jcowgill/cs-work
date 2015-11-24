@@ -35,3 +35,10 @@ __pycache__
 # Backup files
 *~
 *.bak
+
+# Latex
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf

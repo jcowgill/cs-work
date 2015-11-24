@@ -34,6 +34,10 @@
 \usepackage{microtype}
 \usepackage[british]{babel}
 
+% Tikz
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
 \begin{document}
 % Title
 \title{EMBS WSN MAC Layer Protocol Report}
@@ -59,6 +63,29 @@ Report entry 2:
  - Max 500 words as above
 
 \section{Exercise 1 - Ptolemy II}
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[
+     class/.style={draw, rectangle, thick, align=center, inner sep=1em,
+		   font=\bfseries},
+     port/.style={},
+     arrow/.style={thick}]
+
+    \node(SourceNode)       [class] {SourceNode};
+    \node(SourceController) [class,below=of SourceNode] {SourceController}
+      edge [<->,arrow] (SourceNode);
+    \node(SinkSyncData)     [class,below=of SourceController] {SinkSyncData}
+      edge [<->,arrow] (SourceController);
+
+    \node(inWifi)           [port,left=of SourceNode] {Wireless Input}
+      edge [->,arrow] (SourceNode);
+    \node(setChannel)       [port,right=of SourceNode] {Set Channel}
+      edge [<-,arrow] (SourceNode);
+    \node(outWifi)          [port,below=2em of setChannel.west,anchor=west]
+      {Wireless Output} edge [<-,arrow] (SourceNode);
+  \end{tikzpicture}
+  \caption{Exercise 1 Block Diagram}
+\end{figure}
 - Mathematical part split into two parts
   - Data + operations related to a single Sink (SinkSyncData)
     - Calculation of n and delta t

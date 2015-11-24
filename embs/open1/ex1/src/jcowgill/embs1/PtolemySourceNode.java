@@ -10,7 +10,7 @@ import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 
-public class SourceNode extends TypedAtomicActor
+public class PtolemySourceNode extends TypedAtomicActor
 {
 	/** Number of channels */
 	private static final int CHANNELS = 5;
@@ -36,8 +36,8 @@ public class SourceNode extends TypedAtomicActor
 	/** True if the next fire event is a packet sending wakeup */
 	private boolean isSending;
 
-	/** Initializes a new SourceNode */
-	public SourceNode(CompositeEntity container, String name)
+	/** Initializes a new PtolemySourceNode */
+	public PtolemySourceNode(CompositeEntity container, String name)
 			throws IllegalActionException, NameDuplicationException
 	{
 		super(container, name);

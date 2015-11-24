@@ -242,7 +242,7 @@
             <property name="_location" class="ptolemy.kernel.util.Location" value="[1070.0, 260.0]">
             </property>
         </entity>
-        <entity name="SourceNode" class="jcowgill.embs1.SourceNode">
+        <entity name="SourceNode" class="jcowgill.embs1.PtolemySourceNode">
             <property name="_location" class="ptolemy.kernel.util.Location" value="[530.25, 275.78125]">
             </property>
         </entity>

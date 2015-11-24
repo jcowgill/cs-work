@@ -71,7 +71,7 @@ Report entry 2:
      port/.style={},
      arrow/.style={thick}]
 
-    \node(SourceNode)       [class] {SourceNode};
+    \node(SourceNode)       [class] {PtolemySourceNode};
     \node(SourceController) [class,below=of SourceNode] {SourceController}
       edge [<->,arrow] (SourceNode);
     \node(SinkSyncData)     [class,below=of SourceController] {SinkSyncData}
@@ -86,6 +86,65 @@ Report entry 2:
   \end{tikzpicture}
   \caption{Exercise 1 Block Diagram}
 \end{figure}
+
+The design for the system I implemeted for Exercise 1 is split into 3 classes to
+try and modularize the code and separate the different tasks:
+\begin{description}
+  \item[SinkSyncData]
+    Controls the synchronization with one specific sink, and calculates when
+    the reception period is from the data it's gathered.
+  \item[SourceController]
+    Coordinates multiple SinkSyncData objects (one for each sink), and
+    controls which channel to listen for beacons on.
+  \item[PtolemySourceNode]
+    Contains the ptolemy specific code for the implementation. Most events are
+    forwarded to an instance of SourceController to do any calculations.
+\end{description}
+
+\subsection{SinkSyncData}
+
+%%%%%%%%%%%%%%%%%%%%%%% SOME INTRO HERE?
+
+From the initial problem, it is possible to derive a function giving the exact
+time each beacon frame will be received by the source.
+
+\begin{equation*}
+  f(s, n, t, i, b) = ((11 + n)i - (b - 1)t + s
+\end{equation*}
+\begin{description}
+  \item[$s$] Absolute start time
+  \item[$n$] Value of n from the protocol, number of beacons to be sent
+  \item[$t$] Value of t from the protocol, time between beacons
+  \item[$i$] Integer iteration number
+  \item[$b$] Integer beacon number within this iteration (1 \dots $n$)
+\end{description}
+
+This function gives the absolute time a beacon occurs, but to eliminate the
+value of $s$ we will subtract the times of two beacons received from a
+particular sink. The function giving the time between beacons simplifies to:
+\begin{align*}
+  \Delta t &= f(s, n, t, i_2, b_2) - f(s, n, t, i_1, b_1) \\
+           &= ((11 + n)(i_2 - i_1) - b_2 + b_1)t
+\end{align*}
+
+This is then used within the receiveBeacon function (SinkSyncData,
+receiveBeacon, 78-149) to calculate good values for $n$ and $t$. By recording
+the time and $n$ value of the previous beacon, we will always know the values
+of $\Delta t$, $b_1$ and $b_2$. The main part of the algorithm works roughly
+like this:
+
+\begin{enumerate}
+  \item Update the best $n$ value we've received so far.
+  \item If we receive two beacons which are close enough to know they are
+          definitely from the same iteration, we can immediately calculate
+          the value of $t$ knowing that $i_2 = i_1$ and calculating
+          $t = \frac{\Delta t}{b_1 - b_2}$.
+\end{enumerate}
+
+\subsection{SourceController}
+
+\subsection{PtolemySourceNode}
+
 - Mathematical part split into two parts
   - Data + operations related to a single Sink (SinkSyncData)
     - Calculation of n and delta t

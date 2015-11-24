@@ -25,7 +25,7 @@ public class PtolemySourceNode extends TypedAtomicActor
 	private final TypedIOPort setChannel;
 
 	/** The controller for the source node */
-	private final SourceController controller = new SourceController(CHANNELS, 0);
+	private final SourceController controller = new SourceController(CHANNELS);
 
 	/** The channel we're currently on */
 	private int currentChannel;
@@ -119,7 +119,7 @@ public class PtolemySourceNode extends TypedAtomicActor
 	public void initialize() throws IllegalActionException
 	{
 		// Reset the controller and start reading
-		controller.reset(0);
+		controller.reset();
 		currentChannel = -1;
 		timerTime = null;
 		isSending = false;

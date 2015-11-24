@@ -39,7 +39,7 @@ public final class MoteSourceNode
 	private static final int MY_SHORT_ADDRESS = 0x42;
 
 	/** The controller for the source node */
-	private static final SourceController controller;
+	private static final SourceController controller = new SourceController(CHANNELS);
 
 	/** Radio reference */
 	private static final Radio radio = new Radio();
@@ -103,9 +103,6 @@ public final class MoteSourceNode
 				timerFire(param, time);
 			}
 		});
-
-		// Initialize the source controller
-		controller = new SourceController(CHANNELS, Time.currentTime(Time.MILLISECS));
 
 		// Setup xmit fields
 		xmit[0] = Radio.FCF_DATA;

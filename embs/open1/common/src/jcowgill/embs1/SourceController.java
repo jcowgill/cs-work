@@ -49,9 +49,8 @@ public class SourceController
 	 * Initializes a SourceController object
 	 *
 	 * @param channels the number of channels available
-	 * @param initialTime the initial absolute time
 	 */
-	public SourceController(int channels, long initialTime)
+	public SourceController(int channels)
 	{
 		sinkData = new SinkSyncData[channels];
 		sendPending = new byte[channels];
@@ -60,7 +59,7 @@ public class SourceController
 		for (int i = 0; i < channels; i++)
 			sinkData[i] = new SinkSyncData();
 
-		reset(initialTime);
+		reset();
 	}
 
 	/** Returns the number of channels */
@@ -116,12 +115,8 @@ public class SourceController
 		return lowest;
 	}
 
-	/**
-	 * Resets the controller
-	 *
-	 * @param initialTime the initial absolute time
-	 */
-	public void reset(long initialTime)
+	/** Resets the controller */
+	public void reset()
 	{
 		// Reset per sink data
 		for (int i = 0; i < getChannelCount(); i++)

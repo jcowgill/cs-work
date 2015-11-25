@@ -117,13 +117,14 @@ public class SinkSyncData
 					// The beacon is likely to be from the same iteration (but we're not sure)
 					bestDeltaT = clampDeltaT(deltaT / deltaN);
 				}
-				else
+				else if (bestN == 1)
 				{
 					// Beacons have definitely wrapped at least once
 					//  We guess at one iteration if it looks sane
+					//  Since this is potentially very innacurate, we only try this if bestN == 1
 					long guess = roundingIntegerDivision(deltaT, (11 + bestN - deltaN));
 
-					if (isValidDeltaT(guess))
+					if ((bestDeltaT == 0 || guess < bestDeltaT) && isValidDeltaT(guess))
 						bestDeltaT = guess;
 				}
 			}

@@ -57,7 +57,7 @@ public class Sink {
 
 		// Set the PAN ID and the short address
 		int panid = PAN_ID_OFFSET + channel;
-		radio.setPanId(panid, true);
+		radio.setPanId(panid, false);
 		radio.setShortAddr(panid);
 
 		// Prepare beacon frame with source and destination addressing
@@ -109,7 +109,7 @@ public class Sink {
 		radio.startRx(Device.ASAP | Device.RX4EVER, 0, 0);
 
 		// Start the protocol now
-		tstart.setAlarmBySpan(0);
+		restart((byte) 0, 0);
 	}
 
 	// Called when a frame is received or at the end of a reception period
@@ -156,7 +156,7 @@ public class Sink {
 	void restart(byte param, long time) {
 		nc=n;
 		xmit[11]=(byte)n;
-		tsend.setAlarmBySpan(0);
+		periodicSend((byte) 0, 0);
 	}
 
 	// Called on a timer alarm, ends the reception period

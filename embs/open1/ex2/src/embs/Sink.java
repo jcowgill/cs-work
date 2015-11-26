@@ -38,6 +38,7 @@ public class Sink {
 	// Mutable state
 	private int nc;
 	private boolean inReceptionPhase;
+	private long nextEventTime;
 
 	public Sink() {
 		// Default settings
@@ -109,6 +110,7 @@ public class Sink {
 		radio.startRx(Device.ASAP | Device.RX4EVER, 0, 0);
 
 		// Start the protocol now
+		nextEventTime = Time.currentTicks();
 		restart((byte) 0, 0);
 	}
 
@@ -139,7 +141,9 @@ public class Sink {
 			// transmit a beacon
 			radio.transmit(Device.ASAP|Radio.TXMODE_POWER_MAX, xmit, 0, 12, 0);
 			// program new alarm
-			tsend.setAlarmBySpan(wait);
+			nextEventTime += wait;
+			tsend.setAlarmTime(nextEventTime);
+
 			nc--;
 			xmit[11]--;
 		}
@@ -148,7 +152,8 @@ public class Sink {
 			inReceptionPhase = true;
 			LED.setState(LED_YELLOW, LED_ON);
 
-			tendPeriod.setAlarmBySpan(wait);
+			nextEventTime += wait;
+			tendPeriod.setAlarmTime(nextEventTime);
 		}
 	}
 
@@ -165,7 +170,8 @@ public class Sink {
 		LED.setState(LED_YELLOW, LED_OFF);
 
 		// Set alarm to restart the protocol
-		tstart.setAlarmBySpan(10 * wait);
+		nextEventTime += 10 * wait;
+		tstart.setAlarmTime(nextEventTime);
 	}
 
 	/** Toggles the given LED */

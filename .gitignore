@@ -35,6 +35,7 @@ __pycache__
 # Backup files
 *~
 *.bak
+*.swp
 
 # Latex
 *.aux

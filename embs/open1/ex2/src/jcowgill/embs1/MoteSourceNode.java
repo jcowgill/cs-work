@@ -154,13 +154,13 @@ public final class MoteSourceNode
 			if (len != 12 || (data[0] & Radio.FCF_TYPE) != Radio.FCF_BEACON)
 				return 0;
 
-			// Indicate we received a beacon
-			toggleLED(LED_GREEN);
-
 			// Ensure we're receiving a beacon for the right channel
 			//  If a packet is sent just before we change channels, we might receive it
 			if (Util.get16le(data, 3) != PAN_ID_OFFSET + controller.getReadChannel())
 				return 0;
+
+			// Indicate we received a beacon
+			toggleLED(LED_GREEN);
 
 			// Notify controller
 			//  We send a wakeupEvent as well to ensure all pending sends are refreshed now

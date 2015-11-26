@@ -104,16 +104,13 @@ public final class MoteSourceNode
 			}
 		});
 
-		// Setup xmit fields
+		// Initialize radio and xmit fields for the first channel
 		xmit[0] = Radio.FCF_DATA;
 		xmit[1] = Radio.FCA_SRC_SADDR | Radio.FCA_DST_SADDR;
-		Util.set16le(xmit, 3, PAN_ID_OFFSET + controller.getReadChannel());
-		Util.set16le(xmit, 5, PAN_ID_OFFSET + controller.getReadChannel());
-		Util.set16le(xmit, 7, PAN_ID_OFFSET + controller.getReadChannel());
 		Util.set16le(xmit, 9, MY_SHORT_ADDRESS);
+		changeChannel(controller.getReadChannel());
 
 		// Enter read mode and enable timer
-		radio.setShortAddr(MY_SHORT_ADDRESS);
 		handleControllerStateChange();
 
 		// Turn Yellow LED on once we've finished
@@ -273,6 +270,22 @@ public final class MoteSourceNode
 		if (txOn)
 			return false;
 
+		changeChannel(channel);
+		return true;
+	}
+
+	/**
+	 * Forcefully change the radio channel
+	 *
+	 * @param channel channel to change to
+	 */
+	private static void changeChannel(int channel)
+	{
+		// Although the documentation says you do not need to do this,
+		// the radio on IRIS motes seems to need to be turned off
+		// completely before channel changes will take effect.
+		radio.setState(Device.S_OFF);
+
 		// Change the channel
 		radio.setChannel((byte) channel);
 		radio.setPanId(PAN_ID_OFFSET + channel, true);
@@ -280,7 +293,6 @@ public final class MoteSourceNode
 		Util.set16le(xmit, 3, PAN_ID_OFFSET + channel); // Dest PAN
 		Util.set16le(xmit, 5, PAN_ID_OFFSET + channel); // Dest Address
 		Util.set16le(xmit, 7, PAN_ID_OFFSET + channel); // Source PAN
-		return true;
 	}
 
 	/** Toggles the given LED */

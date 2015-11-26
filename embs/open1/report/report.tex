@@ -19,6 +19,9 @@
 \usepackage{tikz}
 \usetikzlibrary{positioning}
 
+% Code references (command is mainly used so I can keep track of them easily)
+\newcommand{\coderef}[3]{\emph{(#1, #2, #3)}}
+
 \begin{document}
 % Title
 \title{EMBS WSN MAC Layer Protocol Report}
@@ -30,15 +33,15 @@
 Report entry 1:
  - Design + Implementation Decisions
    - Synchronizing to multiple sinks
-   - Handling of sinks with n = 1
+   + Handling of sinks with n = 1
  - References of the form (class name, method name, line numbers)
    - For every decision
  - Max 400 words, does not include references and figures
- - "well illustrated"
+ + "well illustrated"
 
 Report entry 2:
  - Design + Implementation Decisions
-   - Synchonizing to multiple sinks
+   - Synchronizing to multiple sinks
    - Design decisions related to energy efficiency
  - References as above
  - Max 500 words as above
@@ -68,7 +71,7 @@ Report entry 2:
   \caption{Exercise 1 Block Diagram}
 \end{figure}
 
-The design for the system I implemeted for Exercise 1 is split into 3 classes to
+The design for the system I implemented for Exercise 1 is split into 3 classes to
 try and modularize the code and separate the different tasks:
 \begin{description}
   \item[SinkSyncData]
@@ -78,7 +81,7 @@ try and modularize the code and separate the different tasks:
     Coordinates multiple SinkSyncData objects (one for each sink), and
     controls which channel to listen for beacons on.
   \item[PtolemySourceNode]
-    Contains the ptolemy specific code for the implementation. Most events are
+    Contains the Ptolemy specific code for the implementation. Most events are
     forwarded to an instance of SourceController to do any calculations.
 \end{description}
 
@@ -108,8 +111,8 @@ particular sink. The function giving the time between beacons simplifies to:
            &= ((11 + n)(i_2 - i_1) - b_2 + b_1)t
 \end{align*}
 
-This is then used within the receiveBeacon function (SinkSyncData,
-receiveBeacon, 78-149) to calculate good values for $n$ and $t$. By recording
+This is then used within the receiveBeacon function \coderef{SinkSyncData}
+{receiveBeacon}{78-149} to calculate good values for $n$ and $t$. By recording
 the time and $n$ value of the previous beacon, we will always know the values
 of $\Delta t$, $b_1$ and $b_2$. The main part of the algorithm works roughly
 like this:
@@ -117,50 +120,77 @@ like this:
 \begin{enumerate}
   \item Update the best $n$ value we've received so far.
   \item If we receive two beacons which are close enough to know they are
-          definitely from the same iteration, we can immediately calculate
-          the value of $t$ knowing that $i_2 = i_1$ and calculating
-          $t = \frac{\Delta t}{b_1 - b_2}$.
+    definitely from the same iteration, we can immediately calculate the value
+		of $t$ knowing that $i_2 = i_1$ using $t = \frac{\Delta t}{b_1 - b_2}$.
+	\item If the two beacons are far apart, it is more difficult to calculate the
+		value of $t$ for certain (we probably don't know the final value of $n$,
+		an iteration may have elapsed between the beacons). However, we can make
+		some estimates which are likely to be right. These can be changed later if
+		a more useful pair of beacons are received.
+		\begin{enumerate}
+			\item If the second beacon could be from the same iteration, guess
+				using the same value of $t$ as above.
+			\item If the second beacon is definitely from another iteration, and our
+				current best value for $n = 1$, try calculating $t$ assuming that only
+				one iteration has passed using $t = \frac{\Delta t}{11 + n + b_1 -
+				b_2}$. This is the only reasonable thing to do when $n = 1$ since we
+				have no other beacons from the same iteration, although it might give
+				the wrong result if we "miss out" a beacon.
+		\end{enumerate}
+	\item If we know the value of $t$ and we have two beacons from sequential
+		iterations, we can calculate the value of $n$ exactly, even if we miss a
+		beacon from the second iteration. Rearranging the $\Delta t$ function gives
+		$x = (11 + n)(i_2 - i_1) = \frac{\Delta	t}{t} - (b_1 - b_2)$. Knowing that
+		$n \leq 10$, the easiest solution is $n = x - 11$ for $12 \leq x \leq 21$.
 \end{enumerate}
+
+% Explain how n + 1 case is handled by the above algorithm.
 
 \subsection{SourceController}
 
+
 \subsection{PtolemySourceNode}
+This class contains the Ptolemy specific code. All the interesting parts of the
+model are implemented in Java here (only connections to wireless ports are
+outside the class).
 
-- Mathematical part split into two parts
-  - Data + operations related to a single Sink (SinkSyncData)
-    - Calculation of n and delta t
-    - Calculation of when to send the next packet (knowing n and delta t)
-  - Multiple sink coordination (SourceController)
-    - Owns one SinkSyncData object for each sink and demultiplexes events to
-      them
-    - Controls when to change channels
-    - Controls when to wakeup (to send packets or for channel hopping)
+When the actor is fired, any beacons received are forwarded to the
+SourceController instance \coderef{PtolemySourceNode}{fire}{136-146} and any
+packets to be sent and channel changes are handled. In Ptolemy, changing the
+channel can happen at any time, but it's not possible to send two packets to
+different channels within the same fire event. To workaround this, whenever a
+packet is sent, the actor fires itself so it can handle any subsequent packets
+\coderef{PtolemySourceNode}{sendPendingPacket}{106-112}.
 
-- ptolemy II Model
-  - Completely implemented in Java (no other ptolemy actors)
-  - Wrapper around SourceController class
-  - Sends events to the SourceController class
-  - Obtains data and tried to set the "state of the world" to what
-    SourceController wants
+Timer events are also handled by the actor firing itself, but since the time
+until the actor wakes up could decrease (e.g. if we receive an $n = 1$ beacon,
+we might need to transmit a packet in a short time), the time is recorded so
+that any spurious timer events can be dropped.
 
 \section{Exercise 2 - Mote Runner}
-- Code for mathemetical part is the same as the above
-  - Why?
-    - Code reuse - much less code to write!
-    - Allows simulation in ptolemy of the ACTUAL code which will be used
-    - Above code was designed to be fairly resiliant to packet loss
-- Channel changing
-  - Requires nothing being transmitted and the receiver must be stopped
-    - Noticed some strange (undocumented) values returned by getState so I
-      decided to ignore that method and use txOn and rxOn boolean variables to
-      record it myself.
-- SourceController does not have separate timers for things so actions are
-  handled after events in a single "refresh" method handleControllerStateChange
-  - Handles any previously pending transmit / receive events.
-  - Attempts to transmit packets or start listening on a particular channel
-  - If this failed (channel change), the event is deffered until both txOn
-    and rxOn are false.
+For the second exercise, I chose to reuse the back end parts of the code I wrote
+for Ptolemy. This was enabled since both Ptolemy and Mote Runner can be
+programmed in Java. Reusing the code meant I had to write much less code in
+total, and allows simulation in Ptolemy of the actual code in the final
+implementation. Since the code for Ptolemy was designed to take into account the
+loss of random beacons (since SourceController can change the channel at will),
+the code should still work in the real world where beacons can be lost for
+various reasons during normal operation.
 
-- Clock skew? (my code doesn't deal with it too much)
+The implementation for exercise 2 revolves around the
+handleControllerStateChange method
+\coderef{MoteSourceNode}{handleControllerStateRef}{192-250}. This method is
+called after each type of event has been processed to try and update the state
+of the radio to what the SourceController class wants. Most actions (such as the
+scheduling of a timer event, starting the receiver and transmitting packets) are
+initiated here.
+% ^^ WHY?
+
+Unlike the Ptolemy model, it is not possible to change the channel of the Mote
+Runner radio while receiving or transmitting. To workaround this, the state of
+the radio is recorded in two variables (txOn and rxOn), and the tryChangeChannel
+method \coderef{MoteSourceNode}{tryChangeChannel}{252-284} will only attempt to
+change channels if these variables are false. Otherwise it will wait for the
+radio to finish, and the call to tryChangeChannel will be retried later.
 
 \end{document}

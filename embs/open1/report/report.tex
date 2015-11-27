@@ -19,7 +19,11 @@
 \usepackage{tikz}
 \usetikzlibrary{positioning}
 
+% Figure frames
+\usepackage{mdframed}
+
 % Code references (command is mainly used so I can keep track of them easily)
+%TC:macro \coderef [ignore,ignore,ignore]
 \newcommand{\coderef}[3]{\emph{(#1, #2, #3)}}
 
 \begin{document}
@@ -29,29 +33,28 @@
 \date{27th November 2015}
 \maketitle
 
-\section{Overview Stuff}
-Report entry 1:
- - Design + Implementation Decisions
-   - Synchronizing to multiple sinks
-   + Handling of sinks with n = 1
- - References of the form (class name, method name, line numbers)
-   - For every decision
- - Max 400 words, does not include references and figures
- + "well illustrated"
-
-Report entry 2:
- - Design + Implementation Decisions
-   - Synchronizing to multiple sinks
-   - Design decisions related to energy efficiency
- - References as above
- - Max 500 words as above
+%Report entry 1:
+% - Design + Implementation Decisions
+%   - Synchronizing to multiple sinks
+%   + Handling of sinks with n = 1
+% - References of the form (class name, method name, line numbers)
+%   - For every decision
+% - Max 400 words, does not include references and figures
+% + "well illustrated"
+%
+%Report entry 2:
+% - Design + Implementation Decisions
+%   - Synchronizing to multiple sinks
+%   - Design decisions related to energy efficiency
+% - References as above
+% - Max 500 words as above
 
 \section{Exercise 1 - Ptolemy II}
 \begin{figure}[ht]
   \centering
   \begin{tikzpicture}[
      class/.style={draw, rectangle, thick, align=center, inner sep=1em,
-		   font=\bfseries},
+       font=\bfseries},
      port/.style={},
      arrow/.style={thick}]
 
@@ -72,36 +75,34 @@ Report entry 2:
 \end{figure}
 
 The design for the system I implemented for Exercise 1 is split into 3 classes to
-try and modularize the code and separate the different tasks:
-\begin{description}
-  \item[SinkSyncData]
-    Controls the synchronization with one specific sink, and calculates when
-    the reception period is from the data it's gathered.
-  \item[SourceController]
-    Coordinates multiple SinkSyncData objects (one for each sink), and
-    controls which channel to listen for beacons on.
-  \item[PtolemySourceNode]
-    Contains the Ptolemy specific code for the implementation. Most events are
-    forwarded to an instance of SourceController to do any calculations.
-\end{description}
+try and modularize the code and separate the different tasks. Each is described
+separately in this report.
 
 \subsection{SinkSyncData}
-
-%%%%%%%%%%%%%%%%%%%%%%% SOME INTRO HERE?
+The SinkSyncData class contains the main algorithm which calculates the $n$ and
+$t$ values for each sink. It also contains the code to calculate the time to
+send the next packet to each sink.
 
 From the initial problem, it is possible to derive a function giving the exact
 time each beacon frame will be received by the source.
 
-\begin{equation*}
-  f(s, n, t, i, b) = ((11 + n)i - (b - 1)t + s
-\end{equation*}
-\begin{description}
-  \item[$s$] Absolute start time
-  \item[$n$] Value of n from the protocol, number of beacons to be sent
-  \item[$t$] Value of t from the protocol, time between beacons
-  \item[$i$] Integer iteration number
-  \item[$b$] Integer beacon number within this iteration (1 \dots $n$)
-\end{description}
+\begin{figure}[ht]
+  \begin{mdframed}
+  \centering
+    \begin{equation*}
+      f(s, n, t, i, b) = ((11 + n)i - (b - 1)t + s
+    \end{equation*}
+    \begin{description}
+      \itemsep0em
+      \item[$s$] Absolute start time
+      \item[$n$] Value of n from the protocol, number of beacons to be sent
+      \item[$t$] Value of t from the protocol, time between beacons
+      \item[$i$] Integer iteration number
+      \item[$b$] Integer beacon number within this iteration (1 \dots $n$)
+    \end{description}
+  \end{mdframed}
+  \caption{Function giving the exact time of each beacon}
+\end{figure}
 
 This function gives the absolute time a beacon occurs, but to eliminate the
 value of $s$ we will subtract the times of two beacons received from a
@@ -112,42 +113,36 @@ particular sink. The function giving the time between beacons simplifies to:
 \end{align*}
 
 This is then used within the receiveBeacon function \coderef{SinkSyncData}
-{receiveBeacon}{78-149} to calculate good values for $n$ and $t$. By recording
+{receiveBeacon}{78-150} to calculate good values for $n$ and $t$. By recording
 the time and $n$ value of the previous beacon, we will always know the values
-of $\Delta t$, $b_1$ and $b_2$. The main part of the algorithm works roughly
-like this:
+of $\Delta t$, $b_1$ and $b_2$. The main part of the
+algorithm calculates $t$ exactly when it knows about two adjacent beacons from
+the same iteration. It can then calculate $n$ exactly by measuring the duration
+of the sleep period.
 
-\begin{enumerate}
-  \item Update the best $n$ value we've received so far.
-  \item If we receive two beacons which are close enough to know they are
-    definitely from the same iteration, we can immediately calculate the value
-		of $t$ knowing that $i_2 = i_1$ using $t = \frac{\Delta t}{b_1 - b_2}$.
-	\item If the two beacons are far apart, it is more difficult to calculate the
-		value of $t$ for certain (we probably don't know the final value of $n$,
-		an iteration may have elapsed between the beacons). However, we can make
-		some estimates which are likely to be right. These can be changed later if
-		a more useful pair of beacons are received.
-		\begin{enumerate}
-			\item If the second beacon could be from the same iteration, guess
-				using the same value of $t$ as above.
-			\item If the second beacon is definitely from another iteration, and our
-				current best value for $n = 1$, try calculating $t$ assuming that only
-				one iteration has passed using $t = \frac{\Delta t}{11 + n + b_1 -
-				b_2}$. This is the only reasonable thing to do when $n = 1$ since we
-				have no other beacons from the same iteration, although it might give
-				the wrong result if we "miss out" a beacon.
-		\end{enumerate}
-	\item If we know the value of $t$ and we have two beacons from sequential
-		iterations, we can calculate the value of $n$ exactly, even if we miss a
-		beacon from the second iteration. Rearranging the $\Delta t$ function gives
-		$x = (11 + n)(i_2 - i_1) = \frac{\Delta	t}{t} - (b_1 - b_2)$. Knowing that
-		$n \leq 10$, the easiest solution is $n = x - 11$ for $12 \leq x \leq 21$.
-\end{enumerate}
-
-% Explain how n + 1 case is handled by the above algorithm.
+In the case where $n = 1$, the easiest way of calculating $t$ using two adjacent
+beacons is not possible, so the only way is to measure beacons from different
+iterations and use the time taken in the sleep period. The algorithm does this
+by guessing at an iteration length of one. This usually works, but can give the
+wrong results if some beacons are skipped over.
 
 \subsection{SourceController}
+This class coordinates multiple sinks and stores references to the SinkSyncData
+objects for each sink.  When beacons are received, they're forwarded to the
+relevant sink object and the channel might be changed
+\coderef{SourceController}{receiveBeacon}{145-167}.
 
+All decisions to change the channel receiving beacons are controlled by this
+class \coderef{SourceController}{changeChannel}{170-195}. With a few exceptions
+that apply after beacons have been received, this happens every second. This is
+done to avoid wasting time staying on one channel when no useful information
+can be gathered for some time. The main disadvantage is that it's difficult to
+be certain about the values for $n$ and $t$ in the $n = 1$ case when doing this.
+
+One exception to the channel change time limit is that a channel will get some
+extra time if a beacon was recently received, and another is likely to be
+received very shortly. This should increase the chances of a good value of $t$
+being calculated by obtaining beacons from the same protocol iteration.
 
 \subsection{PtolemySourceNode}
 This class contains the Ptolemy specific code. All the interesting parts of the
@@ -155,7 +150,7 @@ model are implemented in Java here (only connections to wireless ports are
 outside the class).
 
 When the actor is fired, any beacons received are forwarded to the
-SourceController instance \coderef{PtolemySourceNode}{fire}{136-146} and any
+SourceController instance \coderef{PtolemySourceNode}{fire}{131-146} and any
 packets to be sent and channel changes are handled. In Ptolemy, changing the
 channel can happen at any time, but it's not possible to send two packets to
 different channels within the same fire event. To workaround this, whenever a
@@ -175,22 +170,30 @@ total, and allows simulation in Ptolemy of the actual code in the final
 implementation. Since the code for Ptolemy was designed to take into account the
 loss of random beacons (since SourceController can change the channel at will),
 the code should still work in the real world where beacons can be lost for
-various reasons during normal operation.
+various reasons during normal operation. The difficult case of $n = 1$ also does
+not apply here. As the code is being reused, all the policy decisions relating
+to the calculation of $n$ and $t$ values, and the handling of multiple sinks are
+the same as the previous exercise.
 
 The implementation for exercise 2 revolves around the
 handleControllerStateChange method
-\coderef{MoteSourceNode}{handleControllerStateRef}{192-250}. This method is
+\coderef{MoteSourceNode}{handleControllerStateRef}{194-252}. This method is
 called after each type of event has been processed to try and update the state
 of the radio to what the SourceController class wants. Most actions (such as the
 scheduling of a timer event, starting the receiver and transmitting packets) are
 initiated here.
-% ^^ WHY?
 
 Unlike the Ptolemy model, it is not possible to change the channel of the Mote
 Runner radio while receiving or transmitting. To workaround this, the state of
 the radio is recorded in two variables (txOn and rxOn), and the tryChangeChannel
-method \coderef{MoteSourceNode}{tryChangeChannel}{252-284} will only attempt to
+method \coderef{MoteSourceNode}{tryChangeChannel}{261-279} will only attempt to
 change channels if these variables are false. Otherwise it will wait for the
 radio to finish, and the call to tryChangeChannel will be retried later.
+
+Since the assignment did not place any emphasis on energy efficiency, I mostly
+ignored it and tried instead to get the packet transmissions as accurate as
+possible. However, once the source node has synced with all the sink nodes, it
+will turn the radio off to save energy since no more information needs to be
+gathered.
 
 \end{document}

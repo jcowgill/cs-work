@@ -189,11 +189,6 @@ public class SourceController
 			}
 		}
 
-		// If we can't find any channel which is worth listening on, just listen to
-		//  the next channel in the rotation
-		if (readChannel == -1)
-			readChannel = firstChannel % getChannelCount();
-
 		// Reset timer
 		hopExpiry = absoluteTime + TIME_HOP;
 		hopExtended = false;

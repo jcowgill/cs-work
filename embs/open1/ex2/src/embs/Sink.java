@@ -22,6 +22,7 @@ public class Sink {
 	private static final byte LED_ON = (byte) 1;
 
 	private static final int PAN_ID_OFFSET = 0x11;
+	private static final byte EXPECTED_PAYLOAD = 0x4A;
 
 	private final Timer tsend = new Timer();
 	private final Timer tstart = new Timer();
@@ -120,7 +121,7 @@ public class Sink {
 			// Restart receiver
 			radio.startRx(Device.ASAP | Device.RX4EVER, 0, 0);
 		}
-		else
+		else if (len == 12 && data[11] == EXPECTED_PAYLOAD)
 		{
 			// blink relevant led
 			if (inReceptionPhase)

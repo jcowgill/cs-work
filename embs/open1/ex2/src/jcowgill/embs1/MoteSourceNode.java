@@ -38,6 +38,9 @@ public final class MoteSourceNode
 	/** The short address of this source node */
 	private static final int MY_SHORT_ADDRESS = 0x42;
 
+	/** Constant payload to send */
+	private static final byte PAYLOAD = 0x4A;
+
 	/** The controller for the source node */
 	private static final SourceController controller = new SourceController(CHANNELS);
 
@@ -108,6 +111,7 @@ public final class MoteSourceNode
 		xmit[0] = Radio.FCF_DATA;
 		xmit[1] = Radio.FCA_SRC_SADDR | Radio.FCA_DST_SADDR;
 		Util.set16le(xmit, 9, MY_SHORT_ADDRESS);
+		xmit[11] = PAYLOAD;
 		changeChannel(controller.getReadChannel());
 
 		// Enter read mode and enable timer

@@ -1,0 +1,7 @@
+mote-create -p /dev/ttyUSB1
+mote-reset
+moma-list
+moma-factory-reset
+moma-load logger
+moma-load Sink12
+moma-list

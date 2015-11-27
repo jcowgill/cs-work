@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jcowgill-embs1-common"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/usr/share/moterunner/moterunner/gac/saguaro-system-11.0.jar"/>
+	<classpathentry kind="lib" path="/usr/share/moterunner/moterunner/lib/java-aux-2.0.jar"/>
+	<classpathentry kind="lib" path="/usr/share/moterunner/moterunner/gac/logger-11.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

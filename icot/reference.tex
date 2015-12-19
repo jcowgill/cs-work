@@ -1,0 +1,241 @@
+\documentclass[a4paper,12pt,DIV=calc]{scrartcl}
+
+% Character Encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% Math Typesetting
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Various Typesetting Packages
+\usepackage{microtype}
+\usepackage[british]{babel}
+
+% Mathematical operators
+\newcommand*{\diff}{\mathop{}\!\mathrm{d}}
+
+\begin{document}
+% Title
+\title{ICOT Formula Reference}
+\author{James Cowgill}
+\maketitle
+
+\section{Basic Statistics}
+\subsection{Random Variables}
+Random variables use upper-case letters and values these variables can take use
+lower-case letters.
+\[X = \{x, p(x), \dots\}\]
+The alphabet / range of a random variable is written using a slanted letter.
+\[\mathcal{X} = \{x_1, x_2, \dots, x_n\}\]
+The sum of all probabilities always equals one:
+\[\sum_x p(x) = 1\]
+The mean of a discrete variable is:
+\[E(X) = \sum_x x p(x)\]
+The variance of any variable is:
+\[var(X) = E \left ((X - E(X))^2 \right) = E \left ( X^2 \right ) - E(X)^2\]
+The covariance is a measure of the correlation between two variables. If two
+variables are independent, their covariance is $0$ (however the converse is not
+always true). Covariance is defined as:
+\[cov(X, Y) = E \left( (X - E(X))(Y - E(Y)) \right) = E(XY) - E(X)E(Y)\]
+
+\subsection{Composite Variables}
+Composite variables $(X, Y)$ have joint probabilities. This is the probability
+that both $x$ and $y$ will occur. Marginal probability is the sum over the other
+variables in a join probability distribution.
+\[p(x) = \sum_y p(x, y)\]
+\[p(y) = \sum_x p(x, y)\]
+The chain rule relates the join and marginal probabilities to the conditional
+probability.
+\[p(x, y) = p(x|y)p(y) = p(y|x)p(x)\]
+Bayes's theorem is a rearrangement of the chain rule relating the conditional
+probability to its inverse.
+\[p(y|x) = \frac{p(x|y)p(y)}{p(x)}\]
+
+\subsection{Continuous Variables}
+A continuous random variable is a variable that can take infinitely many values.
+Continuous variables are characterized by a probability density function $p(x)$
+(this is not the same as "probability function" used for discrete variables).
+The probability of a value falling in the interval $[a, b]$ is defined as:
+\[P(a \leq X \leq b) = \int_a^b p(x) \diff x\]
+As a consequence, the probability of a variable falling at an exact value is
+always 0.
+\[P(X = a) = P(a \leq X \leq a) = \int_a^a p(x) \diff x = 0\]
+The sum of a continuous variable's density function is always 1.
+\[\int_{-\infty}^{\infty} p(x) \diff x = 1\]
+The mean of a continuous variable is:
+\[E(X) = \int_{-\infty}^{\infty} x p(x) \diff x\]
+The Gaussian function is the density function for the normal distribution
+$\mathcal{N}(\mu, \sigma^2)$ where $\mu$ is the mean and $\sigma^2$ is the
+variance.
+\[p(x) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x - \mu)^2}{2\sigma^2}}\]
+
+\subsection{Multidimensional Variables}
+These are variables which collect a number of variables within them defined
+using vectors.
+\[\mathbf{X} = \begin{pmatrix}X_1\\\vdots\\X_n\end{pmatrix}\]
+The joint probability density is written as $p(\mathbf{x})$. Similar rules for
+the sum and mean apply to multidimensional variables.
+\[\int_{-\infty}^{\infty} p(\mathbf{x}) \diff \mathbf{x} = 1\]
+\[E(\mathbf{X}) = \int_{-\infty}^{\infty} \mathbf{x} p(\mathbf{x}) \diff \mathbf{x}\]
+The variance "equivalent" is the covariance matrix. This is a symmetric square
+matrix with $n$ rows and columns. Each element is defined as the covariance
+between the two variables that element refers to.
+\[V_{ij} = cov(X_i, X_j)\]
+
+\subsection{Jensen's Inequality}
+When a function is applied to a random variable, the function is applied to each
+item in the variable's alphabet to create a new variable.
+\[f(X) = \{f(x), p(x)\}\]
+Jensen's Inequality: If $f(x)$ is concave then:
+\[E(f(X)) \leq f(E(X))\]
+The reverse is also true: If $f(x)$ is convex then:
+\[E(f(X)) \geq f(E(X))\]
+
+\section{Shannon Entropy}
+The information content of a specific outcome $x$ in bits is:
+\[h(x) = \log_2\frac{1}{p(x)}\]
+The Shannon Entropy of a variable is the \textbf{average information content}:
+\begin{align*}
+  H(X) &= \sum_x p(x)h(x) \\
+       &= \sum_x p(x) \log_2\frac{1}{p(x)} \\
+       &= -\sum_x p(x) \log_2 p(x)
+\end{align*}
+It's defined similarly for joint distributions.
+\[H(X, Y) = -\sum_{x,y} p(x, y) \log_2 p(x, y)\]
+
+\subsection{Properties}
+For all random variables $X$ with alphabets $\mathcal{X}$:
+\[H(X) \leq 0\]
+\[H(X) \leq \log_2 \vert\mathcal{X}\vert\]
+Subadditivity is the property that the joint entropy is always less than the sum
+of the individual entropies.
+\[H(X, Y) \leq H(X) + H(Y)\]
+
+\subsection{Binary Entropy Function}
+The entropy of a binary variable given the probability of one of its values:
+\[H_2(p) = -p\log_2 p -(1 - p)\log_2 (1 - p)\]
+
+\subsection{Conditional Entropy}
+The conditional entropy is the amount of extra information $Y$ provides, given
+$X$ is already known.
+\[H(Y|X) = \sum_{x,y} p(x, y)\log_2 p(y|x)\]
+Conditioning a variable always reduces its entropy.
+\[H(Y|X) \leq H(Y)\]
+The chain rule of entropy:
+\begin{align*}
+  H(X, Y) &= H(Y|X) + H(X) \\
+          &= H(X|Y) + H(Y)
+\end{align*}
+
+\subsection{Relative Entropy}
+Relative entropy is a measure of the difference between two distributions.
+\[D(P\|Q) = \sum_x p(x) \log_2 \frac{p(x)}{q(x)}\]
+In general $D(P\|Q) \neq D(Q\|P)$.
+
+Relative entropy is non-negative and is only 0 if the distributions are equal.
+\[D(p\|q) \geq 0\]
+\[D(p\|q) = 0 \Leftrightarrow p(x) = q(x)\]
+
+\subsection{Mutual Information}
+The information one variable contains about another (the information shared
+between them).
+\begin{align*}
+  I(X:Y) &= D(p(x,y)~\|~p(x)p(y)) \\
+         &= \sum_{x,y} p(x,y) \log_2 \frac{p(x,y)}{p(x)p(y)} \\\\
+         &= H(X) - H(X|Y) \\
+         &= H(Y) - H(Y|X) \\
+         &= H(X) + H(Y) - H(X,Y) \\\\
+         &= I(Y:X)
+\end{align*}
+On a noisy communication channel with input $X$ and output $Y$ characterized by
+the conditional probability $p(y|x)$, the average amount of information
+transmitted is the mutual information $I(X:Y)$.
+
+Mutual information is always non-negative.
+\[I(X:Y) \geq 0\]
+
+\subsection{Markov Chains}
+A Markov chain is a chain of "events" where one event depends only on the result
+previous. In the chain $X \rightarrow Y \rightarrow Z$:
+\[p(z|x,y) = p(z|y)\]
+\[I(X:Z|Y) = 0\]
+In a Markov chain, the information $Z$ contains about $X$ cannot exceed that of
+$Y$.
+\[I(X:Y) \geq I(X:Z)\]
+
+\section{Compression}
+$\mathcal{X}^+$ denotes the set of all possible messages of finite, positive
+(non-zero) length. A binary encoding is a mapping from the set of messages to
+the set of binary messages. A uniquely decodable binary encoding is an encoding
+that is injective.
+\[C^+: \mathcal{X}^+ \rightarrowtail \{0, 1\}^+\]
+
+The expected length is the average length of all the symbols in the encoding
+(weighted by their probabilities).
+\[L(C,X) = \sum_x p(x)l(x)\]
+where $l(x)$ is the length of the symbol $x$.
+
+A \textbf{uniquely decodable} encoding is an encoding which is never ambiguous
+when decoding (any valid encoding can only every be decoded into one input). The
+minimal expected length of a uniquely decodable encoding is never smaller than
+the Shannon entropy. This is described by the \textbf{source coding theorem}:
+\[\forall X\;\exists \,C \colon H(X) \leq L(C, X) \leq H(X) + 1\]
+
+\section{Communication Channels}
+A \textbf{memoryless communication channel} is a system $(\mathcal{X}, p(y|x),
+\mathcal{Y})$ consisting of an input alphabet, output alphabet and a conditional
+probability of getting an output symbol given the input symbol. In a memoryless
+channel, each symbol is transformed independently of any previous symbols.
+
+A \textbf{discrete channel} is a channel with discrete finite alphabets.
+
+If the source and target of the channel have distributions $X$ and $Y$, then the
+amount of information which can be transferred over the channel is the mutual
+information $I(X:Y)$.
+
+\subsection{Information Capacity}
+Information capacity is the maximum amount of information which can be
+transferred over the channel, given that we can change the input distribution.
+\[C = \min_{p(x)} I(X:Y)\]
+
+\subsubsection{Properties}
+\begin{align*}
+  C &\geq 0 \\
+  C &\leq \log_2 |\mathcal{X}| \\
+  C &\leq \log_2 |\mathcal{Y}|
+\end{align*}
+
+\subsubsection{Channel Coding Theorem}
+Given a channel with capacity $C$, for any rate $R < C$ there exists a block
+channel code which realises error free communication.
+
+\subsection{Example Channels}
+\subsubsection{Noiseless Binary Channel}
+This is a binary channel ($\mathcal{X} = \mathcal{Y} = \{0, 1\}$) where the
+channel perfectly transmits any data sent across it.
+\[C = 1\]
+
+\subsubsection{Binary Symmetric Channel}
+Channel with a probability $p$ of a bit flip.
+\[C = 1 - H_2(p)\]
+
+\subsubsection{Erasure Channel}
+The output channel has an extra symbol $?$ which represents a "lost" bit.
+Symbols have the probability $p$ of being lost, but will never be incorrectly
+sent (if a $0$ is received, it is certain that the input is also $0$).
+\[C = 1 - p\]
+
+\subsubsection{Confusion Channel}
+The red herring channel. An extra input $?$ maps to $1$ on the output with
+probability $p$ (and to $0$ with probability $1 - p$). The capacity is $1$ since
+we can just choose an input distribution without the extra input.
+\[C = 1\]
+
+\subsubsection{Z Channel}
+A $1$ on the input maps to $0$ with probability $p$ but a $0$ on the input is
+unaffected.
+\[C = \text{really complex}\]
+
+\end{document}

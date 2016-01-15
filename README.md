@@ -2,7 +2,7 @@
 This repository contains most of the code created during my Computer Science course at the University of York.
 
 ## Licence
-Copyright 2012-2015 James Cowgill
+Copyright 2012-2016 James Cowgill
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

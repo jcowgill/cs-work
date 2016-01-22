@@ -1,0 +1,5 @@
+You can open these projects using GP2 Editor
+ https://github.com/UoYCS-plasma/GP2-Editor
+
+You must start gp2 with this directory (where this README is) as the current
+directory since the projects use relative paths.

@@ -1,18 +1,18 @@
 <!DOCTYPE project>
 <project gpVersion="gp2" name="GarbageCollector.gpp" gpDeveloperVersion="0.1">
  <rules>
-  <rule path="rules/mark.gpr"/>
-  <rule path="rules/sweepNode.gpr"/>
-  <rule path="rules/sweepEdge.gpr"/>
-  <rule path="rules/unmark.gpr"/>
+  <rule path="GarbageCollector/rules/mark.gpr"/>
+  <rule path="GarbageCollector/rules/sweepNode.gpr"/>
+  <rule path="GarbageCollector/rules/sweepEdge.gpr"/>
+  <rule path="GarbageCollector/rules/unmark.gpr"/>
  </rules>
  <programs>
-  <program path="programs/garbageCollector.gp2"/>
+  <program path="GarbageCollector/programs/garbageCollector.gp2"/>
  </programs>
  <graphs>
-  <graph path="graphs/NoRoot.host"/>
-  <graph path="graphs/AllReachable.host"/>
-  <graph path="graphs/SomeReachable.host"/>
+  <graph path="GarbageCollector/graphs/NoRoot.host"/>
+  <graph path="GarbageCollector/graphs/AllReachable.host"/>
+  <graph path="GarbageCollector/graphs/SomeReachable.host"/>
  </graphs>
  <runconfigurations>
   <runconfiguration program="garbageCollector.gp2" graph="NoRoot.host" name="NoRoot"/>

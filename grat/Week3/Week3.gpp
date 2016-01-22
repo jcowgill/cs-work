@@ -1,0 +1,32 @@
+<!DOCTYPE project>
+<project gpVersion="gp2" name="Week3.gpp" gpDeveloperVersion="0.1">
+ <rules>
+  <rule path="Week3/rules/markone.gpr"/>
+  <rule path="Week3/rules/q1traverse1.gpr"/>
+  <rule path="Week3/rules/q1traverse2.gpr"/>
+  <rule path="Week3/rules/addblue.gpr"/>
+  <rule path="Week3/rules/addred.gpr"/>
+  <rule path="Week3/rules/q2removeleaf.gpr"/>
+ </rules>
+ <programs>
+  <program path="Week3/programs/q1.gp2"/>
+  <program path="Week3/programs/q2.gp2"/>
+ </programs>
+ <graphs>
+  <graph path="Week3/graphs/singlenode.host"/>
+  <graph path="Week3/graphs/connected3.host"/>
+  <graph path="Week3/graphs/disconnected.host"/>
+  <graph path="Week3/graphs/empty.host"/>
+  <graph path="Week3/graphs/balancedtree.host"/>
+ </graphs>
+ <runconfigurations>
+  <runconfiguration program="q1.gp2" graph="singlenode.host" name="q1single"/>
+  <runconfiguration program="q1.gp2" graph="connected3.host" name="q1connected3"/>
+  <runconfiguration program="q1.gp2" graph="disconnected.host" name="q1disconnected"/>
+  <runconfiguration program="q1.gp2" graph="empty.host" name="q1empty"/>
+  <runconfiguration program="q2.gp2" graph="singlenode.host" name="q2singlenode"/>
+  <runconfiguration program="q2.gp2" graph="connected3.host" name="q2connected"/>
+  <runconfiguration program="q2.gp2" graph="disconnected.host" name="q2disconnected"/>
+  <runconfiguration program="q2.gp2" graph="balancedtree.host" name="q2balancedtree"/>
+ </runconfigurations>
+</project>

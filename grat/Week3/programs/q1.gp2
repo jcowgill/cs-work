@@ -1,0 +1,6 @@
+// My Program
+Main = if Disconnected then addred else addblue
+
+// Mark any node, mark all nodes reachable from that node
+//  If a node can still be marked, the graph is disconnected
+Disconnected = markone; {q1traverse1, q1traverse2}!; markone

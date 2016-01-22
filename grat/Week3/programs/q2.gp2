@@ -1,0 +1,8 @@
+// My Program
+Main = if IsTree then addblue else addred
+
+// Tests if a graph is a directed tree
+IsTree = q2removeleaf!; IsSingleNode
+
+// Tests if a graph consists of a single unmarked node
+IsSingleNode = markone; if markone then fail

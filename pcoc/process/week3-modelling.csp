@@ -1,0 +1,49 @@
+-- Week 3 Modelling Exercises
+-- James Cowgill
+
+-------------
+-- Exercise 3
+-------------
+channel up, down
+
+Lift = let
+        LiftAtFloor(0) = up -> LiftAtFloor(1)
+        LiftAtFloor(1) = down -> LiftAtFloor(0)
+                         []
+                         up -> LiftAtFloor(2)
+        LiftAtFloor(2) = down -> LiftAtFloor(0)
+       within
+        LiftAtFloor(0)
+
+-------------
+-- Exercise 4
+-------------
+channel inpound, out5p, out10p, out20p
+
+-- A change machine giving the user choices
+CM1 = CM1Inner(0)
+
+-- Inner process of the change machine
+--  state = current value of coins to give out
+CM1Inner(v) =
+    inpound -> CM1Inner(v + 100)
+    []
+    v >= 20 & out20p -> CM1Inner(v - 20)
+    []
+    v >= 10 & out10p -> CM1Inner(v - 10)
+    []
+    v >= 5 & out5p -> CM1Inner(v - 5)
+
+-- A change machine using internal choice and only allows pound coins
+--  when all the change is used up.
+CM2 = inpound -> CM2Inner(100)
+
+-- Inner process of CM2
+CM2Inner(v) =
+    v >= 20 & out20p -> CM2Inner(v - 20)
+    |~|
+    v >= 10 & out20p -> CM2Inner(v - 20)
+    |~|
+    v >= 5 & out20p -> CM2Inner(v - 20)
+    |~|
+    v == 0 & CM2

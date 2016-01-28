@@ -1,0 +1,71 @@
+\documentclass[a4paper,12pt,DIV=calc]{scrartcl}
+
+% Character encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Math + CSP
+\usepackage{amsmath}
+\usepackage{zed-csp}
+
+\begin{document}
+
+\title{PCOC Spr/Week 4 Formative}
+\author{James Cowgill}
+\maketitle
+
+\begin{quote}
+\itshape
+Prove the validity in the traces model of the following law. Justify each step
+of your proof by referring to the definition of the traces semantic function.
+
+\[a \then (P \intchoice Q) = (a \then P) \intchoice (a \then Q)\]
+
+Can FDR help you here?
+\end{quote}
+
+Under the traces model, we need to prove that this is always true:
+\[
+\Traces[a \then (P \intchoice Q)] =
+\Traces[(a \then P) \intchoice (a \then Q)]
+\]
+
+The left hand side of the traces equation expands to the following using the
+definition of $\Traces[a \then P]$.
+\[
+\Traces[a \then (P \intchoice Q)] \\ 
+= \set{\nil} \union
+\set{tr_p : \Traces[P \intchoice Q] \spot \trace{a} \cat tr_p}
+\]
+
+It can be furthur expanded using the definition of $\Traces[P \intchoice Q]$:
+\[
+= \set{\nil} \union
+\set{tr_p : \Traces[P] \union \Traces[Q] \spot \trace{a} \cat tr_p}
+\]
+
+The set comprehension above iterates over the union of two sets ($\Traces[P]$
+and $\Traces[Q]$). This can be rewritten as a union of two separate set
+comprehensions.
+\[
+= \set{\nil} \union
+\set{tr_p : \Traces[P] \spot \trace{a} \cat tr_p} \union
+\set{tr_q : \Traces[Q] \spot \trace{a} \cat tr_q}
+\]
+
+We can then add a union with the empty sequence (which does nothing since we
+already have it in our final of traces). Then we can use the two definitions
+used previously to simplify and get the right hand side.
+\[
+= \set{\nil} \union
+\set{tr_p : \Traces[P] \spot \trace{a} \cat tr_p} \union
+\set{\nil} \union
+\set{tr_q : \Traces[Q] \spot \trace{a} \cat tr_q} \\
+= \Traces[a \then P] \union \Traces[a \then Q] \\
+= \Traces[(a \then P) \intchoice (a \then Q)]
+\]
+
+FDR can't help here because it can't prove general laws - it can only prove
+things about specific processes $P$ and $Q$.
+
+\end{document}

@@ -91,11 +91,11 @@ public class Prac2Processor extends TypedAtomicActor {
         Time currentTime = director.getModelTime();
 
         // Send utilization if we've reached the trigger
-        if (utilizationTrigger.subtract(currentTime).isZero())
+        if (utilizationTrigger.subtract(currentTime).getDoubleValue() <= 0)
             sendUtilization();
 
         // Finish, if we are due to finish the task
-        if (isBusy && taskFinishTime.subtract(currentTime).isZero()) {
+        if (isBusy && taskFinishTime.subtract(currentTime).getDoubleValue() <= 0) {
             // Update utilization before wiping
             Time periodStart = utilizationTrigger.subtract(UTILIZATION_PERIOD);
 
@@ -108,7 +108,7 @@ public class Prac2Processor extends TypedAtomicActor {
         }
 
         // Handle any new tokens
-        while (inTasks.hasNewToken(0)) {
+        while (inTasks.hasToken(0)) {
             // Discard if busy, or drop if we can start it
             Token token = inTasks.get(0);
 

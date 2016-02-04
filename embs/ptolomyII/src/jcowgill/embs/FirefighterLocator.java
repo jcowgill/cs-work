@@ -6,7 +6,7 @@ import ptolemy.data.DoubleToken;
 import ptolemy.data.IntToken;
 import ptolemy.data.RecordToken;
 import ptolemy.data.Token;
-import ptolemy.data.expr.StringConstantParameter;
+import ptolemy.data.expr.StringParameter;
 import ptolemy.data.type.BaseType;
 import ptolemy.domains.wireless.kernel.WirelessIOPort;
 import ptolemy.kernel.CompositeEntity;
@@ -45,7 +45,7 @@ public class FirefighterLocator extends TypedAtomicActor
 
         input = new WirelessIOPort(this, "input", true, false);
         input.setTypeEquals(BaseType.INT);
-        input.outsideChannel = new StringConstantParameter(container, "PowerLossChannel");
+        input.outsideChannel = new StringParameter(container, "PowerLossChannel");
     }
 
     @Override
@@ -60,7 +60,7 @@ public class FirefighterLocator extends TypedAtomicActor
     public void fire() throws IllegalActionException
     {
         // Update signal strengths from each input token
-        while (input.hasNewToken(0)) {
+        while (input.hasToken(0)) {
             Token idToken = input.get(0);
             Token propToken = input.getProperties(0);
 
@@ -123,7 +123,7 @@ public class FirefighterLocator extends TypedAtomicActor
         public Double getStrength()
         {
             // Expire strength if enough time has passed
-            if (expiryTime != null && !expiryTime.subtract(getDirector().getModelTime()).isPositive())
+            if (expiryTime != null && expiryTime.subtract(getDirector().getModelTime()).getDoubleValue() <= 0)
                 expireStrength();
 
             return strength;

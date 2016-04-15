@@ -1,0 +1,119 @@
+\documentclass[a4paper,11pt,DIV=calc]{scrartcl}
+
+% Character encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Math + CSP
+\usepackage{amsmath}
+\usepackage{zed-csp}
+
+\begin{document}
+
+\title{PCOC Spr/Week 6 Formative}
+\author{James Cowgill}
+\maketitle
+
+\begin{quote}
+\itshape
+In the failures-divergences model, prove that:
+
+\[P \intchoice (Q \extchoice R) = (P \intchoice Q) \extchoice (P \intchoice R)\]
+\end{quote}
+
+This means that we need to prove that both the divergences and failures-bottom
+are equal.
+
+\begin{align*}
+  \Divergences[P \intchoice (Q \extchoice R)] &=
+  \Divergences[(P \intchoice Q) \extchoice (P \intchoice R)] \\
+  \Failures_\bot\semb{P \intchoice (Q \extchoice R)} &=
+  \Failures_\bot\semb{(P \intchoice Q) \extchoice (P \intchoice R)}
+\end{align*}
+
+\section{Divergences}
+
+It's fairly straightforward to show that the divergences of both sides are
+equal.
+
+\begin{align*}
+  &\Divergences[P \intchoice (Q \extchoice R)] \\
+  &= \Divergences[P] \cup \Divergences[Q \extchoice R] \\
+  &= \Divergences[P] \cup \Divergences[Q] \cup \Divergences[R] \\
+  &= \Divergences[P] \cup \Divergences[Q] \cup \Divergences[P] \cup
+     \Divergences[R] \\
+  &= \Divergences[P \intchoice Q] \cup \Divergences[P \intchoice R] \\
+  &= \Divergences[(P \intchoice Q) \extchoice (P \intchoice R)] \\
+\end{align*}
+
+\section{Failures}
+
+The $\Failures_\bot$ function is defined as:
+\[
+\Failures_\bot\semb{A} =
+  \Failures[A] \cup \{s; ref | s \in \Divergences[P] \spot (s, ref)\}
+\]
+
+Since the divergences of both sides of the original equation are equal, the part
+of the definition on the right hand side of the $\cup$ will also be equal so we
+only need to show that the failures of both sides of the original equation are
+equal to prove it.
+
+Starting with the RHS:
+\begin{align*}
+  &\Failures[(P \intchoice Q) \extchoice (P \intchoice R)] \\
+  &= \{tr, ref | \\
+  &\phantom{===} tr = \nil \wedge (tr, ref) \in
+    \Failures[P \intchoice Q] \cap \Failures[P \intchoice R] \\
+  &\phantom{====} \vee \\
+  &\phantom{===} tr \neq \nil \wedge (tr, ref) \in
+    \Failures[P \intchoice Q] \cup \Failures[P \intchoice R] \\
+  &\phantom{==}\spot (tr, ref)\} \\
+  &= \{tr, ref | \\
+  &\phantom{===} tr = \nil \wedge (tr, ref) \in
+    (\Failures[P] \cup \Failures[Q]) \cap (\Failures[P] \cup \Failures[R]) \\
+  &\phantom{====} \vee \\
+  &\phantom{===} tr \neq \nil \wedge (tr, ref) \in
+    (\Failures[P] \cup \Failures[Q]) \cup (\Failures[P] \cup \Failures[R]) \\
+  &\phantom{==}\spot (tr, ref)\} \\
+  &= \{tr, ref | \\
+  &\phantom{===} tr = \nil \wedge (tr, ref) \in
+    \Failures[P] \cup (\Failures[Q] \cap \Failures[R]) \\
+  &\phantom{====} \vee \\
+  &\phantom{===} tr \neq \nil \wedge (tr, ref) \in
+    \Failures[P] \cup (\Failures[Q] \cup \Failures[R]) \\
+  &\phantom{==}\spot (tr, ref)\}
+\end{align*}
+
+From the final line, it should be easy to see that if $(tr, ref) \in
+\Failures[P]$, then one of the lines of the disjunction must be true. This means
+we can extract $\Failures[P]$ into its own disjunction.
+
+\begin{align*}
+  &= \{tr, ref | \\
+  &\phantom{===} (tr, ref) \in \Failures[P] \\
+  &\phantom{====} \vee \\
+  &\phantom{===} tr = \nil \wedge (tr, ref) \in
+    \Failures[Q] \cap \Failures[R] \\
+  &\phantom{====} \vee \\
+  &\phantom{===} tr \neq \nil \wedge (tr, ref) \in
+    \Failures[Q] \cup \Failures[R] \\
+  &\phantom{==}\spot (tr, ref)\}
+\end{align*}
+
+The $\Failures[P]$ can now be split out of the set comprehension and the entire
+thing can be simplified to the LHS of the original equation.
+
+\begin{align*}
+  &=\{tr, ref | \\
+  &\phantom{===} tr = \nil \wedge (tr, ref) \in
+    \Failures[Q] \cap \Failures[R] \\
+  &\phantom{====} \vee \\
+  &\phantom{===} tr \neq \nil \wedge (tr, ref) \in
+    \Failures[Q] \cup \Failures[R] \\
+  &\phantom{==}\spot (tr, ref)\} \cup \Failures[P] \\
+  &= \Failures[P] \cup \Failures[Q \extchoice R] \\
+  &= \Failures[P \intchoice (Q \extchoice R)]
+\end{align*}
+
+\end{document}

@@ -1,0 +1,69 @@
+\documentclass[a4paper,11pt,DIV=calc]{scrartcl}
+
+% Character encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Math + CSP
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{zed-csp}
+\usepackage{tensor}   % possibly overkill but it works :)
+
+% Custom macros
+\newcommand{\EventsSet}{\mathit{Events}}
+
+\newcommand{\syncparallel}{\xparallel}
+\newcommand{\alphparallel}[2]{\tensor[_{#1}]{\xparallel}{_{#2}}}
+
+\begin{document}
+
+\title{PCOC Spr/Week 7 Formative}
+\author{James Cowgill}
+\maketitle
+
+\begin{quote}
+\itshape
+How can you express a synchronised parallelism $P \syncparallel Q$ (not
+available in FDR) using the alphabetised parallel?  Using this information,
+write out the step law for synchronised parallel.
+\end{quote}
+
+The set $\EventsSet$ is defined as the set of all possible events.
+
+Synchronised parallelism can then be defined as an alphabetised parallelism
+synchronising on every possible event.
+
+\[P \syncparallel Q = P \alphparallel{\EventsSet}{\EventsSet} Q\]
+
+\section{Step Law}
+Given a $P$ and $Q$ in the form:
+\begin{align*}
+  P =& \Extchoice e : A \spot e \then P(e) \\
+  Q =& \Extchoice e : B \spot e \then Q(e)
+\end{align*}
+
+\noindent The step law is then:
+\begin{align*}
+  P \syncparallel Q
+  =& P \alphparallel{\EventsSet}{\EventsSet} Q \\
+\shortintertext{Expand alphabetised parallelism step law}
+  =& \Extchoice e : A \cap (\EventsSet \setminus \EventsSet) \spot
+      e \then (P(e) \alphparallel{\EventsSet}{\EventsSet} Q) \\
+  &\extchoice \\
+  &\Extchoice e : B \cap (\EventsSet \setminus \EventsSet) \spot
+      e \then (P \alphparallel{\EventsSet}{\EventsSet} Q(e)) \\
+  &\extchoice \\
+  &\Extchoice e : A \cap B \cap \EventsSet \cap \EventsSet \spot
+      e \then (P(e) \alphparallel{\EventsSet}{\EventsSet} Q(e)) \\
+\shortintertext{First two choices iterate over $\emptyset$}
+  =&\Extchoice e : A \cap B \cap \EventsSet \cap \EventsSet \spot
+      e \then (P(e) \alphparallel{\EventsSet}{\EventsSet} Q(e))
+\shortintertext{By definition of $\EventsSet$, $A \subseteq \EventsSet$}
+  =&\Extchoice e : A \cap B \spot
+      e \then (P(e) \alphparallel{\EventsSet}{\EventsSet} Q(e))
+\shortintertext{By definition of syncronised parallelism}
+  =&\Extchoice e : A \cap B \spot e \then (P(e) \syncparallel Q(e))
+\end{align*}
+
+\end{document}

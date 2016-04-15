@@ -1,0 +1,78 @@
+\documentclass[a4paper,11pt,DIV=calc]{scrartcl}
+
+% Character encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Math + CSP
+\usepackage{mathtools}
+\usepackage{zed-csp}
+
+% Custom macros
+\newcommand{\Iter}{\mathit{Iter}}
+\newcommand{\STOP}{\mathit{STOP}}
+\newcommand{\SKIP}{\mathit{SKIP}}
+
+\begin{document}
+
+\title{PCOC Spr/Week 9 Formative}
+\author{James Cowgill}
+\maketitle
+
+\begin{quote}
+\itshape
+Calculate the traces of the process
+\[
+  \Iter(c_1 \then \SKIP \extchoice c_1 \then c_2 \then \SKIP)
+\]
+\end{quote}
+
+If $P$ is let to be the process being iterated, the traces of $P$ can be
+calculated quite straightforwardly.
+
+\begin{align*}
+  \Traces[P]
+  &= \Traces[c_1 \then \SKIP \extchoice c_1 \then c_2 \then \SKIP] \\
+  &= \Traces[c_1 \then \SKIP] \cup \Traces[c_1 \then c_2 \then \SKIP] \\
+  &= \{\nil, \trace{c_1}, \trace{c_1, \tick}\} \cup
+     \{\nil, \trace{c_1}, \trace{c_1, c_2}, \trace{c_1, c_2, \tick}\} \\
+  &= \{\nil, \trace{c_1}, \trace{c_1, \tick}, \trace{c_1, c_2}, \trace{c_1, c_2, \tick}\}
+\end{align*}
+
+The traces of the sequential composition $A \comp B$ consist of the traces of
+$A$ which do not end with a $\tick$ event, in union with with the traces of $A$
+which do end with a $\tick$ in sequence with any of the traces of $B$.
+\begin{multline*}
+  \Traces[A \comp B] =
+    \Traces[A] \setminus \set{t \spot t \cat \trace{\tick}} \\ \cup
+    \set{s, t \mid s \cat \trace{\tick} \in \Traces[A] \land t \in \Traces[B] \spot s \cat t}
+\end{multline*}
+
+The $\Iter$ process is defined as:
+\[\Iter(Q) = Q \comp \Iter(Q)\]
+
+The process $\Iter(P)$ (from the question) has the fixed point:
+\[F(X) = P \comp X\]
+
+The usual method of repeatedly applying the function $F$ to evaluate fixed
+points can then be used to calculate the traces.
+
+\begin{align*}
+  \Traces[\STOP] =& \nil \\
+  \Traces[F(\STOP)]
+  =& \Traces[P \comp \STOP] \\
+  =& \{\nil, \trace{c_1}, \trace{c_1, c_2}\} \cup \{\trace{c_1}, \trace{c_1, c_2}\} \\
+  =& \{\nil, \trace{c_1}, \trace{c_1, c_2}\} \\
+  \Traces[F(F(\STOP))]
+  =& \Traces[P \comp F(X)] \\
+  =& \{\nil, \trace{c_1}, \trace{c_1, c_2}\}\\
+  & \cup \{\trace{c_1}, \trace{c_1, c_1}, \trace{c_1, c_1, c_2},
+    \trace{c_1, c_2}, \trace{c_1, c_2, c_1}, \trace{c_1, c_2, c_1, c_2}\} \\
+  =& \{\nil, \trace{c_1}, \trace{c_1, c_1}, \trace{c_1, c_1, c_2},
+    \trace{c_1, c_2}, \trace{c_1, c_2, c_1}, \trace{c_1, c_2, c_1, c_2}\}
+\end{align*}
+
+The final set of traces will include any trace consisting of only the events
+$c_1$ and $c_2$ such that any $c_2$ event immediately follows a $c_1$ event.
+
+\end{document}
